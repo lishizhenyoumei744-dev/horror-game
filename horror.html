@@ -2,8 +2,8 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>星ノ宮異世界学園 ― 春、君と ―</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>終焉の皇と、人間の花</title>
 
 <style>
 *{
@@ -12,16 +12,17 @@
     padding:0;
 }
 
-body{
-    background:#090b18;
-    color:#eee;
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#05050a;
+    color:#fff;
     font-family:
         "Yu Gothic",
         "Hiragino Kaku Gothic ProN",
         Meiryo,
         sans-serif;
-    min-height:100vh;
-    overflow:hidden;
 }
 
 button{
@@ -29,1420 +30,1905 @@ button{
 }
 
 #game{
+    position:relative;
     width:100vw;
     height:100vh;
-    position:relative;
     overflow:hidden;
     background:
-        radial-gradient(circle at 50% 20%, #313a69 0%, #151a35 40%, #070914 100%);
+        radial-gradient(
+            circle at 50% 30%,
+            #30334d 0%,
+            #111321 45%,
+            #05050a 100%
+        );
 }
 
-#game::before{
-    content:"";
+/* 背景 */
+
+#background{
     position:absolute;
     inset:0;
-    pointer-events:none;
-    opacity:.25;
+    z-index:0;
+    transition:
+        background 1s ease,
+        filter 1s ease;
+}
+
+.bg-title{
     background:
-        radial-gradient(circle at 15% 25%, #fff 0 1px, transparent 2px),
-        radial-gradient(circle at 80% 20%, #fff 0 1px, transparent 2px),
-        radial-gradient(circle at 65% 70%, #fff 0 1px, transparent 2px),
-        radial-gradient(circle at 30% 80%, #fff 0 1px, transparent 2px);
-    background-size:140px 120px,190px 150px,220px 180px,170px 140px;
-    animation:stars 10s linear infinite;
-}
-
-@keyframes stars{
-    from{transform:translateY(0);}
-    to{transform:translateY(15px);}
-}
-
-.screen{
-    position:absolute;
-    inset:0;
-    display:none;
-}
-
-.screen.active{
-    display:block;
-}
-
-/* ---------------- TITLE ---------------- */
-
-#titleScreen{
-    display:none;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-}
-
-#titleScreen.active{
-    display:flex;
-}
-
-.titleBox{
-    position:relative;
-    z-index:2;
-    padding:40px;
-    width:min(850px,90vw);
-}
-
-.titleBox h1{
-    font-size:clamp(32px,6vw,72px);
-    letter-spacing:.12em;
-    text-shadow:
-        0 0 10px #9da9ff,
-        0 0 35px #5966d8;
-    margin-bottom:15px;
-}
-
-.titleBox .sub{
-    color:#bbc4ff;
-    letter-spacing:.25em;
-    margin-bottom:45px;
-}
-
-.menu{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    width:min(330px,80vw);
-    margin:auto;
-}
-
-.menu button,
-.choice button,
-.libraryButton,
-.backButton{
-    border:1px solid rgba(180,190,255,.45);
-    background:rgba(25,31,65,.78);
-    color:#eee;
-    padding:14px 20px;
-    border-radius:8px;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.menu button:hover,
-.choice button:hover,
-.libraryButton:hover,
-.backButton:hover{
-    background:rgba(75,88,170,.8);
-    border-color:#aeb8ff;
-    transform:translateY(-2px);
-}
-
-/* ---------------- COMMON ---------------- */
-
-.topBar{
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    height:60px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 22px;
-    z-index:20;
-    background:linear-gradient(
-        to bottom,
-        rgba(5,7,18,.9),
-        rgba(5,7,18,.2)
-    );
-}
-
-.chapter{
-    color:#c7ceff;
-    letter-spacing:.08em;
-    font-size:14px;
-}
-
-.topControls{
-    display:flex;
-    gap:8px;
-}
-
-.smallBtn{
-    border:1px solid #515b93;
-    background:rgba(15,18,40,.8);
-    color:#ddd;
-    padding:7px 10px;
-    border-radius:6px;
-    cursor:pointer;
-}
-
-.smallBtn:hover{
-    background:#323b73;
-}
-
-.progress{
-    position:absolute;
-    top:58px;
-    left:22px;
-    right:22px;
-    height:3px;
-    background:rgba(255,255,255,.1);
-    z-index:20;
-}
-
-.progressBar{
-    width:0%;
-    height:100%;
-    background:linear-gradient(90deg,#8997ff,#ffb8df);
-    transition:.4s;
-}
-
-/* ---------------- NOVEL ---------------- */
-
-#novelScreen{
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(24,31,69,.35),
-            rgba(8,9,22,.9)
+        radial-gradient(
+            circle at 50% 30%,
+            #4a4260 0%,
+            #19172a 45%,
+            #05050a 100%
         );
 }
 
-.sceneBackground{
-    position:absolute;
-    inset:0;
-    transition:background 1s ease;
-}
-
-.sceneBackground.school{
+.bg-city{
     background:
         linear-gradient(
             to bottom,
-            #6e88bc 0%,
-            #a9b8d8 35%,
-            #f0c8a0 100%
+            #303858 0%,
+            #596276 45%,
+            #171923 100%
         );
 }
 
-.sceneBackground.sunset{
+.bg-forest{
     background:
-        linear-gradient(
-            to bottom,
-            #25275d 0%,
-            #6b487c 45%,
-            #e29477 100%
+        radial-gradient(
+            ellipse at center,
+            #293d39 0%,
+            #12201f 45%,
+            #050a0a 100%
         );
 }
 
-.sceneBackground.night{
-    background:
-        linear-gradient(
-            to bottom,
-            #060818 0%,
-            #111638 50%,
-            #242951 100%
-        );
-}
-
-.sceneBackground.dark{
+.bg-battle{
     background:
         radial-gradient(
             circle at center,
-            #4b2749 0%,
-            #180f27 45%,
-            #05050d 100%
+            #542c38 0%,
+            #1d1019 42%,
+            #050509 100%
         );
 }
 
-.sceneBackground.ending{
+.bg-night{
     background:
         linear-gradient(
             to bottom,
-            #253c65 0%,
-            #667da0 45%,
-            #d9b8b1 100%
+            #080b1c,
+            #131a38 55%,
+            #05060d
         );
 }
 
-.sceneDecor{
+.bg-ending{
+    background:
+        linear-gradient(
+            to bottom,
+            #493b57,
+            #84758a 50%,
+            #1b1927
+        );
+}
+
+/* 光 */
+
+#light{
     position:absolute;
     inset:0;
+    z-index:1;
+    pointer-events:none;
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            rgba(255,255,255,.08),
+            transparent 45%
+        );
+}
+
+/* 雨 */
+
+#rain{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity .8s;
+    background:
+        repeating-linear-gradient(
+            105deg,
+            transparent 0,
+            transparent 18px,
+            rgba(190,210,255,.12) 19px,
+            transparent 20px
+        );
+    animation:rainMove .5s linear infinite;
+}
+
+#rain.on{
+    opacity:1;
+}
+
+@keyframes rainMove{
+    from{
+        background-position:0 0;
+    }
+    to{
+        background-position:-30px 60px;
+    }
+}
+
+/* 花びら */
+
+#petals{
+    position:absolute;
+    inset:0;
+    z-index:3;
+    pointer-events:none;
+    overflow:hidden;
+}
+
+.petal{
+    position:absolute;
+    top:-30px;
+    width:9px;
+    height:14px;
+    border-radius:70% 30% 70% 30%;
+    background:rgba(255,190,215,.7);
+    animation:fall linear infinite;
+}
+
+@keyframes fall{
+    0%{
+        transform:
+            translateY(-30px)
+            rotate(0deg);
+    }
+    100%{
+        transform:
+            translateY(110vh)
+            rotate(620deg);
+    }
+}
+
+/* キャラクター領域 */
+
+.character{
+    position:absolute;
+    z-index:5;
+    bottom:125px;
+    width:300px;
+    height:470px;
+    opacity:0;
+    transform:translateY(25px) scale(.96);
+    transition:
+        opacity .45s ease,
+        transform .45s ease;
     pointer-events:none;
 }
 
-.moon{
-    position:absolute;
-    right:9%;
-    top:12%;
-    width:90px;
-    height:90px;
-    border-radius:50%;
-    background:#fff6d8;
-    box-shadow:0 0 45px rgba(255,245,190,.6);
-    opacity:.85;
+.character.show{
+    opacity:1;
+    transform:translateY(0) scale(1);
 }
 
-.window{
-    position:absolute;
-    right:8%;
-    top:15%;
-    width:220px;
-    height:280px;
-    border:10px solid rgba(30,35,60,.8);
-    opacity:.25;
+.character.left{
+    left:3%;
 }
 
-.window::before,
-.window::after{
-    content:"";
-    position:absolute;
-    background:rgba(30,35,60,.8);
+.character.right{
+    right:3%;
 }
 
-.window::before{
-    width:8px;
-    height:100%;
-    left:50%;
-    transform:translateX(-50%);
-}
+/*
+    外部画像が無くても成立する
+    イメージアイコン風キャラクター
+*/
 
-.window::after{
-    height:8px;
-    width:100%;
-    top:50%;
-    transform:translateY(-50%);
-}
-
-.novelContent{
+.charIcon{
     position:absolute;
     left:50%;
     bottom:0;
     transform:translateX(-50%);
-    width:min(1050px,94vw);
-    z-index:10;
-    padding-bottom:28px;
+    width:270px;
+    height:390px;
 }
 
-.characterName{
-    display:inline-block;
+/* 皇 */
+
+.icon-kou{
+    background:
+        radial-gradient(
+            ellipse at 50% 25%,
+            #c8c9d7 0 10%,
+            transparent 11%
+        ),
+        linear-gradient(
+            90deg,
+            transparent 0 25%,
+            #171722 26% 74%,
+            transparent 75%
+        );
+    border-radius:45% 45% 12% 12%;
+    filter:drop-shadow(0 0 25px rgba(170,40,75,.4));
+}
+
+.icon-kou::before{
+    content:"";
+    position:absolute;
+    top:45px;
+    left:76px;
+    width:118px;
+    height:145px;
+    border-radius:48% 48% 42% 42%;
+    background:
+        radial-gradient(
+            circle at 35% 50%,
+            #ff405f 0 5px,
+            transparent 6px
+        ),
+        radial-gradient(
+            circle at 65% 50%,
+            #ff405f 0 5px,
+            transparent 6px
+        ),
+        linear-gradient(
+            135deg,
+            #d8d8e2,
+            #767687
+        );
+}
+
+.icon-kou::after{
+    content:"";
+    position:absolute;
+    top:170px;
+    left:52px;
+    width:166px;
+    height:190px;
+    background:
+        linear-gradient(
+            90deg,
+            #080810,
+            #28283b,
+            #080810
+        );
+    clip-path:
+        polygon(
+            18% 0,
+            82% 0,
+            100% 100%,
+            0 100%
+        );
+}
+
+/* 雫 */
+
+.icon-shizuku{
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0 23%,
+            #f4f4fa 24% 76%,
+            transparent 77%
+        );
+    border-radius:45% 45% 20% 20%;
+    filter:drop-shadow(0 0 25px rgba(120,180,255,.35));
+}
+
+.icon-shizuku::before{
+    content:"";
+    position:absolute;
+    top:50px;
+    left:74px;
+    width:122px;
+    height:145px;
+    border-radius:50%;
+    background:
+        radial-gradient(
+            circle at 35% 51%,
+            #5b9cff 0 5px,
+            transparent 6px
+        ),
+        radial-gradient(
+            circle at 65% 51%,
+            #5b9cff 0 5px,
+            transparent 6px
+        ),
+        linear-gradient(
+            135deg,
+            #fff,
+            #d7dced
+        );
+}
+
+.icon-shizuku::after{
+    content:"";
+    position:absolute;
+    top:175px;
+    left:43px;
+    width:184px;
+    height:190px;
+    border-radius:30px 30px 0 0;
+    background:
+        linear-gradient(
+            90deg,
+            #b9c9df,
+            #eef4ff,
+            #9caeca
+        );
+}
+
+/* 灯影 */
+
+.icon-tokage{
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0 22%,
+            #54182a 23% 77%,
+            transparent 78%
+        );
+    border-radius:45% 45% 15% 15%;
+    filter:drop-shadow(0 0 28px rgba(255,60,70,.4));
+}
+
+.icon-tokage::before{
+    content:"";
+    position:absolute;
+    top:48px;
+    left:73px;
+    width:124px;
+    height:145px;
+    border-radius:50%;
+    background:
+        radial-gradient(
+            circle at 35% 51%,
+            #ff765e 0 5px,
+            transparent 6px
+        ),
+        radial-gradient(
+            circle at 65% 51%,
+            #ff765e 0 5px,
+            transparent 6px
+        ),
+        linear-gradient(
+            135deg,
+            #f2d8d8,
+            #b77a86
+        );
+}
+
+.icon-tokage::after{
+    content:"";
+    position:absolute;
+    top:170px;
+    left:42px;
+    width:186px;
+    height:205px;
+    background:
+        linear-gradient(
+            90deg,
+            #260b14,
+            #7b2239,
+            #260b14
+        );
+    clip-path:
+        polygon(
+            20% 0,
+            80% 0,
+            100% 100%,
+            0 100%
+        );
+}
+
+/* 下僕 */
+
+.icon-geboku{
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0 23%,
+            #202531 24% 76%,
+            transparent 77%
+        );
+    border-radius:48% 48% 15% 15%;
+    filter:drop-shadow(0 0 22px rgba(120,140,180,.3));
+}
+
+.icon-geboku::before{
+    content:"";
+    position:absolute;
+    top:55px;
+    left:77px;
+    width:116px;
+    height:140px;
+    border-radius:50%;
+    background:
+        radial-gradient(
+            circle at 35% 51%,
+            #b9e5ff 0 4px,
+            transparent 5px
+        ),
+        radial-gradient(
+            circle at 65% 51%,
+            #b9e5ff 0 4px,
+            transparent 5px
+        ),
+        linear-gradient(
+            135deg,
+            #d8dde7,
+            #777d8b
+        );
+}
+
+.icon-geboku::after{
+    content:"";
+    position:absolute;
+    top:175px;
+    left:45px;
+    width:180px;
+    height:200px;
+    background:
+        linear-gradient(
+            90deg,
+            #090c12,
+            #313949,
+            #090c12
+        );
+    clip-path:
+        polygon(
+            18% 0,
+            82% 0,
+            100% 100%,
+            0 100%
+        );
+}
+
+/* 会話UI */
+
+#dialogue{
+    position:absolute;
+    z-index:20;
+    left:3%;
+    right:3%;
+    bottom:22px;
+    min-height:180px;
+    padding:22px 28px 28px;
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:12px;
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(8,9,16,.78),
+            rgba(3,4,9,.94)
+        );
+    box-shadow:
+        0 -10px 50px rgba(0,0,0,.35);
+    display:none;
+}
+
+#speaker{
+    position:absolute;
+    left:22px;
+    top:-42px;
+    min-width:170px;
     padding:8px 18px;
-    background:rgba(12,15,33,.92);
-    border:1px solid rgba(181,190,255,.4);
     border-radius:8px 8px 0 0;
-    color:#cdd4ff;
+    background:#0b0d18;
+    border:1px solid rgba(255,255,255,.22);
+    font-size:20px;
     font-weight:bold;
 }
 
-.textBox{
-    min-height:190px;
-    background:rgba(7,9,20,.91);
-    border:1px solid rgba(173,182,255,.3);
-    border-radius:0 10px 10px 10px;
-    padding:25px;
+#text{
+    padding-top:12px;
+    font-size:19px;
     line-height:2;
-    font-size:18px;
-    box-shadow:0 -10px 50px rgba(0,0,0,.3);
-}
-
-.text{
     white-space:pre-wrap;
+    min-height:105px;
 }
 
-.nextHint{
-    margin-top:12px;
-    text-align:right;
-    color:#929ac4;
+#next{
+    position:absolute;
+    right:20px;
+    bottom:10px;
+    color:#aaaec5;
     font-size:12px;
+    animation:blink 1.2s infinite;
 }
 
-.choice{
-    margin-top:15px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
+@keyframes blink{
+    0%,100%{opacity:.35}
+    50%{opacity:1}
 }
 
-.choice button{
-    flex:1;
-    min-width:200px;
+/* 上部UI */
+
+#topUI{
+    position:absolute;
+    z-index:30;
+    top:15px;
+    left:15px;
+    right:15px;
+    display:none;
+    justify-content:space-between;
+    align-items:center;
 }
 
-/* ---------------- LIBRARY ---------------- */
-
-#libraryScreen{
-    padding:80px 30px 30px;
-    overflow:auto;
-    background:
-        radial-gradient(circle at top,#272e59,#080a16 70%);
-}
-
-.libraryTitle{
-    text-align:center;
-    margin-bottom:25px;
-    letter-spacing:.12em;
-}
-
-.characters{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-    gap:15px;
-    width:min(1100px,95vw);
-    margin:auto;
-}
-
-.card{
-    background:rgba(17,21,45,.9);
-    border:1px solid rgba(150,160,230,.25);
-    border-radius:12px;
-    padding:20px;
-}
-
-.card h3{
-    color:#d5d9ff;
-    margin-bottom:8px;
-}
-
-.card .role{
-    color:#9ea8df;
+#chapter{
+    padding:8px 14px;
+    border-radius:6px;
+    background:rgba(0,0,0,.55);
+    color:#d9dcef;
     font-size:13px;
-    margin-bottom:12px;
 }
 
-.card p{
-    color:#c4c6d6;
-    font-size:14px;
-    line-height:1.8;
+.controls{
+    display:flex;
+    gap:7px;
 }
 
-.libraryBottom{
-    width:min(1100px,95vw);
-    margin:25px auto;
+.controlBtn{
+    border:1px solid rgba(255,255,255,.25);
+    border-radius:6px;
+    background:rgba(8,9,16,.78);
+    color:#fff;
+    padding:7px 11px;
+    cursor:pointer;
 }
 
-/* ---------------- SETTINGS ---------------- */
+.controlBtn:hover{
+    background:rgba(100,90,140,.7);
+}
 
-#settingsScreen{
+/* タイトル */
+
+#titleScreen{
+    position:absolute;
+    z-index:50;
+    inset:0;
+    display:flex;
+    flex-direction:column;
     align-items:center;
     justify-content:center;
-    background:radial-gradient(circle,#252c56,#080a16);
+    text-align:center;
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            rgba(100,85,120,.55),
+            rgba(3,4,9,.94) 68%
+        );
 }
 
-#settingsScreen.active{
+#titleScreen h1{
+    font-size:
+        clamp(34px,6vw,72px);
+    letter-spacing:.12em;
+    font-weight:normal;
+    text-shadow:
+        0 0 12px rgba(220,210,255,.5),
+        0 0 35px rgba(100,80,150,.5);
+}
+
+#titleScreen .subtitle{
+    margin-top:16px;
+    color:#c5bfd3;
+    letter-spacing:.3em;
+}
+
+.titleButtons{
+    margin-top:50px;
     display:flex;
+    flex-direction:column;
+    gap:12px;
+    width:280px;
 }
 
-.settingsBox{
-    width:min(500px,90vw);
-    padding:30px;
-    background:rgba(12,15,34,.94);
-    border:1px solid rgba(170,180,255,.3);
+.titleBtn{
+    height:52px;
+    border:1px solid rgba(220,215,240,.3);
+    border-radius:8px;
+    color:white;
+    background:rgba(20,20,32,.82);
+    font-size:17px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.titleBtn:hover{
+    transform:translateY(-2px);
+    background:rgba(70,60,95,.85);
+}
+
+/* ログ */
+
+#logWindow{
+    position:absolute;
+    z-index:100;
+    inset:7%;
+    display:none;
+    padding:25px;
+    overflow:auto;
+    border:1px solid rgba(255,255,255,.25);
     border-radius:12px;
+    background:rgba(5,6,12,.96);
 }
 
-.settingsBox h2{
-    margin-bottom:25px;
-}
-
-.settingRow{
+#logWindow h2{
     margin-bottom:20px;
+    font-weight:normal;
 }
 
-.settingRow label{
-    display:block;
-    margin-bottom:8px;
-    color:#cbd0f0;
+.logLine{
+    margin-bottom:14px;
+    padding-bottom:10px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    line-height:1.7;
 }
 
-input[type="range"]{
-    width:100%;
+.logName{
+    color:#d7b8cc;
+    font-weight:bold;
 }
 
-/* ---------------- ENDING ---------------- */
+/* 選択肢 */
+
+#choices{
+    position:absolute;
+    z-index:40;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width:min(650px,90vw);
+    display:none;
+    flex-direction:column;
+    gap:12px;
+}
+
+.choiceBtn{
+    padding:18px;
+    border-radius:9px;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(10,11,20,.94);
+    color:white;
+    font-size:17px;
+    cursor:pointer;
+}
+
+.choiceBtn:hover{
+    background:rgba(85,65,105,.9);
+}
+
+/* フェード */
+
+#fade{
+    position:absolute;
+    z-index:200;
+    inset:0;
+    background:#000;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity .6s;
+}
+
+#fade.active{
+    opacity:1;
+}
+
+/* エンディング */
 
 #endingScreen{
+    position:absolute;
+    z-index:150;
+    inset:0;
+    display:none;
     align-items:center;
     justify-content:center;
     text-align:center;
     background:
-        radial-gradient(circle at center,#4d557c,#15182e 55%,#060711);
+        radial-gradient(
+            circle at center,
+            #62536d,
+            #181622 65%,
+            #05050a
+        );
 }
 
-#endingScreen.active{
-    display:flex;
+#endingScreen h2{
+    font-size:
+        clamp(35px,6vw,68px);
+    font-weight:normal;
+    letter-spacing:.15em;
+    text-shadow:0 0 30px rgba(255,210,230,.35);
 }
 
-.endingBox{
-    width:min(900px,90vw);
-    padding:35px;
+#endingScreen p{
+    margin-top:25px;
+    line-height:2.2;
+    color:#ded9e5;
+    font-size:17px;
 }
 
-.endingBox h1{
-    font-size:clamp(28px,5vw,60px);
-    color:#f1d9e7;
-    text-shadow:0 0 25px #bf8eac;
-    margin-bottom:20px;
+#restart{
+    margin-top:35px;
+    padding:13px 35px;
+    border:1px solid rgba(255,255,255,.3);
+    border-radius:8px;
+    color:#fff;
+    background:rgba(10,10,18,.8);
+    cursor:pointer;
 }
 
-.endingBox p{
-    line-height:2.1;
-    color:#d6d8e8;
-}
+/* スマホ */
 
-.couples{
-    margin:25px 0;
-    font-size:20px;
-    color:#ffe2ef;
-}
+@media(max-width:700px){
 
-.fade{
-    animation:fade .8s ease;
-}
+    .character{
+        width:190px;
+        height:320px;
+        bottom:175px;
+    }
 
-@keyframes fade{
-    from{opacity:0}
-    to{opacity:1}
-}
+    .charIcon{
+        width:180px;
+        height:270px;
+    }
 
-.flash{
-    animation:flash .25s ease;
-}
+    #dialogue{
+        left:10px;
+        right:10px;
+        bottom:10px;
+        min-height:165px;
+        padding:20px 17px 25px;
+    }
 
-@keyframes flash{
-    0%{opacity:.4}
-    100%{opacity:1}
-}
-
-@media(max-width:600px){
-    .textBox{
+    #text{
         font-size:16px;
-        min-height:210px;
-        padding:18px;
     }
 
-    .novelContent{
-        padding-bottom:12px;
+    #speaker{
+        left:12px;
+        top:-38px;
+        font-size:16px;
     }
 
-    .topBar{
-        padding:0 10px;
+    .controls{
+        gap:3px;
     }
 
-    .window{
-        display:none;
+    .controlBtn{
+        padding:6px 7px;
+        font-size:11px;
     }
 }
 </style>
+
 </head>
 
 <body>
 
 <div id="game">
 
-    <!-- TITLE -->
-    <section id="titleScreen" class="screen active">
-        <div class="titleBox">
-            <h1>星ノ宮異世界学園</h1>
-            <div class="sub">― 春、君と ―</div>
+    <div id="background" class="bg-title"></div>
 
-            <div class="menu">
-                <button onclick="startGame()">▶ はじめから</button>
-                <button onclick="loadGame()">↻ 続きから</button>
-                <button onclick="showLibrary()">✦ キャラクター</button>
-                <button onclick="showSettings()">⚙ 設定</button>
-            </div>
-        </div>
-    </section>
+    <div id="light"></div>
 
-    <!-- LIBRARY -->
-    <section id="libraryScreen" class="screen">
+    <div id="rain"></div>
 
-        <h2 class="libraryTitle">CHARACTER</h2>
+    <div id="petals"></div>
 
-        <div class="characters">
+    <!-- キャラクター -->
+    <div id="leftCharacter" class="character left">
+        <div id="leftIcon" class="charIcon"></div>
+    </div>
 
-            <div class="card">
-                <h3>皇 紅蓮</h3>
-                <div class="role">最上位吸血鬼 × 幽霊</div>
-                <p>
-                    強大な力を持つ異世界の少年。
-                    口が悪く、素直ではない。
-                    雫とは出会った瞬間から犬猿の仲。
-                    しかし、その感情は少しずつ変わっていく。
-                </p>
-            </div>
+    <div id="rightCharacter" class="character right">
+        <div id="rightIcon" class="charIcon"></div>
+    </div>
 
-            <div class="card">
-                <h3>雫</h3>
-                <div class="role">星ノ宮学園の少女</div>
-                <p>
-                    明るさと芯の強さを持つ少女。
-                    皇とは何かにつけて衝突する。
-                    それでも、彼の本当の優しさを
-                    少しずつ知っていく。
-                </p>
-            </div>
+    <!-- タイトル -->
+    <div id="titleScreen">
 
-            <div class="card">
-                <h3>下僕</h3>
-                <div class="role">スライム・究極眷属</div>
-                <p>
-                    皇に仕える眷属。
-                    戦闘能力は非常に高いが、
-                    灯影に対しては誰よりも優しい。
-                </p>
-            </div>
+        <h1>終焉の皇と、人間の花</h1>
 
-            <div class="card">
-                <h3>焔緋 灯影</h3>
-                <div class="role">終焉の管理者・少女</div>
-                <p>
-                    世界の終わりを知る少女。
-                    自分の未来を変えられないと思っていたが、
-                    下僕と出会い、初めて未来を選ぼうとする。
-                </p>
-            </div>
-
-            <div class="card">
-                <h3>焔緋くん</h3>
-                <div class="role">裏社会の何でも屋・26歳</div>
-                <p>
-                    大人の視点から学園の騒動を見守る人物。
-                    皇や下僕の相談相手でもある。
-                    灯影とは別人。
-                </p>
-            </div>
-
+        <div class="subtitle">
+            ―― 儚い世界で、君を知った ――
         </div>
 
-        <div class="libraryBottom">
-            <button class="backButton" onclick="showTitle()">← 戻る</button>
-        </div>
-    </section>
+        <div class="titleButtons">
 
-    <!-- SETTINGS -->
-    <section id="settingsScreen" class="screen">
-
-        <div class="settingsBox">
-
-            <h2>設定</h2>
-
-            <div class="settingRow">
-                <label>
-                    BGM
-                    <span id="bgmStatus">ON</span>
-                </label>
-
-                <button class="smallBtn" onclick="toggleBGM()">
-                    BGM ON / OFF
-                </button>
-            </div>
-
-            <div class="settingRow">
-                <label for="volume">
-                    BGM音量
-                </label>
-
-                <input
-                    id="volume"
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    value="0.45"
-                    oninput="changeVolume(this.value)"
-                >
-            </div>
-
-            <button class="backButton" onclick="showTitle()">
-                ← 戻る
+            <button
+                class="titleBtn"
+                id="startButton">
+                はじめから
             </button>
 
-        </div>
-    </section>
+            <button
+                class="titleBtn"
+                id="loadButton">
+                続きから
+            </button>
 
-    <!-- NOVEL -->
-    <section id="novelScreen" class="screen">
-
-        <div id="sceneBackground" class="sceneBackground school">
-
-            <div class="sceneDecor">
-                <div class="moon"></div>
-                <div class="window"></div>
-            </div>
-
-        </div>
-
-        <div class="topBar">
-
-            <div id="chapter" class="chapter">
-                PROLOGUE
-            </div>
-
-            <div class="topControls">
-
-                <button class="smallBtn" onclick="saveGame()">
-                    SAVE
-                </button>
-
-                <button class="smallBtn" onclick="toggleBGM()">
-                    BGM
-                </button>
-
-                <button class="smallBtn" onclick="showTitle()">
-                    TITLE
-                </button>
-
-            </div>
-
-        </div>
-
-        <div class="progress">
-            <div id="progressBar" class="progressBar"></div>
-        </div>
-
-        <div class="novelContent">
-
-            <div id="characterName" class="characterName">
-                ―
-            </div>
-
-            <div id="textBox" class="textBox">
-
-                <div id="text" class="text"></div>
-
-                <div id="choice" class="choice"></div>
-
-                <div id="nextHint" class="nextHint">
-                    クリック / Enter / Space
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- ENDING -->
-    <section id="endingScreen" class="screen">
-
-        <div class="endingBox">
-
-            <h1>結ばれる世界</h1>
-
-            <p>
-                世界が終わるはずだった春。<br>
-                けれど、彼らは未来を選び直した。
-            </p>
-
-            <div class="couples">
-                皇 紅蓮 × 雫<br>
-                下僕 × 焔緋 灯影
-            </div>
-
-            <p>
-                儚い世界だったからこそ、<br>
-                手を離さなかった。
-            </p>
-
-            <br>
-
-            <button class="menuButton smallBtn" onclick="showTitle()">
-                タイトルへ戻る
+            <button
+                class="titleBtn"
+                id="soundButton">
+                BGM：ON
             </button>
 
         </div>
 
-    </section>
+    </div>
 
-</div>
+    <!-- 上部UI -->
+    <div id="topUI">
+
+        <div id="chapter">
+            PROLOGUE
+        </div>
+
+        <div class="controls">
+
+            <button
+                class="controlBtn"
+                id="saveButton">
+                SAVE
+            </button>
+
+            <button
+                class="controlBtn"
+                id="autoButton">
+                AUTO
+            </button>
+
+            <button
+                class="controlBtn"
+                id="skipButton">
+                SKIP
+            </button>
+
+            <button
+                class="controlBtn"
+                id="logButton">
+                LOG
+            </button>
+
+            <button
+                class="controlBtn"
+                id="titleButton">
+                TITLE
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- 会話 -->
+    <div id="dialogue">
+
+        <div id="speaker">
+            ―
+        </div>
+
+        <div id="text">
+        </div>
+
+        <div id="next">
+            ▼ クリック / Enter
+        </div>
+
+    </div>
+
+    <!-- 選択肢 -->
+    <div id="choices"></div>
+
+    <!-- ログ -->
+    <div id="logWindow">
+
+        <h2>― BACK LOG ―</h2>
+
+        <div id="logContent"></div>
+
+        <button
+            class="controlBtn"
+            id="closeLog">
+            閉じる
+        </button>
+
+    </div>
+
+    <!-- フェード -->
+    <div id="fade"></div>
+
+    <!-- エンディング -->
+    <div id="endingScreen">
+
+        <div>
+
+            <h2>君と、生きる。</h2>
+
+            <p>
+                終わるはずだった世界で、<br>
+                皇は初めて、人間の意味を知った。<br><br>
+
+                強さではなく。<br>
+                永遠でもなく。<br>
+                誰かを想う、その一瞬こそが――<br>
+                人間の美しさだった。
+            </p>
+
+            <button id="restart">
+                もう一度
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- BGM -->
+    <audio
+        id="bgm"
+        loop
+        preload="auto">
+    </audio>
 
 <script>
+  /* =========================================================
+   PART 1B
+   ゲームエンジン・BGM・画面演出
+   ========================================================= */
+
+const $ = id => document.getElementById(id);
+
+const bg = $("background");
+const rain = $("rain");
+const petals = $("petals");
+
+const leftCharacter = $("leftCharacter");
+const rightCharacter = $("rightCharacter");
+
+const leftIcon = $("leftIcon");
+const rightIcon = $("rightIcon");
+
+const dialogue = $("dialogue");
+const speaker = $("speaker");
+const textBox = $("text");
+
+const choices = $("choices");
+const chapter = $("chapter");
+
+const titleScreen = $("titleScreen");
+const topUI = $("topUI");
+const endingScreen = $("endingScreen");
+
+const fade = $("fade");
+const logWindow = $("logWindow");
+const logContent = $("logContent");
+
+const bgm = $("bgm");
+
 
 /* =========================================================
-   GAME DATA
-========================================================= */
-
-const scenes = [
-
-    {
-        chapter:"PROLOGUE",
-        bg:"school",
-        bgm:"school",
-        name:"ナレーション",
-        text:"異世界と現代が交わる場所――星ノ宮学園。\nそこには、人間も、魔族も、幽霊も、神に近い存在さえも通っていた。",
-    },
-
-    {
-        chapter:"PROLOGUE",
-        bg:"school",
-        bgm:"school",
-        name:"ナレーション",
-        text:"春。\n桜が舞う校門の前で、五人の運命が静かに動き始める。",
-    },
-
-    {
-        chapter:"第1章　最悪の出会い",
-        bg:"school",
-        bgm:"school",
-        name:"皇 紅蓮",
-        text:"……邪魔だ。",
-    },
-
-    {
-        chapter:"第1章　最悪の出会い",
-        bg:"school",
-        bgm:"tension",
-        name:"雫",
-        text:"はぁ！？\nいきなり何なの、その態度！",
-    },
-
-    {
-        chapter:"第1章　最悪の出会い",
-        bg:"school",
-        bgm:"tension",
-        name:"皇 紅蓮",
-        text:"道の真ん中に立っている方が悪い。",
-    },
-
-    {
-        chapter:"第1章　最悪の出会い",
-        bg:"school",
-        bgm:"tension",
-        name:"雫",
-        text:"あんたこそ偉そうに！\n初対面で人にそんな言い方する！？",
-    },
-
-    {
-        chapter:"第1章　最悪の出会い",
-        bg:"school",
-        bgm:"tension",
-        name:"ナレーション",
-        text:"こうして二人は、出会ったその日に最悪の印象を残した。",
-    },
-
-    {
-        chapter:"第2章　隣の席",
-        bg:"school",
-        bgm:"school",
-        name:"先生",
-        text:"席替えをするぞ。",
-    },
-
-    {
-        chapter:"第2章　隣の席",
-        bg:"school",
-        bgm:"school",
-        name:"ナレーション",
-        text:"そして――偶然とは残酷なものだった。",
-    },
-
-    {
-        chapter:"第2章　隣の席",
-        bg:"school",
-        bgm:"tension",
-        name:"雫",
-        text:"……嘘でしょ。",
-    },
-
-    {
-        chapter:"第2章　隣の席",
-        bg:"school",
-        bgm:"tension",
-        name:"皇 紅蓮",
-        text:"……最悪だ。",
-    },
-
-    {
-        chapter:"第2章　隣の席",
-        bg:"school",
-        bgm:"school",
-        name:"ナレーション",
-        text:"二人は隣の席になった。",
-    },
-
-    {
-        chapter:"第3章　終焉を知る少女",
-        bg:"sunset",
-        bgm:"fragile",
-        name:"焔緋 灯影",
-        text:"……この世界は、いつか終わる。",
-    },
-
-    {
-        chapter:"第3章　終焉を知る少女",
-        bg:"sunset",
-        bgm:"fragile",
-        name:"焔緋 灯影",
-        text:"私は、その未来を知ってる。\nだから……何をしても無駄なの。",
-    },
-
-    {
-        chapter:"第3章　終焉を知る少女",
-        bg:"sunset",
-        bgm:"fragile",
-        name:"下僕",
-        text:"ならば、その未来を変えればいい。",
-    },
-
-    {
-        chapter:"第3章　終焉を知る少女",
-        bg:"sunset",
-        bgm:"fragile",
-        name:"焔緋 灯影",
-        text:"……できないよ。",
-    },
-
-    {
-        chapter:"第3章　終焉を知る少女",
-        bg:"sunset",
-        bgm:"fragile",
-        name:"下僕",
-        text:"できます。\n少なくとも、俺は諦めません。",
-    },
-
-    {
-        chapter:"第3章　終焉を知る少女",
-        bg:"sunset",
-        bgm:"fragile",
-        name:"焔緋 灯影",
-        text:"……変な人。",
-    },
-
-    {
-        chapter:"第3章　終焉を知る少女",
-        bg:"sunset",
-        bgm:"fragile",
-        name:"下僕",
-        text:"よく言われます。",
-    },
-
-    {
-        chapter:"第4章　気になる人",
-        bg:"school",
-        bgm:"school",
-        name:"雫",
-        text:"ねぇ、皇。",
-    },
-
-    {
-        chapter:"第4章　気になる人",
-        bg:"school",
-        bgm:"school",
-        name:"皇 紅蓮",
-        text:"何だ。",
-    },
-
-    {
-        chapter:"第4章　気になる人",
-        bg:"school",
-        bgm:"school",
-        name:"雫",
-        text:"今日、ちょっと優しかったよね。",
-    },
-
-    {
-        chapter:"第4章　気になる人",
-        bg:"school",
-        bgm:"school",
-        name:"皇 紅蓮",
-        text:"……気のせいだ。",
-    },
-
-    {
-        chapter:"第4章　気になる人",
-        bg:"school",
-        bgm:"school",
-        name:"雫",
-        text:"ふーん。",
-    },
-
-    {
-        chapter:"第4章　気になる人",
-        bg:"school",
-        bgm:"school",
-        name:"ナレーション",
-        text:"敵だと思っていた相手。\nけれど、いつの間にか視線で追うようになっていた。",
-    },
-
-    {
-        chapter:"第5章　嫉妬",
-        bg:"sunset",
-        bgm:"jealousy",
-        name:"ナレーション",
-        text:"放課後。\n雫は別の男子生徒と楽しそうに話していた。",
-    },
-
-    {
-        chapter:"第5章　嫉妬",
-        bg:"sunset",
-        bgm:"jealousy",
-        name:"皇 紅蓮",
-        text:"…………。",
-    },
-
-    {
-        chapter:"第5章　嫉妬",
-        bg:"sunset",
-        bgm:"jealousy",
-        name:"下僕",
-        text:"どうしました？",
-    },
-
-    {
-        chapter:"第5章　嫉妬",
-        bg:"sunset",
-        bgm:"jealousy",
-        name:"皇 紅蓮",
-        text:"何でもない。",
-    },
-
-    {
-        chapter:"第5章　嫉妬",
-        bg:"sunset",
-        bgm:"jealousy",
-        name:"下僕",
-        text:"……雫さんを見ていますね。",
-    },
-
-    {
-        chapter:"第5章　嫉妬",
-        bg:"sunset",
-        bgm:"jealousy",
-        name:"皇 紅蓮",
-        text:"見ていない。",
-    },
-
-    {
-        chapter:"第5章　嫉妬",
-        bg:"sunset",
-        bgm:"jealousy",
-        name:"下僕",
-        text:"嫉妬ですか？",
-    },
-
-    {
-        chapter:"第5章　嫉妬",
-        bg:"sunset",
-        bgm:"jealousy",
-        name:"皇 紅蓮",
-        text:"違う。",
-    },
-
-    {
-        chapter:"第5章　嫉妬",
-        bg:"sunset",
-        bgm:"jealousy",
-        name:"ナレーション",
-        text:"否定する声だけが、妙に小さかった。",
-    },
-
-    {
-        chapter:"第6章　修羅場",
-        bg:"dark",
-        bgm:"conflict",
-        name:"雫",
-        text:"皇！",
-    },
-
-    {
-        chapter:"第6章　修羅場",
-        bg:"dark",
-        bgm:"conflict",
-        name:"皇 紅蓮",
-        text:"何だ。",
-    },
-
-    {
-        chapter:"第6章　修羅場",
-        bg:"dark",
-        bgm:"conflict",
-        name:"雫",
-        text:"さっきから何なの！？\n私が誰と話そうと勝手でしょ！",
-    },
-
-    {
-        chapter:"第6章　修羅場",
-        bg:"dark",
-        bgm:"conflict",
-        name:"皇 紅蓮",
-        text:"……勝手にすればいい。",
-    },
-
-    {
-        chapter:"第6章　修羅場",
-        bg:"dark",
-        bgm:"conflict",
-        name:"雫",
-        text:"じゃあ、なんでそんな顔するのよ！",
-    },
-
-    {
-        chapter:"第6章　修羅場",
-        bg:"dark",
-        bgm:"conflict",
-        name:"皇 紅蓮",
-        text:"…………。",
-    },
-
-    {
-        chapter:"第6章　修羅場",
-        bg:"dark",
-        bgm:"conflict",
-        name:"ナレーション",
-        text:"二人の距離は近づいていた。\nだからこそ、言葉は簡単にすれ違った。",
-    },
-
-    {
-        chapter:"第7章　灯影の涙",
-        bg:"night",
-        bgm:"fragile",
-        name:"焔緋 灯影",
-        text:"私が未来を変えたら……誰かが傷つくかもしれない。",
-    },
-
-    {
-        chapter:"第7章　灯影の涙",
-        bg:"night",
-        bgm:"fragile",
-        name:"下僕",
-        text:"それでも、あなたが一人で背負う必要はありません。",
-    },
-
-    {
-        chapter:"第7章　灯影の涙",
-        bg:"night",
-        bgm:"fragile",
-        name:"焔緋 灯影",
-        text:"どうして……そこまでしてくれるの？",
-    },
-
-    {
-        chapter:"第7章　灯影の涙",
-        bg:"night",
-        bgm:"confession",
-        name:"下僕",
-        text:"あなたが大切だからです。",
-    },
-
-    {
-        chapter:"第7章　灯影の涙",
-        bg:"night",
-        bgm:"confession",
-        name:"焔緋 灯影",
-        text:"……ずるいよ。",
-    },
-
-    {
-        chapter:"第7章　灯影の涙",
-        bg:"night",
-        bgm:"confession",
-        name:"焔緋 灯影",
-        text:"そんなこと言われたら……私も、あなたを大切にしたくなる。",
-    },
-
-    {
-        chapter:"第8章　選ぶ未来",
-        bg:"dark",
-        bgm:"endingBattle",
-        name:"ナレーション",
-        text:"世界を覆う終焉の気配。\n灯影が知っていた未来が、ついに動き始める。",
-    },
-
-    {
-        chapter:"第8章　選ぶ未来",
-        bg:"dark",
-        bgm:"endingBattle",
-        name:"焔緋 灯影",
-        text:"来る……。",
-    },
-
-    {
-        chapter:"第8章　選ぶ未来",
-        bg:"dark",
-        bgm:"endingBattle",
-        name:"下僕",
-        text:"なら、一緒に迎え撃ちましょう。",
-    },
-
-    {
-        chapter:"第8章　選ぶ未来",
-        bg:"dark",
-        bgm:"endingBattle",
-        name:"焔緋 灯影",
-        text:"うん。\n今度は、一人じゃない。",
-    },
-
-    {
-        chapter:"第9章　皇の本音",
-        bg:"sunset",
-        bgm:"confession",
-        name:"皇 紅蓮",
-        text:"……雫。",
-    },
-
-    {
-        chapter:"第9章　皇の本音",
-        bg:"sunset",
-        bgm:"confession",
-        name:"雫",
-        text:"何？",
-    },
-
-    {
-        chapter:"第9章　皇の本音",
-        bg:"sunset",
-        bgm:"confession",
-        name:"皇 紅蓮",
-        text:"俺は、お前が他の奴と話していると……嫌だと思う。",
-    },
-
-    {
-        chapter:"第9章　皇の本音",
-        bg:"sunset",
-        bgm:"confession",
-        name:"雫",
-        text:"……それって。",
-    },
-
-    {
-        chapter:"第9章　皇の本音",
-        bg:"sunset",
-        bgm:"confession",
-        name:"皇 紅蓮",
-        text:"好きだ。\n……たぶん、ずっと前から。",
-    },
-
-    {
-        chapter:"第9章　皇の本音",
-        bg:"sunset",
-        bgm:"confession",
-        name:"雫",
-        text:"……遅いよ。",
-    },
-
-    {
-        chapter:"第9章　皇の本音",
-        bg:"sunset",
-        bgm:"confession",
-        name:"皇 紅蓮",
-        text:"……何？",
-    },
-
-    {
-        chapter:"第9章　皇の本音",
-        bg:"sunset",
-        bgm:"confession",
-        name:"雫",
-        text:"私も、ずっと待ってた。",
-    },
-
-    {
-        chapter:"第9章　皇の本音",
-        bg:"sunset",
-        bgm:"hope",
-        name:"ナレーション",
-        text:"犬猿の仲だった二人は、ようやく互いの気持ちを認めた。",
-    },
-
-    {
-        chapter:"第10章　春の約束",
-        bg:"night",
-        bgm:"hope",
-        name:"焔緋 灯影",
-        text:"未来が変わった。",
-    },
-
-    {
-        chapter:"第10章　春の約束",
-        bg:"night",
-        bgm:"hope",
-        name:"下僕",
-        text:"はい。",
-    },
-
-    {
-        chapter:"第10章　春の約束",
-        bg:"night",
-        bgm:"hope",
-        name:"焔緋 灯影",
-        text:"あなたがいてくれたから。",
-    },
-
-    {
-        chapter:"第10章　春の約束",
-        bg:"night",
-        bgm:"hope",
-        name:"下僕",
-        text:"これからも、隣にいます。",
-    },
-
-    {
-        chapter:"第10章　春の約束",
-        bg:"ending",
-        bgm:"hope",
-        name:"ナレーション",
-        text:"終わるはずだった世界。\nそれでも彼らは、未来を選んだ。",
-    },
-
-    {
-        chapter:"第10章　春の約束",
-        bg:"ending",
-        bgm:"hope",
-        name:"ナレーション",
-        text:"皇 紅蓮と雫。\n下僕と焔緋 灯影。\n二つの想いは、確かな形になった。",
-    },
-
-    {
-        chapter:"END",
-        bg:"ending",
-        bgm:"ending",
-        name:"ナレーション",
-        text:"儚くて、暖かい春。\nその世界で、五人はそれぞれの未来へ歩き始めた。",
-        ending:true
-    }
-
-];
-
-
-/* =========================================================
-   STATE
-========================================================= */
+   ゲーム状態
+   ========================================================= */
 
 let currentScene = 0;
 let typing = false;
-let typingTimer = null;
+let typeTimer = null;
 let fullText = "";
 
-let bgmEnabled = true;
-let volume = 0.45;
+let autoMode = false;
+let skipMode = false;
+let soundOn = true;
 
-const SAVE_KEY = "HOSHINOMIYA_LOVE_BGM_V3";
+let currentBGM = "";
+let audioContext = null;
+let bgmGain = null;
+let bgmTimer = null;
 
-
-/* =========================================================
-   DOM
-========================================================= */
-
-const titleScreen = document.getElementById("titleScreen");
-const libraryScreen = document.getElementById("libraryScreen");
-const settingsScreen = document.getElementById("settingsScreen");
-const novelScreen = document.getElementById("novelScreen");
-const endingScreen = document.getElementById("endingScreen");
-
-const chapterEl = document.getElementById("chapter");
-const characterNameEl = document.getElementById("characterName");
-const textEl = document.getElementById("text");
-const choiceEl = document.getElementById("choice");
-const nextHintEl = document.getElementById("nextHint");
-const progressBar = document.getElementById("progressBar");
-const sceneBackground = document.getElementById("sceneBackground");
-const bgmStatus = document.getElementById("bgmStatus");
-const volumeSlider = document.getElementById("volume");
+let log = [];
 
 
 /* =========================================================
-   SCREEN
-========================================================= */
+   キャラクター設定
+   ========================================================= */
 
-function hideAllScreens(){
-    [
-        titleScreen,
-        libraryScreen,
-        settingsScreen,
-        novelScreen,
-        endingScreen
-    ].forEach(el => el.classList.remove("active"));
-}
+const characters = {
 
-function showTitle(){
-    hideAllScreens();
-    titleScreen.classList.add("active");
-}
+    kou: {
+        name: "皇",
+        icon: "icon-kou"
+    },
 
-function showLibrary(){
-    hideAllScreens();
-    libraryScreen.classList.add("active");
-}
+    shizuku: {
+        name: "雫",
+        icon: "icon-shizuku"
+    },
 
-function showSettings(){
-    hideAllScreens();
-    settingsScreen.classList.add("active");
+    tokage: {
+        name: "焔緋 灯影",
+        icon: "icon-tokage"
+    },
+
+    geboku: {
+        name: "下僕",
+        icon: "icon-geboku"
+    }
+
+};
+
+
+/* =========================================================
+   背景変更
+   ========================================================= */
+
+function setBackground(name){
+
+    bg.className = "";
+
+    if(name){
+        bg.classList.add("bg-" + name);
+    }
+
 }
 
 
 /* =========================================================
-   GAME START
-========================================================= */
+   雨
+   ========================================================= */
 
-function startGame(){
+function setRain(on){
 
-    currentScene = 0;
-
-    hideAllScreens();
-
-    novelScreen.classList.add("active");
-
-    initAudio();
-
-    showScene();
+    if(on){
+        rain.classList.add("on");
+    }else{
+        rain.classList.remove("on");
+    }
 
 }
 
-function loadGame(){
 
-    const save = localStorage.getItem(SAVE_KEY);
+/* =========================================================
+   花びら生成
+   ========================================================= */
 
-    if(!save){
-        alert("セーブデータがありません。");
+function createPetals(){
+
+    petals.innerHTML = "";
+
+    for(let i = 0; i < 22; i++){
+
+        const p = document.createElement("div");
+
+        p.className = "petal";
+
+        p.style.left =
+            Math.random() * 100 + "%";
+
+        p.style.animationDuration =
+            (5 + Math.random() * 7) + "s";
+
+        p.style.animationDelay =
+            (-Math.random() * 10) + "s";
+
+        p.style.opacity =
+            0.25 + Math.random() * 0.7;
+
+        petals.appendChild(p);
+
+    }
+
+}
+
+
+/* =========================================================
+   キャラクター表示
+   ========================================================= */
+
+function showCharacter(side, id){
+
+    const target =
+        side === "left"
+        ? leftCharacter
+        : rightCharacter;
+
+    const icon =
+        side === "left"
+        ? leftIcon
+        : rightIcon;
+
+    if(!id){
+
+        target.classList.remove("show");
+
         return;
     }
 
-    try{
+    const data = characters[id];
 
-        const data = JSON.parse(save);
+    if(!data) return;
 
-        currentScene = data.currentScene || 0;
+    icon.className =
+        "charIcon " + data.icon;
 
-        bgmEnabled =
-            data.bgmEnabled !== undefined
-                ? data.bgmEnabled
-                : true;
+    target.classList.add("show");
 
-        volume =
-            data.volume !== undefined
-                ? data.volume
-                : 0.45;
-
-        volumeSlider.value = volume;
-
-        hideAllScreens();
-
-        novelScreen.classList.add("active");
-
-        initAudio();
-
-        showScene();
-
-    }catch(e){
-
-        alert("セーブデータを読み込めませんでした。");
-
-    }
 }
 
 
 /* =========================================================
-   SAVE
-========================================================= */
+   キャラクター非表示
+   ========================================================= */
+
+function hideCharacter(side){
+
+    const target =
+        side === "left"
+        ? leftCharacter
+        : rightCharacter;
+
+    target.classList.remove("show");
+
+}
+
+
+/* =========================================================
+   全キャラ非表示
+   ========================================================= */
+
+function hideCharacters(){
+
+    leftCharacter.classList.remove("show");
+    rightCharacter.classList.remove("show");
+
+}
+
+
+/* =========================================================
+   BGM
+   外部音源なしでWeb Audio APIを使用
+   シーンごとに雰囲気を変える
+   ========================================================= */
+
+const bgmPatterns = {
+
+    title: {
+        notes: [220, 277, 330, 277],
+        speed: 650,
+        wave: "sine",
+        volume: 0.035
+    },
+
+    city: {
+        notes: [196, 247, 294, 247],
+        speed: 520,
+        wave: "triangle",
+        volume: 0.035
+    },
+
+    forest: {
+        notes: [174, 220, 261, 220],
+        speed: 720,
+        wave: "sine",
+        volume: 0.03
+    },
+
+    battle: {
+        notes: [110, 146, 123, 164],
+        speed: 260,
+        wave: "sawtooth",
+        volume: 0.025
+    },
+
+    night: {
+        notes: [146, 174, 220, 174],
+        speed: 900,
+        wave: "sine",
+        volume: 0.028
+    },
+
+    ending: {
+        notes: [196, 247, 294, 392],
+        speed: 1000,
+        wave: "sine",
+        volume: 0.035
+    }
+
+};
+
+
+/* =========================================================
+   AudioContext初期化
+   ========================================================= */
+
+function initAudio(){
+
+    if(audioContext) return;
+
+    audioContext =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+    bgmGain =
+        audioContext.createGain();
+
+    bgmGain.gain.value = 0;
+
+    bgmGain.connect(
+        audioContext.destination
+    );
+
+}
+
+
+/* =========================================================
+   BGM停止
+   ========================================================= */
+
+function stopBGM(){
+
+    if(bgmTimer){
+
+        clearInterval(bgmTimer);
+        bgmTimer = null;
+
+    }
+
+    if(bgmGain && audioContext){
+
+        bgmGain.gain.cancelScheduledValues(
+            audioContext.currentTime
+        );
+
+        bgmGain.gain.setTargetAtTime(
+            0,
+            audioContext.currentTime,
+            0.15
+        );
+
+    }
+
+    currentBGM = "";
+
+}
+
+
+/* =========================================================
+   BGM変更
+   ========================================================= */
+
+function playBGM(name){
+
+    if(!soundOn) return;
+
+    initAudio();
+
+    if(
+        audioContext.state === "suspended"
+    ){
+        audioContext.resume();
+    }
+
+    if(currentBGM === name) return;
+
+    stopBGM();
+
+    const pattern =
+        bgmPatterns[name];
+
+    if(!pattern) return;
+
+    currentBGM = name;
+
+    bgmGain.gain.setTargetAtTime(
+        pattern.volume,
+        audioContext.currentTime,
+        0.25
+    );
+
+    let index = 0;
+
+    function playNote(){
+
+        if(!soundOn) return;
+
+        const osc =
+            audioContext.createOscillator();
+
+        const gain =
+            audioContext.createGain();
+
+        osc.type = pattern.wave;
+
+        osc.frequency.value =
+            pattern.notes[index];
+
+        gain.gain.setValueAtTime(
+            0,
+            audioContext.currentTime
+        );
+
+        gain.gain.linearRampToValueAtTime(
+            0.22,
+            audioContext.currentTime + 0.03
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.001,
+            audioContext.currentTime +
+            pattern.speed / 1000
+        );
+
+        osc.connect(gain);
+        gain.connect(bgmGain);
+
+        osc.start();
+
+        osc.stop(
+            audioContext.currentTime +
+            pattern.speed / 1000
+        );
+
+        index =
+            (index + 1) %
+            pattern.notes.length;
+
+    }
+
+    playNote();
+
+    bgmTimer =
+        setInterval(
+            playNote,
+            pattern.speed
+        );
+
+}
+
+
+/* =========================================================
+   効果音
+   ========================================================= */
+
+function soundEffect(
+    frequency = 440,
+    duration = 0.12,
+    type = "sine"
+){
+
+    if(!soundOn) return;
+
+    initAudio();
+
+    if(audioContext.state === "suspended"){
+        audioContext.resume();
+    }
+
+    const osc =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+    osc.type = type;
+
+    osc.frequency.setValueAtTime(
+        frequency,
+        audioContext.currentTime
+    );
+
+    gain.gain.setValueAtTime(
+        0.001,
+        audioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.15,
+        audioContext.currentTime + 0.02
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioContext.currentTime + duration
+    );
+
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+
+    osc.start();
+
+    osc.stop(
+        audioContext.currentTime + duration
+    );
+
+}
+
+
+/* =========================================================
+   画面フェード
+   ========================================================= */
+
+function fadeOut(callback){
+
+    fade.classList.add("active");
+
+    setTimeout(() => {
+
+        if(callback) callback();
+
+    }, 550);
+
+}
+
+
+function fadeIn(){
+
+    setTimeout(() => {
+
+        fade.classList.remove("active");
+
+    }, 100);
+
+}
+
+
+/* =========================================================
+   章表示
+   ========================================================= */
+
+function setChapter(name){
+
+    chapter.textContent = name;
+
+}
+
+
+/* =========================================================
+   テキスト表示
+   ========================================================= */
+
+function showText(content){
+
+    fullText = content;
+
+    textBox.textContent = "";
+
+    typing = true;
+
+    let index = 0;
+
+    clearInterval(typeTimer);
+
+    const speed =
+        skipMode ? 1 : 28;
+
+    typeTimer =
+        setInterval(() => {
+
+            textBox.textContent =
+                fullText.slice(
+                    0,
+                    index + 1
+                );
+
+            index++;
+
+            if(index >= fullText.length){
+
+                clearInterval(typeTimer);
+
+                typing = false;
+
+                if(autoMode){
+
+                    setTimeout(
+                        nextScene,
+                        1100
+                    );
+
+                }
+
+            }
+
+        }, speed);
+
+}
+
+
+/* =========================================================
+   文字送り
+   ========================================================= */
+
+function finishTyping(){
+
+    if(!typing) return;
+
+    clearInterval(typeTimer);
+
+    textBox.textContent =
+        fullText;
+
+    typing = false;
+
+}
+
+
+/* =========================================================
+   ログ
+   ========================================================= */
+
+function addLog(name, message){
+
+    log.push({
+        name,
+        message
+    });
+
+    if(log.length > 100){
+
+        log.shift();
+
+    }
+
+}
+
+
+/* =========================================================
+   ログ表示
+   ========================================================= */
+
+function openLog(){
+
+    logContent.innerHTML = "";
+
+    for(const item of log){
+
+        const div =
+            document.createElement("div");
+
+        div.className = "logLine";
+
+        div.innerHTML =
+            `<div class="logName">
+                ${escapeHTML(item.name)}
+            </div>
+            <div>
+                ${escapeHTML(item.message)}
+            </div>`;
+
+        logContent.appendChild(div);
+
+    }
+
+    logWindow.style.display =
+        "block";
+
+}
+
+
+/* =========================================================
+   HTMLエスケープ
+   ========================================================= */
+
+function escapeHTML(str){
+
+    return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+/* =========================================================
+   会話表示
+   ========================================================= */
+
+function showDialogue(data){
+
+    dialogue.style.display =
+        "block";
+
+    speaker.textContent =
+        data.name || "―";
+
+    if(data.name){
+
+        addLog(
+            data.name,
+            data.text
+        );
+
+    }
+
+    showText(
+        data.text
+    );
+
+}
+
+
+/* =========================================================
+   選択肢
+   ========================================================= */
+
+function showChoices(list){
+
+    choices.innerHTML = "";
+
+    choices.style.display =
+        "flex";
+
+    dialogue.style.display =
+        "none";
+
+    list.forEach(choice => {
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "choiceBtn";
+
+        button.textContent =
+            choice.text;
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                soundEffect(
+                    520,
+                    0.08
+                );
+
+                choices.style.display =
+                    "none";
+
+                if(choice.action){
+
+                    choice.action();
+
+                }
+
+            }
+        );
+
+        choices.appendChild(button);
+
+    });
+
+}
+
+
+/* =========================================================
+   選択肢を消す
+   ========================================================= */
+
+function hideChoices(){
+
+    choices.style.display =
+        "none";
+
+    choices.innerHTML = "";
+
+}
+
+
+/* =========================================================
+   シーン適用
+   ========================================================= */
+
+function applyScene(scene){
+
+    if(scene.chapter){
+
+        setChapter(
+            scene.chapter
+        );
+
+    }
+
+    if(scene.background){
+
+        setBackground(
+            scene.background
+        );
+
+    }
+
+    if(typeof scene.rain !== "undefined"){
+
+        setRain(
+            scene.rain
+        );
+
+    }
+
+    if(scene.bgm){
+
+        playBGM(
+            scene.bgm
+        );
+
+    }
+
+    if(scene.left){
+
+        showCharacter(
+            "left",
+            scene.left
+        );
+
+    }else{
+
+        hideCharacter("left");
+
+    }
+
+    if(scene.right){
+
+        showCharacter(
+            "right",
+            scene.right
+        );
+
+    }else{
+
+        hideCharacter("right");
+
+    }
+
+}
+
+
+/* =========================================================
+   シーン進行
+   ========================================================= */
+
+function nextScene(){
+
+    if(typing){
+
+        finishTyping();
+
+        return;
+
+    }
+
+    if(currentScene >= story.length){
+
+        showEnding();
+
+        return;
+
+    }
+
+    const scene =
+        story[currentScene];
+
+    currentScene++;
+
+    hideChoices();
+
+    applyScene(scene);
+
+    if(scene.type === "choice"){
+
+        showChoices(
+            scene.choices
+        );
+
+        return;
+
+    }
+
+    showDialogue(scene);
+
+}
+
+
+/* =========================================================
+   タイトルから開始
+   ========================================================= */
+
+function startGame(){
+
+    initAudio();
+
+    currentScene = 0;
+
+    log = [];
+
+    titleScreen.style.display =
+        "none";
+
+    endingScreen.style.display =
+        "none";
+
+    topUI.style.display =
+        "flex";
+
+    dialogue.style.display =
+        "block";
+
+    hideChoices();
+
+    createPetals();
+
+    setRain(false);
+
+    setBackground("city");
+
+    playBGM("city");
+
+    fadeIn();
+
+    nextScene();
+
+}
+
+
+/* =========================================================
+   エンディング
+   ========================================================= */
+
+function showEnding(){
+
+    dialogue.style.display =
+        "none";
+
+    topUI.style.display =
+        "none";
+
+    hideCharacters();
+
+    hideChoices();
+
+    setRain(false);
+
+    setBackground("ending");
+
+    playBGM("ending");
+
+    endingScreen.style.display =
+        "flex";
+
+}
+
+
+/* =========================================================
+   セーブ
+   ========================================================= */
 
 function saveGame(){
 
-    const data = {
+    const saveData = {
+
         currentScene,
-        bgmEnabled,
-        volume,
-        savedAt:Date.now()
+        log,
+        soundOn,
+        savedAt:
+            new Date().toISOString()
+
     };
 
     localStorage.setItem(
-        SAVE_KEY,
-        JSON.stringify(data)
+        "kou_shizuku_save",
+        JSON.stringify(saveData)
+    );
+
+    soundEffect(
+        660,
+        0.1
     );
 
     alert("セーブしました。");
@@ -1451,335 +1937,19 @@ function saveGame(){
 
 
 /* =========================================================
-   SCENE
-========================================================= */
+   ロード
+   ========================================================= */
 
-function showScene(){
+function loadGame(){
 
-    if(currentScene >= scenes.length){
-        showEnding();
-        return;
-    }
+    const raw =
+        localStorage.getItem(
+            "kou_shizuku_save"
+        );
 
-    const scene = scenes[currentScene];
+    if(!raw){
 
-    chapterEl.textContent = scene.chapter;
-    characterNameEl.textContent = scene.name;
-
-    sceneBackground.className =
-        "sceneBackground " + scene.bg;
-
-    textEl.textContent = "";
-    choiceEl.innerHTML = "";
-
-    progressBar.style.width =
-        ((currentScene / (scenes.length - 1)) * 100) + "%";
-
-    setBGM(scene.bgm);
-
-    typeText(scene.text);
-
-    novelScreen.classList.remove("fade");
-    void novelScreen.offsetWidth;
-    novelScreen.classList.add("fade");
-
-}
-
-
-/* =========================================================
-   TEXT
-========================================================= */
-
-function typeText(text){
-
-    clearInterval(typingTimer);
-
-    fullText = text;
-    typing = true;
-
-    let index = 0;
-
-    textEl.textContent = "";
-
-    nextHintEl.textContent =
-        "クリック / Enter / Space";
-
-    typingTimer = setInterval(() => {
-
-        textEl.textContent += fullText[index];
-
-        index++;
-
-        if(index >= fullText.length){
-
-            clearInterval(typingTimer);
-
-            typing = false;
-
-        }
-
-    }, 28);
-
-}
-
-function finishTyping(){
-
-    if(!typing) return;
-
-    clearInterval(typingTimer);
-
-    textEl.textContent = fullText;
-
-    typing = false;
-
-}
-
-
-/* =========================================================
-   NEXT
-========================================================= */
-
-function nextScene(){
-
-    if(typing){
-
-        finishTyping();
-        return;
-
-    }
-
-    currentScene++;
-
-    if(currentScene >= scenes.length){
-
-        showEnding();
-
-    }else{
-
-        showScene();
-
-    }
-
-}
-
-novelScreen.addEventListener("click", e => {
-
-    if(
-        e.target.closest("button") ||
-        e.target.closest(".choice")
-    ){
-        return;
-    }
-
-    nextScene();
-
-});
-
-document.addEventListener("keydown", e => {
-
-    if(
-        e.code === "Enter" ||
-        e.code === "Space"
-    ){
-
-        if(novelScreen.classList.contains("active")){
-
-            e.preventDefault();
-
-            nextScene();
-
-        }
-
-    }
-
-});
-
-
-/* =========================================================
-   ENDING
-========================================================= */
-
-function showEnding(){
-
-    hideAllScreens();
-
-    endingScreen.classList.add("active");
-
-    setBGM("ending");
-
-}
-
-
-/* =========================================================
-   AUDIO ENGINE
-   Scene-based BGM
-========================================================= */
-
-let audioContext = null;
-let masterGain = null;
-
-let currentMusic = null;
-let currentBGMName = null;
-
-let audioReady = false;
-
-
-/*
-    BGM presets
-
-    Web Audio APIだけで音を作るため、
-    外部MP3・外部ファイル不要。
-*/
-
-const BGM_PRESETS = {
-
-    school:{
-        tempo:92,
-        notes:[
-            [261.63,0],
-            [329.63,.5],
-            [392,.9],
-            [329.63,1.4],
-            [293.66,2],
-            [349.23,2.5],
-            [440,3],
-            [349.23,3.5]
-        ],
-        type:"warm"
-    },
-
-    tension:{
-        tempo:108,
-        notes:[
-            [220,0],
-            [277.18,.45],
-            [329.63,.9],
-            [277.18,1.35],
-            [246.94,1.8],
-            [311.13,2.25],
-            [369.99,2.7],
-            [311.13,3.15]
-        ],
-        type:"tense"
-    },
-
-    fragile:{
-        tempo:68,
-        notes:[
-            [220,0],
-            [261.63,.8],
-            [329.63,1.6],
-            [293.66,2.4],
-            [196,3.2],
-            [246.94,4]
-        ],
-        type:"fragile"
-    },
-
-    jealousy:{
-        tempo:76,
-        notes:[
-            [196,0],
-            [233.08,.65],
-            [277.18,1.3],
-            [233.08,1.95],
-            [185,2.6],
-            [220,3.25]
-        ],
-        type:"jealousy"
-    },
-
-    conflict:{
-        tempo:120,
-        notes:[
-            [146.83,0],
-            [174.61,.35],
-            [207.65,.7],
-            [174.61,1.05],
-            [155.56,1.4],
-            [196,1.75],
-            [233.08,2.1],
-            [196,2.45]
-        ],
-        type:"dark"
-    },
-
-    confession:{
-        tempo:64,
-        notes:[
-            [261.63,0],
-            [329.63,1],
-            [392,2],
-            [493.88,3],
-            [392,4],
-            [329.63,5]
-        ],
-        type:"love"
-    },
-
-    endingBattle:{
-        tempo:128,
-        notes:[
-            [130.81,0],
-            [164.81,.35],
-            [196,.7],
-            [220,1.05],
-            [246.94,1.4],
-            [220,1.75],
-            [196,2.1],
-            [164.81,2.45]
-        ],
-        type:"battle"
-    },
-
-    hope:{
-        tempo:78,
-        notes:[
-            [261.63,0],
-            [329.63,.75],
-            [392,1.5],
-            [523.25,2.25],
-            [440,3],
-            [392,3.75],
-            [329.63,4.5],
-            [261.63,5.25]
-        ],
-        type:"hope"
-    },
-
-    ending:{
-        tempo:72,
-        notes:[
-            [261.63,0],
-            [329.63,.8],
-            [392,1.6],
-            [523.25,2.4],
-            [493.88,3.2],
-            [392,4],
-            [329.63,4.8],
-            [392,5.6],
-            [523.25,6.4]
-        ],
-        type:"ending"
-    }
-
-};
-
-
-/* =========================================================
-   AUDIO INIT
-========================================================= */
-
-function initAudio(){
-
-    if(audioReady){
-
-        if(audioContext &&
-           audioContext.state === "suspended"){
-
-            audioContext.resume();
-
-        }
+        alert("セーブデータがありません。");
 
         return;
 
@@ -1787,627 +1957,40 @@ function initAudio(){
 
     try{
 
-        audioContext =
-            new (
-                window.AudioContext ||
-                window.webkitAudioContext
-            )();
+        const data =
+            JSON.parse(raw);
 
-        masterGain =
-            audioContext.createGain();
+        currentScene =
+            data.currentScene || 0;
 
-        masterGain.gain.value =
-            bgmEnabled ? volume : 0;
+        log =
+            data.log || [];
 
-        masterGain.connect(
-            audioContext.destination
-        );
+        soundOn =
+            data.soundOn !== false;
 
-        audioReady = true;
+        titleScreen.style.display =
+            "none";
 
-    }catch(e){
+        endingScreen.style.display =
+            "none";
 
-        console.warn(
-            "Web Audio APIを利用できません。",
-            e
-        );
+        topUI.style.display =
+            "flex";
 
-    }
+        dialogue.style.display =
+            "block";
 
-}
+        createPetals();
 
+        playBGM("night");
 
-/* =========================================================
-   CREATE OSCILLATOR
-========================================================= */
+        nextScene();
 
-function createTone(
-    frequency,
-    startTime,
-    duration,
-    gainValue,
-    waveform="sine"
-){
+    }catch(error){
 
-    if(!audioContext || !masterGain) return;
-
-    const osc =
-        audioContext.createOscillator();
-
-    const gain =
-        audioContext.createGain();
-
-    osc.type = waveform;
-
-    osc.frequency.setValueAtTime(
-        frequency,
-        startTime
-    );
-
-    gain.gain.setValueAtTime(
-        0.0001,
-        startTime
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        gainValue,
-        startTime + 0.04
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        0.0001,
-        startTime + duration
-    );
-
-    osc.connect(gain);
-    gain.connect(masterGain);
-
-    osc.start(startTime);
-    osc.stop(startTime + duration + .05);
-
-}
-
-
-/* =========================================================
-   BGM LOOP
-========================================================= */
-
-function buildMusic(name){
-
-    if(!audioContext) return null;
-
-    const preset =
-        BGM_PRESETS[name];
-
-    if(!preset) return null;
-
-    const now =
-        audioContext.currentTime + .05;
-
-    const beat =
-        60 / preset.tempo;
-
-    const loopLength =
-        beat * 8;
-
-    const nodes = [];
-
-    /*
-        メロディ
-    */
-
-    preset.notes.forEach(note => {
-
-        const freq = note[0];
-        const beatPosition = note[1];
-
-        let duration = beat * .75;
-
-        let waveform = "sine";
-
-        let gain = .045;
-
-        if(preset.type === "warm"){
-
-            waveform = "triangle";
-            gain = .04;
-
-        }
-
-        if(preset.type === "fragile"){
-
-            waveform = "sine";
-            gain = .035;
-
-        }
-
-        if(preset.type === "tense"){
-
-            waveform = "square";
-            gain = .018;
-
-        }
-
-        if(preset.type === "jealousy"){
-
-            waveform = "triangle";
-            gain = .022;
-
-        }
-
-        if(preset.type === "dark"){
-
-            waveform = "sawtooth";
-            gain = .012;
-
-        }
-
-        if(preset.type === "love"){
-
-            waveform = "triangle";
-            gain = .045;
-
-        }
-
-        if(preset.type === "battle"){
-
-            waveform = "square";
-            gain = .014;
-
-        }
-
-        if(preset.type === "hope"){
-
-            waveform = "triangle";
-            gain = .05;
-
-        }
-
-        if(preset.type === "ending"){
-
-            waveform = "sine";
-            gain = .055;
-
-        }
-
-        createTone(
-            freq,
-            now + beatPosition * beat,
-            duration,
-            gain,
-            waveform
-        );
-
-    });
-
-
-    /*
-        低音
-    */
-
-    const bassRoots = {
-
-        school:[130.81,146.83,164.81,146.83],
-        tension:[110,116.54,123.47,116.54],
-        fragile:[110,98,87.31,98],
-        jealousy:[98,103.83,92.5,87.31],
-        conflict:[73.42,82.41,87.31,73.42],
-        confession:[130.81,164.81,196,164.81],
-        endingBattle:[65.41,73.42,82.41,65.41],
-        hope:[130.81,146.83,164.81,196],
-        ending:[130.81,164.81,196,261.63]
-
-    };
-
-    const roots =
-        bassRoots[name] ||
-        bassRoots.school;
-
-    roots.forEach((root,i)=>{
-
-        createTone(
-            root,
-            now + i * beat * 2,
-            beat * 1.8,
-            .018,
-            "sine"
-        );
-
-    });
-
-
-    /*
-        柔らかいパッド
-    */
-
-    if(
-        preset.type === "fragile" ||
-        preset.type === "love" ||
-        preset.type === "hope" ||
-        preset.type === "ending"
-    ){
-
-        const padRoot =
-            roots[0];
-
-        createTone(
-            padRoot * 2,
-            now,
-            loopLength - .1,
-            .008,
-            "sine"
-        );
-
-    }
-
-
-    return {
-
-        startTime:now,
-        length:loopLength,
-        name
-
-    };
-
-}
-
-
-/* =========================================================
-   START / STOP MUSIC
-========================================================= */
-
-function stopMusic(){
-
-    if(!currentMusic) return;
-
-    currentMusic.stopping = true;
-
-    currentMusic = null;
-
-}
-
-
-/*
-    Web Audioの短い音を生成する方式なので、
-    毎ループごとに新しい音を予約する。
-*/
-
-function scheduleMusicLoop(name){
-
-    if(!audioReady || !bgmEnabled) return;
-
-    const preset =
-        BGM_PRESETS[name];
-
-    if(!preset) return;
-
-    const beat =
-        60 / preset.tempo;
-
-    const loopLength =
-        beat * 8;
-
-    const start =
-        audioContext.currentTime + .05;
-
-    /*
-        メロディ
-    */
-
-    preset.notes.forEach(note => {
-
-        const freq = note[0];
-
-        const pos = note[1];
-
-        let waveform = "sine";
-        let gain = .04;
-
-        switch(preset.type){
-
-            case "warm":
-                waveform = "triangle";
-                gain = .04;
-                break;
-
-            case "tense":
-                waveform = "square";
-                gain = .016;
-                break;
-
-            case "fragile":
-                waveform = "sine";
-                gain = .034;
-                break;
-
-            case "jealousy":
-                waveform = "triangle";
-                gain = .022;
-                break;
-
-            case "dark":
-                waveform = "sawtooth";
-                gain = .012;
-                break;
-
-            case "love":
-                waveform = "triangle";
-                gain = .045;
-                break;
-
-            case "battle":
-                waveform = "square";
-                gain = .013;
-                break;
-
-            case "hope":
-                waveform = "triangle";
-                gain = .05;
-                break;
-
-            case "ending":
-                waveform = "sine";
-                gain = .052;
-                break;
-
-        }
-
-        createTone(
-            freq,
-            start + pos * beat,
-            beat * .72,
-            gain,
-            waveform
-        );
-
-    });
-
-
-    /*
-        ベース
-    */
-
-    const bassRoots = {
-
-        school:[130.81,146.83,164.81,146.83],
-        tension:[110,116.54,123.47,116.54],
-        fragile:[110,98,87.31,98],
-        jealousy:[98,103.83,92.5,87.31],
-        conflict:[73.42,82.41,87.31,73.42],
-        confession:[130.81,164.81,196,164.81],
-        endingBattle:[65.41,73.42,82.41,65.41],
-        hope:[130.81,146.83,164.81,196],
-        ending:[130.81,164.81,196,261.63]
-
-    };
-
-    const roots =
-        bassRoots[name] ||
-        bassRoots.school;
-
-    roots.forEach((root,i)=>{
-
-        createTone(
-            root,
-            start + i * beat * 2,
-            beat * 1.7,
-            .016,
-            "sine"
-        );
-
-    });
-
-
-    /*
-        パッド
-    */
-
-    if(
-        preset.type === "fragile" ||
-        preset.type === "love" ||
-        preset.type === "hope" ||
-        preset.type === "ending"
-    ){
-
-        createTone(
-            roots[0] * 2,
-            start,
-            loopLength - .1,
-            .006,
-            "sine"
-        );
-
-    }
-
-
-    /*
-        次のループを予約
-    */
-
-    if(
-        currentMusic &&
-        currentMusic.name === name
-    ){
-
-        const loopTimer =
-            setTimeout(
-                ()=>scheduleMusicLoop(name),
-                (loopLength - .15) * 1000
-            );
-
-        currentMusic.timer = loopTimer;
-
-    }
-
-}
-
-
-/* =========================================================
-   FADE
-========================================================= */
-
-function fadeTo(target, duration=600){
-
-    if(!audioContext || !masterGain) return;
-
-    const now =
-        audioContext.currentTime;
-
-    masterGain.gain.cancelScheduledValues(now);
-
-    masterGain.gain.setValueAtTime(
-        masterGain.gain.value,
-        now
-    );
-
-    masterGain.gain.linearRampToValueAtTime(
-        target,
-        now + duration / 1000
-    );
-
-}
-
-
-/* =========================================================
-   SET SCENE BGM
-========================================================= */
-
-function setBGM(name){
-
-    initAudio();
-
-    if(!audioReady) return;
-
-    if(!bgmEnabled){
-
-        fadeTo(0,.3);
-
-        currentBGMName = name;
-
-        return;
-
-    }
-
-    /*
-        同じ曲なら継続
-    */
-
-    if(currentBGMName === name && currentMusic){
-
-        return;
-
-    }
-
-    /*
-        前のBGMをフェードアウト
-    */
-
-    fadeTo(0,.35);
-
-    const oldMusic =
-        currentMusic;
-
-    if(oldMusic && oldMusic.timer){
-
-        clearTimeout(oldMusic.timer);
-
-    }
-
-    /*
-        少し待って新しい曲を開始
-    */
-
-    setTimeout(()=>{
-
-        if(!bgmEnabled) return;
-
-        currentBGMName = name;
-
-        currentMusic = {
-            name,
-            timer:null
-        };
-
-        fadeTo(volume,.7);
-
-        scheduleMusicLoop(name);
-
-    },380);
-
-}
-
-
-/* =========================================================
-   BGM SETTINGS
-========================================================= */
-
-function toggleBGM(){
-
-    initAudio();
-
-    bgmEnabled = !bgmEnabled;
-
-    bgmStatus.textContent =
-        bgmEnabled ? "ON" : "OFF";
-
-    if(masterGain){
-
-        if(bgmEnabled){
-
-            fadeTo(volume,.5);
-
-            if(
-                currentBGMName
-            ){
-
-                currentMusic = {
-                    name:currentBGMName,
-                    timer:null
-                };
-
-                scheduleMusicLoop(
-                    currentBGMName
-                );
-
-            }
-
-        }else{
-
-            fadeTo(0,.4);
-
-            if(
-                currentMusic &&
-                currentMusic.timer
-            ){
-
-                clearTimeout(
-                    currentMusic.timer
-                );
-
-            }
-
-            currentMusic = null;
-
-        }
-
-    }
-
-}
-
-function changeVolume(value){
-
-    volume =
-        parseFloat(value);
-
-    if(
-        masterGain &&
-        bgmEnabled
-    ){
-
-        masterGain.gain.setTargetAtTime(
-            volume,
-            audioContext.currentTime,
-            .05
+        alert(
+            "セーブデータを読み込めませんでした。"
         );
 
     }
@@ -2416,46 +1999,3809 @@ function changeVolume(value){
 
 
 /* =========================================================
-   INITIALIZE SETTINGS
-========================================================= */
+   AUTO
+   ========================================================= */
 
-volumeSlider.value = volume;
-bgmStatus.textContent =
-    bgmEnabled ? "ON" : "OFF";
+function toggleAuto(){
+
+    autoMode =
+        !autoMode;
+
+    $("autoButton").textContent =
+        autoMode
+        ? "AUTO：ON"
+        : "AUTO";
+
+}
 
 
 /* =========================================================
-   SAVE BEFORE LEAVING
-========================================================= */
+   SKIP
+   ========================================================= */
 
-window.addEventListener(
-    "beforeunload",
-    ()=>{
-        /*
-            自動保存はしない。
-            明示的SAVEのみ。
-        */
+function toggleSkip(){
+
+    skipMode =
+        !skipMode;
+
+    $("skipButton").textContent =
+        skipMode
+        ? "SKIP：ON"
+        : "SKIP";
+
+}
+
+
+/* =========================================================
+   BGM ON/OFF
+   ========================================================= */
+
+function toggleSound(){
+
+    soundOn =
+        !soundOn;
+
+    $("soundButton").textContent =
+        soundOn
+        ? "BGM：ON"
+        : "BGM：OFF";
+
+    if(!soundOn){
+
+        stopBGM();
+
+    }else{
+
+        playBGM(
+            currentBGM || "title"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   TITLEへ戻る
+   ========================================================= */
+
+function backToTitle(){
+
+    clearInterval(typeTimer);
+
+    typing = false;
+
+    stopBGM();
+
+    dialogue.style.display =
+        "none";
+
+    topUI.style.display =
+        "none";
+
+    hideCharacters();
+
+    hideChoices();
+
+    endingScreen.style.display =
+        "none";
+
+    titleScreen.style.display =
+        "flex";
+
+    setBackground("title");
+
+}
+
+
+/* =========================================================
+   クリックで次へ
+   ========================================================= */
+
+document.addEventListener(
+    "click",
+    event => {
+
+        if(
+            event.target.closest("button")
+        ){
+            return;
+        }
+
+        if(
+            titleScreen.style.display !==
+            "none"
+        ){
+            return;
+        }
+
+        if(
+            logWindow.style.display ===
+            "block"
+        ){
+            return;
+        }
+
+        if(
+            endingScreen.style.display ===
+            "flex"
+        ){
+            return;
+        }
+
+        nextScene();
+
     }
 );
 
 
 /* =========================================================
-   TITLE AUDIO START
-========================================================= */
+   Enterキー
+   ========================================================= */
 
-document.querySelectorAll(
-    "#titleScreen button"
-).forEach(button=>{
+document.addEventListener(
+    "keydown",
+    event => {
 
-    button.addEventListener(
-        "click",
-        ()=>{
-            initAudio();
+        if(event.key === "Enter"){
+
+            if(
+                logWindow.style.display ===
+                "block"
+            ){
+                return;
+            }
+
+            nextScene();
+
         }
-    );
+
+    }
+);
+
+
+/* =========================================================
+   ボタンイベント
+   ========================================================= */
+
+$("startButton").addEventListener(
+    "click",
+    startGame
+);
+
+$("loadButton").addEventListener(
+    "click",
+    loadGame
+);
+
+$("soundButton").addEventListener(
+    "click",
+    () => {
+
+        initAudio();
+
+        toggleSound();
+
+    }
+);
+
+$("saveButton").addEventListener(
+    "click",
+    saveGame
+);
+
+$("autoButton").addEventListener(
+    "click",
+    toggleAuto
+);
+
+$("skipButton").addEventListener(
+    "click",
+    toggleSkip
+);
+
+$("logButton").addEventListener(
+    "click",
+    openLog
+);
+
+$("closeLog").addEventListener(
+    "click",
+    () => {
+
+        logWindow.style.display =
+            "none";
+
+    }
+);
+
+$("titleButton").addEventListener(
+    "click",
+    backToTitle
+);
+
+$("restart").addEventListener(
+    "click",
+    () => {
+
+        startGame();
+
+    }
+);
+
+
+/* =========================================================
+   初期状態
+   ========================================================= */
+
+setBackground("title");
+
+setRain(false);
+
+createPetals();
+
+dialogue.style.display =
+    "none";
+
+topUI.style.display =
+    "none";
+
+endingScreen.style.display =
+    "none";
+
+console.log(
+    "終焉の皇と、人間の花 ― Game Engine Ready"
+);
+/* =========================================================
+   PART 1C
+   物語データ ― プロローグ～序章
+   ========================================================= */
+
+story = [];
+
+
+/* =========================================================
+   PROLOGUE
+   ========================================================= */
+
+story.push({
+
+    chapter: "PROLOGUE ― 終焉の夜",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "kou",
+
+    right: null,
+
+    name: "皇",
+
+    text:
+        "人間という生き物を、俺は理解していなかった。"
 
 });
 
+
+story.push({
+
+    chapter: "PROLOGUE ― 終焉の夜",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "kou",
+
+    right: null,
+
+    name: "皇",
+
+    text:
+        "弱い。\n脆い。\n短い命。\n\nそれでも――なぜ、あれほど必死に生きる？"
+
+});
+
+
+story.push({
+
+    chapter: "PROLOGUE ― 終焉の夜",
+
+    background: "city",
+
+    bgm: "city",
+
+    left: "kou",
+
+    right: "tokage",
+
+    name: "焔緋 灯影",
+
+    text:
+        "また人間を襲ったのか、皇。"
+
+});
+
+
+story.push({
+
+    chapter: "PROLOGUE ― 終焉の夜",
+
+    background: "city",
+
+    bgm: "city",
+
+    left: "kou",
+
+    right: "tokage",
+
+    name: "皇",
+
+    text:
+        "俺の邪魔をした。\nだから喰った。\nそれだけだ。"
+
+});
+
+
+story.push({
+
+    chapter: "PROLOGUE ― 終焉の夜",
+
+    background: "city",
+
+    bgm: "city",
+
+    left: "kou",
+
+    right: "tokage",
+
+    name: "焔緋 灯影",
+
+    text:
+        "……お前は昔から変わらないな。"
+
+});
+
+
+story.push({
+
+    chapter: "PROLOGUE ― 終焉の夜",
+
+    background: "city",
+
+    bgm: "city",
+
+    left: "kou",
+
+    right: "tokage",
+
+    name: "皇",
+
+    text:
+        "お前こそ。\nなぜ人間を庇う？"
+
+});
+
+
+story.push({
+
+    chapter: "PROLOGUE ― 終焉の夜",
+
+    background: "city",
+
+    bgm: "city",
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "理由なんてない。\nただ――"
+
+});
+
+
+story.push({
+
+    chapter: "PROLOGUE ― 終焉の夜",
+
+    background: "city",
+
+    bgm: "city",
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "人間にも、守る価値があると思ってるだけだ。"
+
+});
+
+
+story.push({
+
+    chapter: "PROLOGUE ― 終焉の夜",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "kou",
+
+    right: null,
+
+    name: "皇",
+
+    text:
+        "守る価値……？"
+
+});
+
+
+story.push({
+
+    chapter: "PROLOGUE ― 終焉の夜",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "kou",
+
+    right: null,
+
+    name: "皇",
+
+    text:
+        "くだらない。"
+
+});
+
+
+/* =========================================================
+   雨の街
+   ========================================================= */
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "city",
+
+    bgm: "city",
+
+    rain: true,
+
+    left: null,
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "……雨、止まないな。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "city",
+
+    bgm: "city",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "人間。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "city",
+
+    bgm: "city",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "……え？"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "city",
+
+    bgm: "city",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "なぜ逃げない。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "city",
+
+    bgm: "city",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "逃げるって……どこへ？"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "city",
+
+    bgm: "city",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "俺が怖くないのか。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "city",
+
+    bgm: "city",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "……怖いよ。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "city",
+
+    bgm: "city",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "でも、あなたが私を傷つけるって決まったわけじゃないでしょう？"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "city",
+
+    bgm: "city",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "……変な人間だ。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "city",
+
+    bgm: "city",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "よく言われる。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "city",
+
+    bgm: "city",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "……名前は。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "city",
+
+    bgm: "city",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "雫。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "city",
+
+    bgm: "city",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "雫……。"
+
+});
+
+
+/* =========================================================
+   小さな花
+   ========================================================= */
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "見て。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "雨のあとって、花が綺麗なんだよ。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "花に何の価値がある。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "価値がなくても、綺麗だと思えるなら、それでいいんじゃない？"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "……理解できない。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "いつか分かるよ。"
+
+});
+
+
+story.push({
+
+    chapter: "第一章 ― 雨の街",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "……いつか、か。"
+
+});
+
+
+/* =========================================================
+   灯影との再会
+   ========================================================= */
+
+story.push({
+
+    chapter: "第二章 ― 幼き日の友",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "皇。"
+
+});
+
+
+story.push({
+
+    chapter: "第二章 ― 幼き日の友",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "灯影。"
+
+});
+
+
+story.push({
+
+    chapter: "第二章 ― 幼き日の友",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "……あの子と一緒にいるんだな。"
+
+});
+
+
+story.push({
+
+    chapter: "第二章 ― 幼き日の友",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "雫のことか。"
+
+});
+
+
+story.push({
+
+    chapter: "第二章 ― 幼き日の友",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "名前を覚えたのか。"
+
+});
+
+
+story.push({
+
+    chapter: "第二章 ― 幼き日の友",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "……悪いか。"
+
+});
+
+
+story.push({
+
+    chapter: "第二章 ― 幼き日の友",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "いや。"
+
+});
+
+
+story.push({
+
+    chapter: "第二章 ― 幼き日の友",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "むしろ、少し安心した。"
+
+});
+
+
+story.push({
+
+    chapter: "第二章 ― 幼き日の友",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "何がだ。"
+
+});
+
+
+story.push({
+
+    chapter: "第二章 ― 幼き日の友",
+
+    background: "night",
+
+    bgm: "night",
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "お前が、少しだけ変わった気がするからだ。"
+});
+  /* =========================================================
+   PART 1D
+   第二章後半 ～ 異世界バトル
+   ========================================================= */
+
+
+/* =========================================================
+   嵐の前
+   ========================================================= */
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "shizuku",
+
+    right: "kou",
+
+    name: "雫",
+
+    text:
+        "皇って……本当に、人間が嫌いなの？"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "shizuku",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "嫌いというより、興味がなかった。"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "shizuku",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "人間は弱い。\nだから、守る理由もない。"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "shizuku",
+
+    right: "kou",
+
+    name: "雫",
+
+    text:
+        "じゃあ……今は？"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "shizuku",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "……分からない。"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "shizuku",
+
+    right: "kou",
+
+    name: "雫",
+
+    text:
+        "ふふ。"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "shizuku",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "……何がおかしい。"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "shizuku",
+
+    right: "kou",
+
+    name: "雫",
+
+    text:
+        "皇にも、分からないことがあるんだなって。"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "shizuku",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "……お前といると、調子が狂う。"
+
+});
+
+
+/* =========================================================
+   下僕登場
+   ========================================================= */
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "geboku",
+
+    right: "kou",
+
+    name: "下僕",
+
+    text:
+        "皇様。"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "geboku",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "何だ。"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "geboku",
+
+    right: "kou",
+
+    name: "下僕",
+
+    text:
+        "結界の外に、異形の気配があります。"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "geboku",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "数は。"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "forest",
+
+    bgm: "forest",
+
+    rain: false,
+
+    left: "geboku",
+
+    right: "kou",
+
+    name: "下僕",
+
+    text:
+        "……多いです。"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "皇……？"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "下がっていろ。"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "でも……！"
+
+});
+
+
+story.push({
+
+    chapter: "第三章 ― 嵐の前",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "俺の後ろにいろ。"
+
+});
+
+
+/* =========================================================
+   バトル開始
+   ========================================================= */
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "geboku",
+
+    name: "下僕",
+
+    text:
+        "来ます！"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "geboku",
+
+    name: "皇",
+
+    text:
+        "――来い。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "geboku",
+
+    name: "皇",
+
+    text:
+        "俺の前に立つなら、すべて斬る。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "geboku",
+
+    name: "下僕",
+
+    text:
+        "右から三体！"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "geboku",
+
+    name: "皇",
+
+    text:
+        "遅い。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "geboku",
+
+    name: "皇",
+
+    text:
+        "――血界、展開。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "geboku",
+
+    name: "下僕",
+
+    text:
+        "……一瞬で……。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "geboku",
+
+    name: "皇",
+
+    text:
+        "この程度か。"
+
+});
+
+
+/* =========================================================
+   雫が狙われる
+   ========================================================= */
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "皇！　後ろ――！"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "……っ！"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "雫、伏せろ！"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "皇……！"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "俺がいる。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "お前には、触れさせない。"
+
+});
+
+
+/* =========================================================
+   灯影参戦
+   ========================================================= */
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "……やっぱり、お前は変わったな。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "今は昔話をしている暇はない。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "そうだな。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "なら、昔みたいに並んで戦うか。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 魔獣襲来",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "……ああ。"
+
+});
+
+
+/* =========================================================
+   共闘
+   ========================================================= */
+
+story.push({
+
+    chapter: "BATTLE ― 共闘",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "tokage",
+
+    name: "焔緋 灯影",
+
+    text:
+        "左は任せろ！"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 共闘",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "tokage",
+
+    name: "皇",
+
+    text:
+        "なら俺は正面だ。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 共闘",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "tokage",
+
+    name: "焔緋 灯影",
+
+    text:
+        "相変わらず無茶をする。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 共闘",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "tokage",
+
+    name: "皇",
+
+    text:
+        "お前に言われたくない。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 共闘",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "tokage",
+
+    name: "焔緋 灯影",
+
+    text:
+        "……ふっ。"
+
+});
+
+
+/* =========================================================
+   戦闘終了
+   ========================================================= */
+
+story.push({
+
+    chapter: "BATTLE ― 終幕",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "終わった……？"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 終幕",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "ああ。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 終幕",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "ありがとう、皇。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 終幕",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "礼などいらない。"
+
+});
+
+
+story.push({
+
+    chapter: "BATTLE ― 終幕",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "……俺がそうしたかっただけだ。"
+
+});
+
+
+/* =========================================================
+   皇の変化
+   ========================================================= */
+
+story.push({
+
+    chapter: "第四章 ― 知らなかった温度",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "皇。"
+
+});
+
+
+story.push({
+
+    chapter: "第四章 ― 知らなかった温度",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "何だ。"
+
+});
+
+
+story.push({
+
+    chapter: "第四章 ― 知らなかった温度",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "今日、怖くなかった。"
+
+});
+
+
+story.push({
+
+    chapter: "第四章 ― 知らなかった温度",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "俺は怖いぞ。"
+
+});
+
+
+story.push({
+
+    chapter: "第四章 ― 知らなかった温度",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "え？"
+
+});
+
+
+story.push({
+
+    chapter: "第四章 ― 知らなかった温度",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "お前を失うことが。"
+  
+});
+  /* =========================================================
+   PART 1E
+   クライマックス ― 皇と雫
+   ========================================================= */
+
+
+/* =========================================================
+   告白の前夜
+   ========================================================= */
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "……皇。"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "どうした。"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "私ね……最初は、あなたが怖かった。"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "冷たくて。\n何を考えているのか分からなくて。"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "……そうだろうな。"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "でも、今は違う。"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "あなたが、誰かを守ろうとするところを見たから。"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "……守ったのではない。"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "お前だったから、守った。"
+
+});
+
+
+/* =========================================================
+   皇の過去
+   ========================================================= */
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: null,
+
+    name: "皇",
+
+    text:
+        "昔の俺は、人間が死んでも何も思わなかった。"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: null,
+
+    name: "皇",
+
+    text:
+        "生きることも。\n死ぬことも。\nただの現象だと思っていた。"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: null,
+
+    name: "皇",
+
+    text:
+        "だが、お前と出会ってから……"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "花が綺麗だと思うようになった。"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "雨の音を、うるさいと思わなくなった。"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "そして――"
+
+});
+
+
+story.push({
+
+    chapter: "第五章 ― 夜明け前",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "お前がいない未来を、想像できなくなった。"
+
+});
+
+
+/* =========================================================
+   最終決戦
+   ========================================================= */
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "下僕",
+
+    text:
+        "皇様！　魔王軍の本隊が来ます！"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "……ここまで来たか。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "皇……私も戦う。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "駄目だ。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "どうして？"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "お前まで失ったら、俺はもう戦えない。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "皇。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "……灯影。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "昔のお前なら、そんなこと言わなかった。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "皇",
+
+    text:
+        "……そうだな。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "なら、行け。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "tokage",
+
+    right: "kou",
+
+    name: "焔緋 灯影",
+
+    text:
+        "今のお前が守りたいものを、最後まで守れ。"
+
+});
+
+
+/* =========================================================
+   決着
+   ========================================================= */
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "――終焉支配。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "この世界を、終わらせはしない。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "battle",
+
+    bgm: "battle",
+
+    rain: true,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "俺には――守りたいものがある。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "……皇。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "雫。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "俺は、人間を美しいと思う。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "……うん。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "弱くても。\n短い命でも。\n誰かを想って生きる姿が――美しい。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "night",
+
+    bgm: "night",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "そして、その中でも……"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "俺が一番大切にしたいのは、お前だ。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "……私も。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "あなたと一緒にいたい。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "……そうか。"
+
+});
+
+
+story.push({
+
+    chapter: "最終章 ― 世界の終わり",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "なら、もう一人ではないな。"
+
+});
+
+
+/* =========================================================
+   エピローグ
+   ========================================================= */
+
+story.push({
+
+    chapter: "EPILOGUE ― 春",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "ねえ、皇。"
+
+});
+
+
+story.push({
+
+    chapter: "EPILOGUE ― 春",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "何だ。"
+
+});
+
+
+story.push({
+
+    chapter: "EPILOGUE ― 春",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "あの花、覚えてる？"
+
+});
+
+
+story.push({
+
+    chapter: "EPILOGUE ― 春",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "……覚えている。"
+
+});
+
+
+story.push({
+
+    chapter: "EPILOGUE ― 春",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "また、一緒に見に行こう。"
+
+});
+
+
+story.push({
+
+    chapter: "EPILOGUE ― 春",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "ああ。"
+
+});
+
+
+story.push({
+
+    chapter: "EPILOGUE ― 春",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "何度でも。"
+});
+  /* =========================================================
+   PART 1F
+   最終演出・エンディング・終了
+   ========================================================= */
+
+
+/* =========================================================
+   最終シーン演出
+   ========================================================= */
+
+story.push({
+
+    chapter: "EPILOGUE ― 春",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "……ねえ、皇。"
+
+});
+
+
+story.push({
+
+    chapter: "EPILOGUE ― 春",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "何だ。"
+
+});
+
+
+story.push({
+
+    chapter: "EPILOGUE ― 春",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "雫",
+
+    text:
+        "これからも、一緒にいてくれる？"
+
+});
+
+
+story.push({
+
+    chapter: "EPILOGUE ― 春",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "……ああ。"
+
+});
+
+
+story.push({
+
+    chapter: "EPILOGUE ― 春",
+
+    background: "ending",
+
+    bgm: "ending",
+
+    rain: false,
+
+    left: "kou",
+
+    right: "shizuku",
+
+    name: "皇",
+
+    text:
+        "約束する。"
+
+});
+
+
+/* =========================================================
+   特別エンディング演出
+   ========================================================= */
+
+function showTrueEnding(){
+
+    clearInterval(typeTimer);
+
+    typing = false;
+
+    dialogue.style.display =
+        "none";
+
+    topUI.style.display =
+        "none";
+
+    hideChoices();
+
+    setRain(false);
+
+    hideCharacters();
+
+    setBackground("ending");
+
+    playBGM("ending");
+
+    fadeOut(() => {
+
+        endingScreen.style.display =
+            "flex";
+
+        fadeIn();
+
+    });
+
+}
+
+
+/* =========================================================
+   エンディングボタン
+   ========================================================= */
+
+$("restart").addEventListener(
+
+    "click",
+
+    () => {
+
+        currentScene = 0;
+
+        log = [];
+
+        endingScreen.style.display =
+            "none";
+
+        titleScreen.style.display =
+            "none";
+
+        topUI.style.display =
+            "flex";
+
+        dialogue.style.display =
+            "block";
+
+        hideChoices();
+
+        createPetals();
+
+        setRain(false);
+
+        setBackground("city");
+
+        playBGM("city");
+
+        nextScene();
+
+    }
+
+);
+
+
+/* =========================================================
+   シーン終了判定を上書き
+   ========================================================= */
+
+const originalNextScene =
+    nextScene;
+
+nextScene = function(){
+
+    if(typing){
+
+        finishTyping();
+
+        return;
+
+    }
+
+    if(
+        currentScene >= story.length
+    ){
+
+        showTrueEnding();
+
+        return;
+
+    }
+
+    const scene =
+        story[currentScene];
+
+    currentScene++;
+
+    hideChoices();
+
+    applyScene(scene);
+
+    if(scene.type === "choice"){
+
+        showChoices(
+            scene.choices
+        );
+
+        return;
+
+    }
+
+    showDialogue(scene);
+
+};
+
+
+/* =========================================================
+   ページを離れる前の状態保存
+   ========================================================= */
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        if(
+            currentScene > 0 &&
+            currentScene < story.length
+        ){
+
+            const autoSave = {
+
+                currentScene,
+
+                log,
+
+                soundOn,
+
+                savedAt:
+                    new Date().toISOString()
+
+            };
+
+            localStorage.setItem(
+                "kou_shizuku_autosave",
+                JSON.stringify(autoSave)
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   自動ロード確認
+   ========================================================= */
+
+function hasAutoSave(){
+
+    return Boolean(
+        localStorage.getItem(
+            "kou_shizuku_autosave"
+        )
+    );
+
+}
+
+
+/* =========================================================
+   スマホ向けタップ演出
+   ========================================================= */
+
+document.addEventListener(
+    "touchstart",
+    () => {
+
+        if(
+            audioContext &&
+            audioContext.state === "suspended"
+        ){
+
+            audioContext.resume();
+
+        }
+
+    },
+    {
+        passive:true
+    }
+);
+
+
+/* =========================================================
+   キーボード操作
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(event.key === "Escape"){
+
+            if(
+                logWindow.style.display ===
+                "block"
+            ){
+
+                logWindow.style.display =
+                    "none";
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   初期タイトルBGM
+   ========================================================= */
+
+$("soundButton").textContent =
+    "BGM：ON";
+
+
+/* =========================================================
+   ゲーム完成
+   ========================================================= */
+
+console.log(
+    "===================================="
+);
+
+console.log(
+    "終焉の皇と、人間の花"
+);
+
+console.log(
+    "GAME COMPLETE"
+);
+
+console.log(
+    "皇 × 雫"
+);
+
+console.log(
+    "===================================="
+
+);
 
 </script>
 
