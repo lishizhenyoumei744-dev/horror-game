@@ -3,69 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Θaύμα ― 白い記憶</title>
+<title>星ノ宮異世界学園 ― 春、君と ―</title>
 
 <style>
 *{
     box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
-}
-
-html,body{
     margin:0;
     padding:0;
-    width:100%;
-    height:100%;
-    background:#050507;
+}
+
+body{
+    background:#090b18;
     color:#eee;
     font-family:
         "Yu Gothic",
         "Hiragino Kaku Gothic ProN",
         Meiryo,
         sans-serif;
+    min-height:100vh;
     overflow:hidden;
 }
 
 button{
-    font:inherit;
+    font-family:inherit;
 }
 
-#app{
-    width:100%;
-    height:100%;
+#game{
+    width:100vw;
+    height:100vh;
     position:relative;
     overflow:hidden;
     background:
-        radial-gradient(circle at 50% 45%, #17151b 0%, #08080b 45%, #020204 100%);
+        radial-gradient(circle at 50% 20%, #313a69 0%, #151a35 40%, #070914 100%);
 }
 
-#noise{
+#game::before{
+    content:"";
     position:absolute;
     inset:0;
     pointer-events:none;
-    opacity:.055;
-    z-index:20;
-    background-image:
-        repeating-linear-gradient(
-            0deg,
-            transparent 0px,
-            transparent 2px,
-            rgba(255,255,255,.15) 3px
-        );
-}
-
-#vignette{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    z-index:19;
+    opacity:.25;
     background:
-        radial-gradient(
-            ellipse at center,
-            transparent 35%,
-            rgba(0,0,0,.35) 68%,
-            rgba(0,0,0,.9) 100%
-        );
+        radial-gradient(circle at 15% 25%, #fff 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 20%, #fff 0 1px, transparent 2px),
+        radial-gradient(circle at 65% 70%, #fff 0 1px, transparent 2px),
+        radial-gradient(circle at 30% 80%, #fff 0 1px, transparent 2px);
+    background-size:140px 120px,190px 150px,220px 180px,170px 140px;
+    animation:stars 10s linear infinite;
+}
+
+@keyframes stars{
+    from{transform:translateY(0);}
+    to{transform:translateY(15px);}
 }
 
 .screen{
@@ -75,548 +64,467 @@ button{
 }
 
 .screen.active{
-    display:flex;
+    display:block;
 }
 
-/* =========================
-   TITLE
-========================= */
+/* ---------------- TITLE ---------------- */
 
 #titleScreen{
+    display:none;
     align-items:center;
     justify-content:center;
     text-align:center;
-    background:
-        radial-gradient(circle at center, #1a1520 0%, #07070a 48%, #010102 100%);
+}
+
+#titleScreen.active{
+    display:flex;
 }
 
 .titleBox{
-    width:min(900px,92%);
-    animation:titleIn 1.5s ease;
+    position:relative;
+    z-index:2;
+    padding:40px;
+    width:min(850px,90vw);
 }
 
-@keyframes titleIn{
-    from{
-        opacity:0;
-        transform:translateY(25px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-.titleSmall{
-    letter-spacing:.5em;
-    color:#aaa;
-    font-size:12px;
-    margin-bottom:25px;
-}
-
-.gameTitle{
-    margin:0;
-    font-size:clamp(42px,10vw,100px);
+.titleBox h1{
+    font-size:clamp(32px,6vw,72px);
     letter-spacing:.12em;
-    font-weight:300;
     text-shadow:
-        0 0 12px rgba(255,255,255,.15),
-        0 0 40px rgba(160,80,170,.18);
+        0 0 10px #9da9ff,
+        0 0 35px #5966d8;
+    margin-bottom:15px;
 }
 
-.gameSub{
-    margin-top:14px;
-    color:#aaa;
-    letter-spacing:.3em;
-    font-size:14px;
-}
-
-.titleLine{
-    width:130px;
-    height:1px;
-    background:#777;
-    margin:35px auto;
-    opacity:.5;
+.titleBox .sub{
+    color:#bbc4ff;
+    letter-spacing:.25em;
+    margin-bottom:45px;
 }
 
 .menu{
     display:flex;
     flex-direction:column;
     gap:12px;
-    width:min(360px,90%);
+    width:min(330px,80vw);
     margin:auto;
 }
 
 .menu button,
-.choice{
-    border:1px solid #444;
-    background:rgba(10,10,14,.8);
-    color:#ddd;
-    padding:15px 20px;
+.choice button,
+.libraryButton,
+.backButton{
+    border:1px solid rgba(180,190,255,.45);
+    background:rgba(25,31,65,.78);
+    color:#eee;
+    padding:14px 20px;
+    border-radius:8px;
     cursor:pointer;
-    transition:.25s;
+    transition:.2s;
 }
 
 .menu button:hover,
-.choice:hover{
-    background:#211d26;
-    border-color:#aaa;
+.choice button:hover,
+.libraryButton:hover,
+.backButton:hover{
+    background:rgba(75,88,170,.8);
+    border-color:#aeb8ff;
     transform:translateY(-2px);
 }
 
-.menu button:active,
-.choice:active{
-    transform:scale(.98);
+/* ---------------- COMMON ---------------- */
+
+.topBar{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:60px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+    z-index:20;
+    background:linear-gradient(
+        to bottom,
+        rgba(5,7,18,.9),
+        rgba(5,7,18,.2)
+    );
 }
 
-.warning{
-    margin-top:25px;
-    font-size:11px;
-    color:#666;
+.chapter{
+    color:#c7ceff;
+    letter-spacing:.08em;
+    font-size:14px;
 }
 
-/* =========================
-   NOVEL
-========================= */
+.topControls{
+    display:flex;
+    gap:8px;
+}
+
+.smallBtn{
+    border:1px solid #515b93;
+    background:rgba(15,18,40,.8);
+    color:#ddd;
+    padding:7px 10px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.smallBtn:hover{
+    background:#323b73;
+}
+
+.progress{
+    position:absolute;
+    top:58px;
+    left:22px;
+    right:22px;
+    height:3px;
+    background:rgba(255,255,255,.1);
+    z-index:20;
+}
+
+.progressBar{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,#8997ff,#ffb8df);
+    transition:.4s;
+}
+
+/* ---------------- NOVEL ---------------- */
 
 #novelScreen{
-    flex-direction:column;
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(24,31,69,.35),
+            rgba(8,9,22,.9)
+        );
 }
 
 .sceneBackground{
     position:absolute;
     inset:0;
-    z-index:0;
     transition:background 1s ease;
 }
 
-.bg-dark{
+.sceneBackground.school{
     background:
-        radial-gradient(circle at 50% 40%, #19151d, #060609 70%);
+        linear-gradient(
+            to bottom,
+            #6e88bc 0%,
+            #a9b8d8 35%,
+            #f0c8a0 100%
+        );
 }
 
-.bg-white{
+.sceneBackground.sunset{
     background:
-        radial-gradient(circle at center, #d9d9dc, #8b8b90 55%, #29292d 100%);
+        linear-gradient(
+            to bottom,
+            #25275d 0%,
+            #6b487c 45%,
+            #e29477 100%
+        );
 }
 
-.bg-red{
+.sceneBackground.night{
     background:
-        radial-gradient(circle at center, #3a080d, #100306 65%, #020102 100%);
+        linear-gradient(
+            to bottom,
+            #060818 0%,
+            #111638 50%,
+            #242951 100%
+        );
 }
 
-.bg-memory{
+.sceneBackground.dark{
     background:
-        radial-gradient(circle at center, #24232d, #0a0a0e 75%);
+        radial-gradient(
+            circle at center,
+            #4b2749 0%,
+            #180f27 45%,
+            #05050d 100%
+        );
 }
 
-.bg-end{
+.sceneBackground.ending{
     background:
-        radial-gradient(circle at center, #171421, #030305 75%);
+        linear-gradient(
+            to bottom,
+            #253c65 0%,
+            #667da0 45%,
+            #d9b8b1 100%
+        );
 }
 
-.chapter{
-    position:relative;
-    z-index:3;
-    padding:22px 25px 0;
-    color:#aaa;
-    font-size:12px;
-    letter-spacing:.3em;
-}
-
-.chapter span{
-    color:#ddd;
-}
-
-.scene{
-    position:relative;
-    z-index:2;
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-end;
-    padding:20px;
-}
-
-.character{
-    width:min(1000px,96%);
-    margin:0 auto 18px;
-    min-height:145px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+.sceneDecor{
+    position:absolute;
+    inset:0;
     pointer-events:none;
 }
 
-.character.none{
-    display:none;
-}
-
-.portrait{
-    width:125px;
-    height:125px;
-    border:1px solid #444;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:44px;
-    background:rgba(0,0,0,.35);
-    box-shadow:0 0 40px rgba(0,0,0,.6);
-}
-
-.portrait.guren{
-    border-color:#7d2938;
-    color:#bd5163;
-}
-
-.portrait.geboku{
-    border-color:#597d8b;
-    color:#8ebdcc;
-}
-
-.portrait.enpi{
-    border-color:#9b6534;
-    color:#d49b5b;
-}
-
-.portrait.touei{
-    border-color:#aaa;
-    color:#eee;
-    box-shadow:0 0 50px rgba(255,255,255,.1);
-}
-
-.nameTag{
+.moon{
     position:absolute;
+    right:9%;
+    top:12%;
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    background:#fff6d8;
+    box-shadow:0 0 45px rgba(255,245,190,.6);
+    opacity:.85;
+}
+
+.window{
+    position:absolute;
+    right:8%;
+    top:15%;
+    width:220px;
+    height:280px;
+    border:10px solid rgba(30,35,60,.8);
+    opacity:.25;
+}
+
+.window::before,
+.window::after{
+    content:"";
+    position:absolute;
+    background:rgba(30,35,60,.8);
+}
+
+.window::before{
+    width:8px;
+    height:100%;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.window::after{
+    height:8px;
+    width:100%;
+    top:50%;
+    transform:translateY(-50%);
+}
+
+.novelContent{
+    position:absolute;
+    left:50%;
     bottom:0;
-    background:rgba(0,0,0,.75);
-    border:1px solid #444;
-    padding:6px 15px;
-    font-size:12px;
-    letter-spacing:.15em;
+    transform:translateX(-50%);
+    width:min(1050px,94vw);
+    z-index:10;
+    padding-bottom:28px;
 }
 
-.dialogue{
-    width:min(1050px,96%);
-    margin:0 auto;
-    background:
-        linear-gradient(
-            180deg,
-            rgba(5,5,8,.88),
-            rgba(3,3,5,.97)
-        );
-    border:1px solid #333;
-    padding:24px 25px 20px;
-    min-height:165px;
-    box-shadow:0 -15px 50px rgba(0,0,0,.35);
+.characterName{
+    display:inline-block;
+    padding:8px 18px;
+    background:rgba(12,15,33,.92);
+    border:1px solid rgba(181,190,255,.4);
+    border-radius:8px 8px 0 0;
+    color:#cdd4ff;
+    font-weight:bold;
 }
 
-.speaker{
-    color:#bbb;
-    font-size:13px;
-    letter-spacing:.2em;
-    margin-bottom:14px;
+.textBox{
+    min-height:190px;
+    background:rgba(7,9,20,.91);
+    border:1px solid rgba(173,182,255,.3);
+    border-radius:0 10px 10px 10px;
+    padding:25px;
+    line-height:2;
+    font-size:18px;
+    box-shadow:0 -10px 50px rgba(0,0,0,.3);
 }
 
 .text{
-    line-height:2;
-    font-size:16px;
     white-space:pre-wrap;
-    min-height:65px;
 }
 
-.hint{
-    color:#666;
-    text-align:right;
-    font-size:10px;
+.nextHint{
     margin-top:12px;
-}
-
-.choices{
-    width:min(1050px,96%);
-    margin:12px auto 0;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
+    text-align:right;
+    color:#929ac4;
+    font-size:12px;
 }
 
 .choice{
-    text-align:left;
-    padding:13px 17px;
-    font-size:14px;
-}
-
-.choice small{
-    color:#777;
-}
-
-.bottomBar{
-    width:min(1050px,96%);
-    margin:12px auto 15px;
+    margin-top:15px;
     display:flex;
-    justify-content:space-between;
-    gap:8px;
+    flex-wrap:wrap;
+    gap:10px;
 }
 
-.bottomBar button{
-    border:1px solid #333;
-    background:#0a0a0d;
-    color:#888;
-    padding:8px 14px;
-    cursor:pointer;
+.choice button{
+    flex:1;
+    min-width:200px;
 }
 
-.bottomBar button:hover{
-    color:#fff;
-    border-color:#777;
-}
+/* ---------------- LIBRARY ---------------- */
 
-/* =========================
-   LIBRARY
-========================= */
-
-#libraryScreen,
-#settingsScreen{
-    flex-direction:column;
+#libraryScreen{
+    padding:80px 30px 30px;
     overflow:auto;
     background:
-        radial-gradient(circle at top, #17151d, #050507 70%);
-    padding:35px 20px;
+        radial-gradient(circle at top,#272e59,#080a16 70%);
 }
 
-.page{
-    width:min(1050px,100%);
+.libraryTitle{
+    text-align:center;
+    margin-bottom:25px;
+    letter-spacing:.12em;
+}
+
+.characters{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:15px;
+    width:min(1100px,95vw);
     margin:auto;
 }
 
-.pageTitle{
-    font-size:28px;
-    font-weight:300;
-    letter-spacing:.2em;
-    margin-bottom:35px;
-}
-
-.back{
-    margin-bottom:25px;
-    border:1px solid #444;
-    background:#0c0c10;
-    color:#ccc;
-    padding:9px 15px;
-    cursor:pointer;
-}
-
-.cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:15px;
-}
-
 .card{
-    border:1px solid #333;
-    background:rgba(15,15,20,.75);
+    background:rgba(17,21,45,.9);
+    border:1px solid rgba(150,160,230,.25);
+    border-radius:12px;
     padding:20px;
-    min-height:240px;
 }
 
 .card h3{
-    margin:0 0 7px;
-    font-weight:400;
+    color:#d5d9ff;
+    margin-bottom:8px;
 }
 
-.card .type{
-    color:#777;
-    font-size:11px;
-    margin-bottom:15px;
+.card .role{
+    color:#9ea8df;
+    font-size:13px;
+    margin-bottom:12px;
 }
 
 .card p{
-    color:#aaa;
+    color:#c4c6d6;
+    font-size:14px;
     line-height:1.8;
-    font-size:13px;
 }
 
-/* =========================
-   SETTINGS
-========================= */
+.libraryBottom{
+    width:min(1100px,95vw);
+    margin:25px auto;
+}
 
-.setting{
-    border-bottom:1px solid #222;
-    padding:20px 0;
-    display:flex;
-    justify-content:space-between;
+/* ---------------- SETTINGS ---------------- */
+
+#settingsScreen{
     align-items:center;
+    justify-content:center;
+    background:radial-gradient(circle,#252c56,#080a16);
 }
 
-.setting button{
-    border:1px solid #444;
-    background:#0d0d11;
-    color:#ddd;
-    padding:9px 16px;
-    cursor:pointer;
+#settingsScreen.active{
+    display:flex;
 }
 
-.danger{
-    margin-top:30px;
-    border:1px solid #57252a !important;
-    color:#c97980 !important;
+.settingsBox{
+    width:min(500px,90vw);
+    padding:30px;
+    background:rgba(12,15,34,.94);
+    border:1px solid rgba(170,180,255,.3);
+    border-radius:12px;
 }
 
-/* =========================
-   END
-========================= */
+.settingsBox h2{
+    margin-bottom:25px;
+}
+
+.settingRow{
+    margin-bottom:20px;
+}
+
+.settingRow label{
+    display:block;
+    margin-bottom:8px;
+    color:#cbd0f0;
+}
+
+input[type="range"]{
+    width:100%;
+}
+
+/* ---------------- ENDING ---------------- */
 
 #endingScreen{
     align-items:center;
     justify-content:center;
     text-align:center;
-    padding:25px;
     background:
-        radial-gradient(circle at center, #1c1722, #050507 75%);
+        radial-gradient(circle at center,#4d557c,#15182e 55%,#060711);
+}
+
+#endingScreen.active{
+    display:flex;
 }
 
 .endingBox{
-    width:min(850px,94%);
-    animation:endingIn 2s ease;
+    width:min(900px,90vw);
+    padding:35px;
 }
 
-@keyframes endingIn{
-    from{
-        opacity:0;
-        transform:scale(.97);
-    }
-    to{
-        opacity:1;
-        transform:scale(1);
-    }
+.endingBox h1{
+    font-size:clamp(28px,5vw,60px);
+    color:#f1d9e7;
+    text-shadow:0 0 25px #bf8eac;
+    margin-bottom:20px;
 }
 
-.endingLabel{
-    font-size:11px;
-    letter-spacing:.5em;
-    color:#777;
+.endingBox p{
+    line-height:2.1;
+    color:#d6d8e8;
 }
 
-.endingTitle{
-    font-size:clamp(30px,7vw,65px);
-    font-weight:300;
+.couples{
     margin:25px 0;
+    font-size:20px;
+    color:#ffe2ef;
 }
 
-.endingText{
-    color:#aaa;
-    line-height:2.2;
-    white-space:pre-wrap;
-    font-size:15px;
+.fade{
+    animation:fade .8s ease;
 }
 
-.endingButtons{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    width:min(350px,90%);
-    margin:35px auto 0;
+@keyframes fade{
+    from{opacity:0}
+    to{opacity:1}
 }
-
-.endingButtons button{
-    padding:13px;
-    border:1px solid #444;
-    background:#0b0b0e;
-    color:#ddd;
-    cursor:pointer;
-}
-
-/* =========================
-   EFFECTS
-========================= */
 
 .flash{
-    position:fixed;
-    inset:0;
-    background:white;
-    z-index:100;
-    pointer-events:none;
-    animation:flash .18s ease;
+    animation:flash .25s ease;
 }
 
 @keyframes flash{
-    from{opacity:.9}
-    to{opacity:0}
+    0%{opacity:.4}
+    100%{opacity:1}
 }
-
-.shake{
-    animation:shake .35s;
-}
-
-@keyframes shake{
-    0%,100%{transform:translate(0)}
-    20%{transform:translate(-7px,3px)}
-    40%{transform:translate(6px,-3px)}
-    60%{transform:translate(-4px,-2px)}
-    80%{transform:translate(4px,3px)}
-}
-
-.glitch{
-    animation:glitch .6s;
-}
-
-@keyframes glitch{
-    0%{filter:none}
-    15%{filter:contrast(2) brightness(1.5)}
-    25%{filter:hue-rotate(70deg)}
-    45%{filter:none}
-    60%{filter:contrast(1.8)}
-    100%{filter:none}
-}
-
-.toast{
-    position:fixed;
-    left:50%;
-    bottom:25px;
-    transform:translateX(-50%);
-    background:#111;
-    border:1px solid #444;
-    color:#ddd;
-    padding:10px 18px;
-    z-index:200;
-    font-size:12px;
-    opacity:0;
-    pointer-events:none;
-    transition:.3s;
-}
-
-.toast.show{
-    opacity:1;
-}
-
-/* mobile */
 
 @media(max-width:600px){
-    .scene{
-        padding:10px;
+    .textBox{
+        font-size:16px;
+        min-height:210px;
+        padding:18px;
     }
 
-    .character{
-        min-height:105px;
-        margin-bottom:10px;
+    .novelContent{
+        padding-bottom:12px;
     }
 
-    .portrait{
-        width:90px;
-        height:90px;
-        font-size:30px;
+    .topBar{
+        padding:0 10px;
     }
 
-    .dialogue{
-        padding:17px;
-        min-height:180px;
-    }
-
-    .text{
-        font-size:14px;
-        line-height:1.9;
-    }
-
-    .chapter{
-        padding:15px 15px 0;
+    .window{
+        display:none;
     }
 }
 </style>
@@ -624,2491 +532,1931 @@ button{
 
 <body>
 
-<div id="app">
+<div id="game">
 
-<div id="noise"></div>
-<div id="vignette"></div>
+    <!-- TITLE -->
+    <section id="titleScreen" class="screen active">
+        <div class="titleBox">
+            <h1>星ノ宮異世界学園</h1>
+            <div class="sub">― 春、君と ―</div>
 
-<!-- TITLE -->
-<section id="titleScreen" class="screen active">
-    <div class="titleBox">
-        <div class="titleSmall">A NOVEL HORROR STORY</div>
-        <h1 class="gameTitle">Θaύμα</h1>
-        <div class="gameSub">白い記憶</div>
-
-        <div class="titleLine"></div>
-
-        <div class="menu">
-            <button onclick="newGame()">はじめから</button>
-            <button onclick="continueGame()">つづきから</button>
-            <button onclick="openLibrary()">人物設定</button>
-            <button onclick="openSettings()">設定</button>
+            <div class="menu">
+                <button onclick="startGame()">▶ はじめから</button>
+                <button onclick="loadGame()">↻ 続きから</button>
+                <button onclick="showLibrary()">✦ キャラクター</button>
+                <button onclick="showSettings()">⚙ 設定</button>
+            </div>
         </div>
+    </section>
 
-        <div class="warning">
-            ※ 音声・BGMがあります。音量に注意してください。
-        </div>
-    </div>
-</section>
+    <!-- LIBRARY -->
+    <section id="libraryScreen" class="screen">
 
-<!-- NOVEL -->
-<section id="novelScreen" class="screen">
-    <div id="sceneBackground" class="sceneBackground bg-dark"></div>
+        <h2 class="libraryTitle">CHARACTER</h2>
 
-    <div class="chapter">
-        <span id="chapterText">序章</span>
-    </div>
-
-    <div class="scene" id="sceneArea">
-
-        <div id="characterArea" class="character none">
-            <div id="portrait" class="portrait">?</div>
-            <div id="nameTag" class="nameTag"></div>
-        </div>
-
-        <div class="dialogue">
-            <div id="speaker" class="speaker"></div>
-            <div id="text" class="text"></div>
-            <div id="hint" class="hint">タップ / クリックで続く</div>
-        </div>
-
-        <div id="choices" class="choices"></div>
-
-        <div class="bottomBar">
-            <button onclick="saveGame()">保存</button>
-            <button onclick="toggleBGM()">BGM</button>
-            <button onclick="backToTitle()">タイトル</button>
-        </div>
-    </div>
-</section>
-
-<!-- LIBRARY -->
-<section id="libraryScreen" class="screen">
-    <div class="page">
-        <button class="back" onclick="showScreen('titleScreen')">← 戻る</button>
-        <div class="pageTitle">人物設定</div>
-
-        <div class="cards">
+        <div class="characters">
 
             <div class="card">
                 <h3>皇 紅蓮</h3>
-                <div class="type">最上位吸血鬼 × 幽霊</div>
+                <div class="role">最上位吸血鬼 × 幽霊</div>
                 <p>
-                    霊界から追放された存在。<br>
-                    強大な力を持つが、本音を隠すことが苦手。<br><br>
-                    HP 1000 / 攻撃 210 / 防御 100
+                    強大な力を持つ異世界の少年。
+                    口が悪く、素直ではない。
+                    雫とは出会った瞬間から犬猿の仲。
+                    しかし、その感情は少しずつ変わっていく。
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>雫</h3>
+                <div class="role">星ノ宮学園の少女</div>
+                <p>
+                    明るさと芯の強さを持つ少女。
+                    皇とは何かにつけて衝突する。
+                    それでも、彼の本当の優しさを
+                    少しずつ知っていく。
                 </p>
             </div>
 
             <div class="card">
                 <h3>下僕</h3>
-                <div class="type">スライム（眷属・人間型）</div>
+                <div class="role">スライム・究極眷属</div>
                 <p>
-                    究極眷属。<br>
-                    完全適応・未来予知・圧倒的戦闘技術を持つ。<br><br>
-                    物語の第6章後、未知の力に目覚める。
-                </p>
-            </div>
-
-            <div class="card">
-                <h3>焔緋くん</h3>
-                <div class="type">裏社会の何でも屋 / 26歳</div>
-                <p>
-                    冷静な判断力と高い戦闘能力を持つ。<br>
-                    情報収集、潜入、交渉にも長けている。<br><br>
-                    HP 900 / 攻撃 230 / 防御 80
+                    皇に仕える眷属。
+                    戦闘能力は非常に高いが、
+                    灯影に対しては誰よりも優しい。
                 </p>
             </div>
 
             <div class="card">
                 <h3>焔緋 灯影</h3>
-                <div class="type">終焉の管理者 / 種族？？？</div>
+                <div class="role">終焉の管理者・少女</div>
                 <p>
-                    焔緋くんとは別人。<br>
-                    終焉支配、永劫の焔、完全解析、無限再構築、神域武装を持つ。<br><br>
-                    HP 5000 / 攻撃 650 / 防御 500
+                    世界の終わりを知る少女。
+                    自分の未来を変えられないと思っていたが、
+                    下僕と出会い、初めて未来を選ぼうとする。
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>焔緋くん</h3>
+                <div class="role">裏社会の何でも屋・26歳</div>
+                <p>
+                    大人の視点から学園の騒動を見守る人物。
+                    皇や下僕の相談相手でもある。
+                    灯影とは別人。
                 </p>
             </div>
 
         </div>
-    </div>
-</section>
 
-<!-- SETTINGS -->
-<section id="settingsScreen" class="screen">
-    <div class="page">
-        <button class="back" onclick="showScreen('titleScreen')">← 戻る</button>
+        <div class="libraryBottom">
+            <button class="backButton" onclick="showTitle()">← 戻る</button>
+        </div>
+    </section>
 
-        <div class="pageTitle">設定</div>
+    <!-- SETTINGS -->
+    <section id="settingsScreen" class="screen">
 
-        <div class="setting">
-            <span>BGM</span>
-            <button onclick="toggleBGM()">ON / OFF</button>
+        <div class="settingsBox">
+
+            <h2>設定</h2>
+
+            <div class="settingRow">
+                <label>
+                    BGM
+                    <span id="bgmStatus">ON</span>
+                </label>
+
+                <button class="smallBtn" onclick="toggleBGM()">
+                    BGM ON / OFF
+                </button>
+            </div>
+
+            <div class="settingRow">
+                <label for="volume">
+                    BGM音量
+                </label>
+
+                <input
+                    id="volume"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="0.45"
+                    oninput="changeVolume(this.value)"
+                >
+            </div>
+
+            <button class="backButton" onclick="showTitle()">
+                ← 戻る
+            </button>
+
+        </div>
+    </section>
+
+    <!-- NOVEL -->
+    <section id="novelScreen" class="screen">
+
+        <div id="sceneBackground" class="sceneBackground school">
+
+            <div class="sceneDecor">
+                <div class="moon"></div>
+                <div class="window"></div>
+            </div>
+
         </div>
 
-        <div class="setting">
-            <span>文字速度</span>
-            <button onclick="cycleSpeed()" id="speedButton">普通</button>
+        <div class="topBar">
+
+            <div id="chapter" class="chapter">
+                PROLOGUE
+            </div>
+
+            <div class="topControls">
+
+                <button class="smallBtn" onclick="saveGame()">
+                    SAVE
+                </button>
+
+                <button class="smallBtn" onclick="toggleBGM()">
+                    BGM
+                </button>
+
+                <button class="smallBtn" onclick="showTitle()">
+                    TITLE
+                </button>
+
+            </div>
+
         </div>
 
-        <div class="setting">
-            <span>セーブデータ</span>
-            <button class="danger" onclick="deleteSave()">セーブ削除</button>
+        <div class="progress">
+            <div id="progressBar" class="progressBar"></div>
         </div>
-    </div>
-</section>
 
-<!-- ENDING -->
-<section id="endingScreen" class="screen">
-    <div class="endingBox">
-        <div class="endingLabel" id="endingLabel">END</div>
-        <div class="endingTitle" id="endingTitle"></div>
-        <div class="endingText" id="endingText"></div>
+        <div class="novelContent">
 
-        <div class="endingButtons">
-            <button onclick="newGame()">もう一度遊ぶ</button>
-            <button onclick="showScreen('titleScreen')">タイトルへ</button>
+            <div id="characterName" class="characterName">
+                ―
+            </div>
+
+            <div id="textBox" class="textBox">
+
+                <div id="text" class="text"></div>
+
+                <div id="choice" class="choice"></div>
+
+                <div id="nextHint" class="nextHint">
+                    クリック / Enter / Space
+                </div>
+
+            </div>
+
         </div>
-    </div>
-</section>
 
-<div id="toast" class="toast"></div>
+    </section>
+
+    <!-- ENDING -->
+    <section id="endingScreen" class="screen">
+
+        <div class="endingBox">
+
+            <h1>結ばれる世界</h1>
+
+            <p>
+                世界が終わるはずだった春。<br>
+                けれど、彼らは未来を選び直した。
+            </p>
+
+            <div class="couples">
+                皇 紅蓮 × 雫<br>
+                下僕 × 焔緋 灯影
+            </div>
+
+            <p>
+                儚い世界だったからこそ、<br>
+                手を離さなかった。
+            </p>
+
+            <br>
+
+            <button class="menuButton smallBtn" onclick="showTitle()">
+                タイトルへ戻る
+            </button>
+
+        </div>
+
+    </section>
 
 </div>
 
 <script>
-"use strict";
 
 /* =========================================================
    GAME DATA
 ========================================================= */
 
-const SAVE_KEY = "THAUMA_WHITE_MEMORY_V2";
-
-const defaultData = {
-    scene: 0,
-    flags: {
-        door: false,
-        trusted: false,
-        helped: false,
-        whiteRoom: false,
-        heardVoice: false,
-        copy: false,
-        toueiChoice: false,
-        finalChoice: null
-    }
-};
-
-let gameData = structuredClone(defaultData);
-let currentScene = 0;
-
-let typing = false;
-let typeTimer = null;
-let fullText = "";
-
-let textSpeed = 28;
-
-/* =========================================================
-   AUDIO
-========================================================= */
-
-let audioCtx = null;
-let master = null;
-let bgmEnabled = true;
-let bgmTimer = null;
-let bgmStep = 0;
-
-function initAudio(){
-    if(audioCtx) return;
-
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    master = audioCtx.createGain();
-    master.gain.value = 0.055;
-    master.connect(audioCtx.destination);
-
-    startBGM();
-}
-
-function tone(freq, duration, type="sine", volume=.08, delay=0){
-    if(!audioCtx || !bgmEnabled) return;
-
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-
-    osc.type = type;
-    osc.frequency.value = freq;
-
-    gain.gain.setValueAtTime(0, audioCtx.currentTime + delay);
-    gain.gain.linearRampToValueAtTime(
-        volume,
-        audioCtx.currentTime + delay + .03
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        .001,
-        audioCtx.currentTime + delay + duration
-    );
-
-    osc.connect(gain);
-    gain.connect(master);
-
-    osc.start(audioCtx.currentTime + delay);
-    osc.stop(audioCtx.currentTime + delay + duration + .05);
-}
-
-function startBGM(){
-    if(!audioCtx || !bgmEnabled || bgmTimer) return;
-
-    bgmStep = 0;
-
-    bgmTimer = setInterval(()=>{
-
-        if(!bgmEnabled) return;
-
-        /*
-         * 「怖さ」と「切なさ」を混ぜるため、
-         * 低い持続音 + 不協和音 + 高い短音を組み合わせる。
-         */
-
-        const progression = [
-            55,
-            61.74,
-            65.41,
-            58.27,
-            49,
-            65.41,
-            55,
-            46.25
-        ];
-
-        const base = progression[bgmStep % progression.length];
-
-        tone(base, 1.9, "sine", .045);
-        tone(base * 1.498, 1.2, "triangle", .018, .1);
-
-        if(bgmStep % 4 === 0){
-            tone(base * 2.01, .7, "sine", .012, .25);
-        }
-
-        /*
-         * たまに遠くで鳴るような高音。
-         */
-        if(bgmStep % 7 === 3){
-            tone(base * 5.02, .9, "sine", .009, .4);
-        }
-
-        bgmStep++;
-
-    }, 1100);
-}
-
-function stopBGM(){
-    if(bgmTimer){
-        clearInterval(bgmTimer);
-        bgmTimer = null;
-    }
-}
-
-function toggleBGM(){
-    bgmEnabled = !bgmEnabled;
-
-    if(bgmEnabled){
-        initAudio();
-        startBGM();
-        showToast("BGM ON");
-    }else{
-        stopBGM();
-        showToast("BGM OFF");
-    }
-}
-
-function seClick(){
-    if(!audioCtx || !bgmEnabled) return;
-    tone(180, .08, "square", .025);
-}
-
-function seChoice(){
-    if(!audioCtx || !bgmEnabled) return;
-    tone(280, .12, "sine", .035);
-    tone(420, .18, "sine", .018, .08);
-}
-
-function seScare(){
-    if(!audioCtx || !bgmEnabled) return;
-
-    tone(38, .7, "sawtooth", .08);
-    tone(41, .55, "sawtooth", .06, .08);
-    tone(82, .35, "square", .035, .1);
-}
-
-function seSad(){
-    if(!audioCtx || !bgmEnabled) return;
-
-    tone(261.63, 1.2, "sine", .025);
-    tone(233.08, 1.5, "sine", .02, .4);
-    tone(196, 1.8, "sine", .016, .9);
-}
-
-/* =========================================================
-   STORY
-========================================================= */
-
 const scenes = [
 
-/* 0 */
-{
-    chapter:"序章　白い部屋",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`目を覚ましたとき、
-
-そこには「何もなかった」。
-
-天井もない。
-床もない。
-壁さえ、あるのか分からない。
-
-ただ一つ。
-
-遠くに、白い扉だけが立っていた。`
-},
-
-/* 1 */
-{
-    chapter:"序章　白い部屋",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`扉には文字が刻まれている。
-
-『忘れた者だけが、ここから出られる』
-
-意味が分からない。
-
-それでも、その文字だけが妙に懐かしかった。`
-},
-
-/* 2 */
-{
-    chapter:"序章　白い部屋",
-    bg:"dark",
-    speaker:"？？？",
-    char:"none",
-    text:
-`「……また来た」`
-},
-
-/* 3 */
-{
-    chapter:"序章　白い部屋",
-    bg:"dark",
-    speaker:"？？？",
-    char:"none",
-    text:
-`振り返る。
-
-誰もいない。`
-},
-
-/* 4 */
-{
-    chapter:"序章　白い部屋",
-    bg:"dark",
-    speaker:"？？？",
-    char:"none",
-    text:
-`「今度こそ、最後にして」`
-},
-
-/* 5 */
-{
-    chapter:"序章　白い部屋",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`その声を聞いた瞬間、
-
-胸の奥が痛んだ。`
-},
-
-/* 6 */
-{
-    chapter:"序章　白い部屋",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`痛い理由だけが、
-
-思い出せなかった。`,
-    scare:true
-},
-
-/* 7 */
-{
-    chapter:"第一章　皇 紅蓮",
-    bg:"memory",
-    speaker:"",
-    char:"none",
-    text:
-`扉を開けた。`
-},
-
-/* 8 */
-{
-    chapter:"第一章　皇 紅蓮",
-    bg:"red",
-    speaker:"",
-    char:"guren",
-    text:
-`赤い月が浮かんでいた。
-
-その下に、一人の男が立っている。`
-},
-
-/* 9 */
-{
-    chapter:"第一章　皇 紅蓮",
-    bg:"red",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……誰だ、お前」`
-},
-
-/* 10 */
-{
-    chapter:"第一章　皇 紅蓮",
-    bg:"red",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「ここは俺の場所だったはずだ」`
-},
-
-/* 11 */
-{
-    chapter:"第一章　皇 紅蓮",
-    bg:"red",
-    speaker:"",
-    char:"none",
-    text:
-`皇 紅蓮。
-
-最上位吸血鬼。
-そして幽霊。
-
-霊界から追放された存在。`
-},
-
-/* 12 */
-{
-    chapter:"第一章　皇 紅蓮",
-    bg:"red",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……違うな」
-
-「追放された、じゃない」`
-},
-
-/* 13 */
-{
-    chapter:"第一章　皇 紅蓮",
-    bg:"red",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「俺は……」
-
-「最初から、いなかったことにされたんだ」`
-},
-
-/* 14 */
-{
-    chapter:"第一章　皇 紅蓮",
-    bg:"red",
-    speaker:"",
-    char:"none",
-    text:
-`その言葉だけが、
-
-妙に冷たく残った。`
-},
-
-/* 15 */
-{
-    chapter:"第二章　下僕",
-    bg:"dark",
-    speaker:"",
-    char:"geboku",
-    text:
-`「皇様」`
-},
-
-/* 16 */
-{
-    chapter:"第二章　下僕",
-    bg:"dark",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……下僕？」`
-},
-
-/* 17 */
-{
-    chapter:"第二章　下僕",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「はい」
-
-「探しました」`
-},
-
-/* 18 */
-{
-    chapter:"第二章　下僕",
-    bg:"dark",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「どうしてここにいる」`
-},
-
-/* 19 */
-{
-    chapter:"第二章　下僕",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「分かりません」
-
-「でも……皇様がいなくなる夢を見ました」`
-},
-
-/* 20 */
-{
-    chapter:"第二章　下僕",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`下僕は笑った。
-
-いつもの笑顔だった。
-
-けれど、
-
-その目だけは笑っていなかった。`
-},
-
-/* 21 */
-{
-    chapter:"第二章　下僕",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「だから、迎えに来ました」`
-},
-
-/* 22 */
-{
-    chapter:"第三章　何でも屋",
-    bg:"memory",
-    speaker:"",
-    char:"enpi",
-    text:
-`「……二人とも、そこで止まって」`
-},
-
-/* 23 */
-{
-    chapter:"第三章　何でも屋",
-    bg:"memory",
-    speaker:"焔緋くん",
-    char:"enpi",
-    text:
-`「その先、普通じゃない」`
-},
-
-/* 24 */
-{
-    chapter:"第三章　何でも屋",
-    bg:"memory",
-    speaker:"",
-    char:"none",
-    text:
-`現れたのは、
-
-裏社会で生きる「何でも屋」。
-
-焔緋くん。`
-},
-
-/* 25 */
-{
-    chapter:"第三章　何でも屋",
-    bg:"memory",
-    speaker:"焔緋くん",
-    char:"enpi",
-    text:
-`「俺は焔緋くん」
-
-「名前だけ覚えてくれればいい」`
-},
-
-/* 26 */
-{
-    chapter:"第三章　何でも屋",
-    bg:"memory",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「妙な名前だな」`
-},
-
-/* 27 */
-{
-    chapter:"第三章　何でも屋",
-    bg:"memory",
-    speaker:"焔緋くん",
-    char:"enpi",
-    text:
-`「お互い様だろ」`
-},
-
-/* 28 */
-{
-    chapter:"第三章　何でも屋",
-    bg:"memory",
-    speaker:"",
-    char:"none",
-    text:
-`一瞬だけ、
-
-三人の間に普通の空気が流れた。`
-},
-
-/* 29 */
-{
-    chapter:"第三章　何でも屋",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`そのとき。
-
-遠くから、
-
-「何か」が歩いてくる音がした。`
-},
-
-/* 30 */
-{
-    chapter:"第三章　何でも屋",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`一歩。
-
-また一歩。
-
-けれど、
-
-足音の数が多すぎる。`,
-    scare:true
-},
-
-/* 31 */
-{
-    chapter:"第三章　何でも屋",
-    bg:"dark",
-    speaker:"焔緋くん",
-    char:"enpi",
-    text:
-`「走るぞ」`
-},
-
-/* 32 */
-{
-    chapter:"第三章　何でも屋",
-    bg:"dark",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「俺は逃げない」`
-},
-
-/* 33 */
-{
-    chapter:"第三章　何でも屋",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「では、僕も」`
-},
-
-/* 34 */
-{
-    chapter:"第三章　何でも屋",
-    bg:"dark",
-    speaker:"焔緋くん",
-    char:"enpi",
-    text:
-`「……本当に似た者同士だな、お前ら」`
-},
-
-/* 35 */
-{
-    chapter:"第四章　灯影",
-    bg:"white",
-    speaker:"",
-    char:"touei",
-    text:
-`白い炎が、
-
-暗闇を切り裂いた。`
-},
-
-/* 36 */
-{
-    chapter:"第四章　灯影",
-    bg:"white",
-    speaker:"？？？",
-    char:"touei",
-    text:
-`「そこまでだ」`
-},
-
-/* 37 */
-{
-    chapter:"第四章　灯影",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`現れた男の名は、
-
-焔緋 灯影。`
-},
-
-/* 38 */
-{
-    chapter:"第四章　灯影",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`焔緋くんとは別人。
-
-終焉の管理者。`
-},
-
-/* 39 */
-{
-    chapter:"第四章　灯影",
-    bg:"white",
-    speaker:"焔緋 灯影",
-    char:"touei",
-    text:
-`「君たちは、まだ知らない」`
-},
-
-/* 40 */
-{
-    chapter:"第四章　灯影",
-    bg:"white",
-    speaker:"焔緋 灯影",
-    char:"touei",
-    text:
-`「この世界は、
-
-君たちが忘れた記憶で作られている」`
-},
-
-/* 41 */
-{
-    chapter:"第四章　灯影",
-    bg:"white",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……じゃあ、この世界を壊せば」`
-},
-
-/* 42 */
-{
-    chapter:"第四章　灯影",
-    bg:"white",
-    speaker:"焔緋 灯影",
-    char:"touei",
-    text:
-`「君自身も消える」`
-},
-
-/* 43 */
-{
-    chapter:"第四章　灯影",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`誰も喋らなかった。`
-},
-
-/* 44 */
-{
-    chapter:"第五章　記憶",
-    bg:"memory",
-    speaker:"",
-    char:"none",
-    text:
-`夜。
-
-四人は小さな部屋に集まった。`
-},
-
-/* 45 */
-{
-    chapter:"第五章　記憶",
-    bg:"memory",
-    speaker:"焔緋くん",
-    char:"enpi",
-    text:
-`「なあ」
-
-「もし全部終わったら、どうする？」`
-},
-
-/* 46 */
-{
-    chapter:"第五章　記憶",
-    bg:"memory",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「皇様についていきます」`
-},
-
-/* 47 */
-{
-    chapter:"第五章　記憶",
-    bg:"memory",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……俺は」
-
-「みんなで帰りたい」`
-},
-
-/* 48 */
-{
-    chapter:"第五章　記憶",
-    bg:"memory",
-    speaker:"",
-    char:"none",
-    text:
-`皇 紅蓮が、
-
-初めて弱い声を出した。`
-},
-
-/* 49 */
-{
-    chapter:"第五章　記憶",
-    bg:"memory",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「俺はもう、
-
-一人になるのは嫌なんだ」`
-},
-
-/* 50 */
-{
-    chapter:"第五章　記憶",
-    bg:"memory",
-    speaker:"",
-    char:"none",
-    text:
-`その夜、
-
-誰も眠らなかった。`
-},
-
-/* 51 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"",
-    char:"none",
-    text:
-`翌朝。
-
-世界が割れた。`
-},
-
-/* 52 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"",
-    char:"none",
-    text:
-`空が赤く染まり、
-
-床に亀裂が走る。`
-},
-
-/* 53 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"焔緋 灯影",
-    char:"touei",
-    text:
-`「来る」`
-},
-
-/* 54 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"",
-    char:"none",
-    text:
-`世界の外側から、
-
-名前のない何かが侵入した。`
-},
-
-/* 55 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"焔緋くん",
-    char:"enpi",
-    text:
-`「数が多すぎる！」`
-},
-
-/* 56 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「下僕！」
-
-「後ろを頼む！」`
-},
-
-/* 57 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「了解しました」`
-},
-
-/* 58 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"",
-    char:"none",
-    text:
-`戦いが始まった。`
-},
-
-/* 59 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"",
-    char:"none",
-    text:
-`皇 紅蓮は血界を広げ、
-
-焔緋くんは道を切り開く。
-
-下僕は全てを見ていた。`
-},
-
-/* 60 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「皇様」
-
-「右です」`
-},
-
-/* 61 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「分かってる！」`
-},
-
-/* 62 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"",
-    char:"none",
-    text:
-`しかし、
-
-世界そのものが敵だった。`
-},
-
-/* 63 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"焔緋 灯影",
-    char:"touei",
-    text:
-`「皇 紅蓮」
-
-「そこから動くな」`
-},
-
-/* 64 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……灯影？」`
-},
-
-/* 65 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"",
-    char:"none",
-    text:
-`一瞬。
-
-白い炎が消えた。`
-},
-
-/* 66 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"",
-    char:"none",
-    text:
-`そして、
-
-皇 紅蓮の姿が消えた。`
-},
-
-/* 67 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「……皇様？」`
-},
-
-/* 68 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"焔緋くん",
-    char:"enpi",
-    text:
-`「紅蓮！」`
-},
-
-/* 69 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"",
-    char:"none",
-    text:
-`返事はない。`
-},
-
-/* 70 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"焔緋 灯影",
-    char:"touei",
-    text:
-`「……」`
-},
-
-/* 71 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"焔緋 灯影",
-    char:"touei",
-    text:
-`「……許さない」`
-},
-
-/* 72 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"",
-    char:"none",
-    text:
-`初めて、
-
-灯影の声が震えた。`
-},
-
-/* 73 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"焔緋 灯影",
-    char:"touei",
-    text:
-`「終焉支配――」`
-},
-
-/* 74 */
-{
-    chapter:"第六章　崩壊",
-    bg:"red",
-    speaker:"",
-    char:"none",
-    text:
-`世界が、
-
-静かになった。`,
-    scare:true
-},
-
-/* 75 */
-{
-    chapter:"第六章　崩壊",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`音が消えた。
-
-色も消えた。
-
-そして――`
-},
-
-/* 76 */
-{
-    chapter:"第六章　崩壊",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`「皇 紅蓮」という存在だけが、
-
-世界から切り離された。`
-},
-
-/* 77 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"",
-    char:"guren",
-    text:
-`「……ここは」`
-},
-
-/* 78 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`皇 紅蓮は、
-
-白い部屋で目を覚ました。`
-},
-
-/* 79 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「また、この部屋か」`
-},
-
-/* 80 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`目の前に、
-
-あの白い扉があった。`
-},
-
-/* 81 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"？？？",
-    char:"none",
-    text:
-`「覚えている？」`
-},
-
-/* 82 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……何を」`
-},
-
-/* 83 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"？？？",
-    char:"none",
-    text:
-`「君が、
-
-どうして一人になったのか」`
-},
-
-/* 84 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`記憶が流れ込んでくる。`
-},
-
-/* 85 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"？？？",
-    char:"none",
-    text:
-`「君は追放されたんじゃない」`
-},
-
-/* 86 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"？？？",
-    char:"none",
-    text:
-`「君は――」
-
-「守るために、外された」`
-},
-
-/* 87 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……俺が？」`
-},
-
-/* 88 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"？？？",
-    char:"none",
-    text:
-`「君が残れば、
-
-世界そのものが壊れるから」`
-},
-
-/* 89 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`皇 紅蓮は、
-
-しばらく何も言わなかった。`
-},
-
-/* 90 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……じゃあ」
-
-「みんなを守るために、
-
-俺は忘れられたのか」`
-},
-
-/* 91 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"？？？",
-    char:"none",
-    text:
-`「そう」`
-},
-
-/* 92 */
-{
-    chapter:"第七章　白い部屋",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`その答えは、
-
-あまりにも優しかった。`
-},
-
-/* 93 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"",
-    char:"geboku",
-    text:
-`その頃。
-
-下僕は一人で歩いていた。`
-},
-
-/* 94 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「皇様……」`
-},
-
-/* 95 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`未来が、
-
-いくつも見える。`
-},
-
-/* 96 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「全部違う」`
-},
-
-/* 97 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「どの未来でも、
-
-皇様が消えてしまう」`
-},
-
-/* 98 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`手が震えた。`
-},
-
-/* 99 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「だったら……」`
-},
-
-/* 100 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「未来を選ぶんじゃなくて」`
-},
-
-/* 101 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「未来そのものを、
-
-変えればいい」`
-},
-
-/* 102 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`その瞬間。
-
-世界が止まった。`
-},
-
-/* 103 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`下僕の身体に、
-
-見たことのない光が走る。`
-},
-
-/* 104 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「……これは？」`
-},
-
-/* 105 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"？？？",
-    char:"none",
-    text:
-`「君は、
-
-見たものを理解するだけじゃない」`
-},
-
-/* 106 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"？？？",
-    char:"none",
-    text:
-`「君は――」
-
-「それを、コピーできる」`
-},
-
-/* 107 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"",
-    char:"geboku",
-    text:
-`下僕は、
-
-ゆっくり顔を上げた。`
-},
-
-/* 108 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「コピー……」`
-},
-
-/* 109 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「これなら……」`
-},
-
-/* 110 */
-{
-    chapter:"第八章　下僕の目覚め",
-    bg:"dark",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「皇様を、
-
-迎えに行ける」`
-},
-
-/* 111 */
-{
-    chapter:"第九章　再会",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`白い扉が開く。`
-},
-
-/* 112 */
-{
-    chapter:"第九章　再会",
-    bg:"white",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……下僕？」`
-},
-
-/* 113 */
-{
-    chapter:"第九章　再会",
-    bg:"white",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「はい」`
-},
-
-/* 114 */
-{
-    chapter:"第九章　再会",
-    bg:"white",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「どうして……」`
-},
-
-/* 115 */
-{
-    chapter:"第九章　再会",
-    bg:"white",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「約束したからです」`
-},
-
-/* 116 */
-{
-    chapter:"第九章　再会",
-    bg:"white",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……そんな約束、
-
-俺は覚えてない」`
-},
-
-/* 117 */
-{
-    chapter:"第九章　再会",
-    bg:"white",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「僕は覚えています」`
-},
-
-/* 118 */
-{
-    chapter:"第九章　再会",
-    bg:"white",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「だから、それで十分です」`
-},
-
-/* 119 */
-{
-    chapter:"第九章　再会",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`皇 紅蓮は、
-
-何も言えなかった。`
-},
-
-/* 120 */
-{
-    chapter:"第九章　再会",
-    bg:"white",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……帰ろう」`
-},
-
-/* 121 */
-{
-    chapter:"第九章　再会",
-    bg:"white",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「はい」`
-},
-
-/* 122 */
-{
-    chapter:"終章　白い記憶",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`二人が扉を抜ける。`
-},
-
-/* 123 */
-{
-    chapter:"終章　白い記憶",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`しかし、
-
-扉の向こうには、
-
-もう一人立っていた。`,
-    scare:true
-},
-
-/* 124 */
-{
-    chapter:"終章　白い記憶",
-    bg:"dark",
-    speaker:"焔緋くん",
-    char:"enpi",
-    text:
-`「遅かったな」`
-},
-
-/* 125 */
-{
-    chapter:"終章　白い記憶",
-    bg:"dark",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……お前」`
-},
-
-/* 126 */
-{
-    chapter:"終章　白い記憶",
-    bg:"dark",
-    speaker:"焔緋くん",
-    char:"enpi",
-    text:
-`「待ってたんだよ」`
-},
-
-/* 127 */
-{
-    chapter:"終章　白い記憶",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`その後ろには、
-
-灯影がいた。`
-},
-
-/* 128 */
-{
-    chapter:"終章　白い記憶",
-    bg:"white",
-    speaker:"焔緋 灯影",
-    char:"touei",
-    text:
-`「終わらせる」`
-},
-
-/* 129 */
-{
-    chapter:"終章　白い記憶",
-    bg:"white",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……今度は、
-
-一緒に？」`
-},
-
-/* 130 */
-{
-    chapter:"終章　白い記憶",
-    bg:"white",
-    speaker:"焔緋 灯影",
-    char:"touei",
-    text:
-`「ああ」`
-},
-
-/* 131 */
-{
-    chapter:"終章　白い記憶",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`四人は、
-
-白い世界の中心へ歩いた。`
-},
-
-/* 132 */
-{
-    chapter:"終章　白い記憶",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`そこで、
-
-皇 紅蓮が立ち止まる。`
-},
-
-/* 133 */
-{
-    chapter:"終章　白い記憶",
-    bg:"white",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「なあ」`
-},
-
-/* 134 */
-{
-    chapter:"終章　白い記憶",
-    bg:"white",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「もしまた、
-
-俺が忘れられたら」`
-},
-
-/* 135 */
-{
-    chapter:"終章　白い記憶",
-    bg:"white",
-    speaker:"下僕",
-    char:"geboku",
-    text:
-`「何度でも、
-
-思い出させます」`
-},
-
-/* 136 */
-{
-    chapter:"終章　白い記憶",
-    bg:"white",
-    speaker:"皇 紅蓮",
-    char:"guren",
-    text:
-`「……そうか」`
-},
-
-/* 137 */
-{
-    chapter:"終章　白い記憶",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`皇 紅蓮は笑った。`
-},
-
-/* 138 */
-{
-    chapter:"終章　白い記憶",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`ずっと一人だった男が、
-
-初めて、
-
-安心したように笑った。`
-},
-
-/* 139 */
-{
-    chapter:"終章　白い記憶",
-    bg:"white",
-    speaker:"",
-    char:"none",
-    text:
-`白い世界が、
-
-ゆっくり崩れていく。`
-},
-
-/* 140 */
-{
-    chapter:"終章　白い記憶",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`最後に聞こえたのは、
-
-誰かの声だった。`
-},
-
-/* 141 */
-{
-    chapter:"終章　白い記憶",
-    bg:"dark",
-    speaker:"？？？",
-    char:"none",
-    text:
-`「忘れないで」`
-},
-
-/* 142 */
-{
-    chapter:"終章　白い記憶",
-    bg:"dark",
-    speaker:"",
-    char:"none",
-    text:
-`そして、
-
-扉は閉じた。`
-},
-
-/* 143 */
-{
-    chapter:"終幕",
-    bg:"end",
-    speaker:"",
-    char:"none",
-    text:
-`――それでも、
-
-誰も一人にはならなかった。`
-},
-
-/* 144 */
-{
-    chapter:"終幕",
-    bg:"end",
-    speaker:"",
-    char:"none",
-    text:
-`FIN.`
-}
+    {
+        chapter:"PROLOGUE",
+        bg:"school",
+        bgm:"school",
+        name:"ナレーション",
+        text:"異世界と現代が交わる場所――星ノ宮学園。\nそこには、人間も、魔族も、幽霊も、神に近い存在さえも通っていた。",
+    },
+
+    {
+        chapter:"PROLOGUE",
+        bg:"school",
+        bgm:"school",
+        name:"ナレーション",
+        text:"春。\n桜が舞う校門の前で、五人の運命が静かに動き始める。",
+    },
+
+    {
+        chapter:"第1章　最悪の出会い",
+        bg:"school",
+        bgm:"school",
+        name:"皇 紅蓮",
+        text:"……邪魔だ。",
+    },
+
+    {
+        chapter:"第1章　最悪の出会い",
+        bg:"school",
+        bgm:"tension",
+        name:"雫",
+        text:"はぁ！？\nいきなり何なの、その態度！",
+    },
+
+    {
+        chapter:"第1章　最悪の出会い",
+        bg:"school",
+        bgm:"tension",
+        name:"皇 紅蓮",
+        text:"道の真ん中に立っている方が悪い。",
+    },
+
+    {
+        chapter:"第1章　最悪の出会い",
+        bg:"school",
+        bgm:"tension",
+        name:"雫",
+        text:"あんたこそ偉そうに！\n初対面で人にそんな言い方する！？",
+    },
+
+    {
+        chapter:"第1章　最悪の出会い",
+        bg:"school",
+        bgm:"tension",
+        name:"ナレーション",
+        text:"こうして二人は、出会ったその日に最悪の印象を残した。",
+    },
+
+    {
+        chapter:"第2章　隣の席",
+        bg:"school",
+        bgm:"school",
+        name:"先生",
+        text:"席替えをするぞ。",
+    },
+
+    {
+        chapter:"第2章　隣の席",
+        bg:"school",
+        bgm:"school",
+        name:"ナレーション",
+        text:"そして――偶然とは残酷なものだった。",
+    },
+
+    {
+        chapter:"第2章　隣の席",
+        bg:"school",
+        bgm:"tension",
+        name:"雫",
+        text:"……嘘でしょ。",
+    },
+
+    {
+        chapter:"第2章　隣の席",
+        bg:"school",
+        bgm:"tension",
+        name:"皇 紅蓮",
+        text:"……最悪だ。",
+    },
+
+    {
+        chapter:"第2章　隣の席",
+        bg:"school",
+        bgm:"school",
+        name:"ナレーション",
+        text:"二人は隣の席になった。",
+    },
+
+    {
+        chapter:"第3章　終焉を知る少女",
+        bg:"sunset",
+        bgm:"fragile",
+        name:"焔緋 灯影",
+        text:"……この世界は、いつか終わる。",
+    },
+
+    {
+        chapter:"第3章　終焉を知る少女",
+        bg:"sunset",
+        bgm:"fragile",
+        name:"焔緋 灯影",
+        text:"私は、その未来を知ってる。\nだから……何をしても無駄なの。",
+    },
+
+    {
+        chapter:"第3章　終焉を知る少女",
+        bg:"sunset",
+        bgm:"fragile",
+        name:"下僕",
+        text:"ならば、その未来を変えればいい。",
+    },
+
+    {
+        chapter:"第3章　終焉を知る少女",
+        bg:"sunset",
+        bgm:"fragile",
+        name:"焔緋 灯影",
+        text:"……できないよ。",
+    },
+
+    {
+        chapter:"第3章　終焉を知る少女",
+        bg:"sunset",
+        bgm:"fragile",
+        name:"下僕",
+        text:"できます。\n少なくとも、俺は諦めません。",
+    },
+
+    {
+        chapter:"第3章　終焉を知る少女",
+        bg:"sunset",
+        bgm:"fragile",
+        name:"焔緋 灯影",
+        text:"……変な人。",
+    },
+
+    {
+        chapter:"第3章　終焉を知る少女",
+        bg:"sunset",
+        bgm:"fragile",
+        name:"下僕",
+        text:"よく言われます。",
+    },
+
+    {
+        chapter:"第4章　気になる人",
+        bg:"school",
+        bgm:"school",
+        name:"雫",
+        text:"ねぇ、皇。",
+    },
+
+    {
+        chapter:"第4章　気になる人",
+        bg:"school",
+        bgm:"school",
+        name:"皇 紅蓮",
+        text:"何だ。",
+    },
+
+    {
+        chapter:"第4章　気になる人",
+        bg:"school",
+        bgm:"school",
+        name:"雫",
+        text:"今日、ちょっと優しかったよね。",
+    },
+
+    {
+        chapter:"第4章　気になる人",
+        bg:"school",
+        bgm:"school",
+        name:"皇 紅蓮",
+        text:"……気のせいだ。",
+    },
+
+    {
+        chapter:"第4章　気になる人",
+        bg:"school",
+        bgm:"school",
+        name:"雫",
+        text:"ふーん。",
+    },
+
+    {
+        chapter:"第4章　気になる人",
+        bg:"school",
+        bgm:"school",
+        name:"ナレーション",
+        text:"敵だと思っていた相手。\nけれど、いつの間にか視線で追うようになっていた。",
+    },
+
+    {
+        chapter:"第5章　嫉妬",
+        bg:"sunset",
+        bgm:"jealousy",
+        name:"ナレーション",
+        text:"放課後。\n雫は別の男子生徒と楽しそうに話していた。",
+    },
+
+    {
+        chapter:"第5章　嫉妬",
+        bg:"sunset",
+        bgm:"jealousy",
+        name:"皇 紅蓮",
+        text:"…………。",
+    },
+
+    {
+        chapter:"第5章　嫉妬",
+        bg:"sunset",
+        bgm:"jealousy",
+        name:"下僕",
+        text:"どうしました？",
+    },
+
+    {
+        chapter:"第5章　嫉妬",
+        bg:"sunset",
+        bgm:"jealousy",
+        name:"皇 紅蓮",
+        text:"何でもない。",
+    },
+
+    {
+        chapter:"第5章　嫉妬",
+        bg:"sunset",
+        bgm:"jealousy",
+        name:"下僕",
+        text:"……雫さんを見ていますね。",
+    },
+
+    {
+        chapter:"第5章　嫉妬",
+        bg:"sunset",
+        bgm:"jealousy",
+        name:"皇 紅蓮",
+        text:"見ていない。",
+    },
+
+    {
+        chapter:"第5章　嫉妬",
+        bg:"sunset",
+        bgm:"jealousy",
+        name:"下僕",
+        text:"嫉妬ですか？",
+    },
+
+    {
+        chapter:"第5章　嫉妬",
+        bg:"sunset",
+        bgm:"jealousy",
+        name:"皇 紅蓮",
+        text:"違う。",
+    },
+
+    {
+        chapter:"第5章　嫉妬",
+        bg:"sunset",
+        bgm:"jealousy",
+        name:"ナレーション",
+        text:"否定する声だけが、妙に小さかった。",
+    },
+
+    {
+        chapter:"第6章　修羅場",
+        bg:"dark",
+        bgm:"conflict",
+        name:"雫",
+        text:"皇！",
+    },
+
+    {
+        chapter:"第6章　修羅場",
+        bg:"dark",
+        bgm:"conflict",
+        name:"皇 紅蓮",
+        text:"何だ。",
+    },
+
+    {
+        chapter:"第6章　修羅場",
+        bg:"dark",
+        bgm:"conflict",
+        name:"雫",
+        text:"さっきから何なの！？\n私が誰と話そうと勝手でしょ！",
+    },
+
+    {
+        chapter:"第6章　修羅場",
+        bg:"dark",
+        bgm:"conflict",
+        name:"皇 紅蓮",
+        text:"……勝手にすればいい。",
+    },
+
+    {
+        chapter:"第6章　修羅場",
+        bg:"dark",
+        bgm:"conflict",
+        name:"雫",
+        text:"じゃあ、なんでそんな顔するのよ！",
+    },
+
+    {
+        chapter:"第6章　修羅場",
+        bg:"dark",
+        bgm:"conflict",
+        name:"皇 紅蓮",
+        text:"…………。",
+    },
+
+    {
+        chapter:"第6章　修羅場",
+        bg:"dark",
+        bgm:"conflict",
+        name:"ナレーション",
+        text:"二人の距離は近づいていた。\nだからこそ、言葉は簡単にすれ違った。",
+    },
+
+    {
+        chapter:"第7章　灯影の涙",
+        bg:"night",
+        bgm:"fragile",
+        name:"焔緋 灯影",
+        text:"私が未来を変えたら……誰かが傷つくかもしれない。",
+    },
+
+    {
+        chapter:"第7章　灯影の涙",
+        bg:"night",
+        bgm:"fragile",
+        name:"下僕",
+        text:"それでも、あなたが一人で背負う必要はありません。",
+    },
+
+    {
+        chapter:"第7章　灯影の涙",
+        bg:"night",
+        bgm:"fragile",
+        name:"焔緋 灯影",
+        text:"どうして……そこまでしてくれるの？",
+    },
+
+    {
+        chapter:"第7章　灯影の涙",
+        bg:"night",
+        bgm:"confession",
+        name:"下僕",
+        text:"あなたが大切だからです。",
+    },
+
+    {
+        chapter:"第7章　灯影の涙",
+        bg:"night",
+        bgm:"confession",
+        name:"焔緋 灯影",
+        text:"……ずるいよ。",
+    },
+
+    {
+        chapter:"第7章　灯影の涙",
+        bg:"night",
+        bgm:"confession",
+        name:"焔緋 灯影",
+        text:"そんなこと言われたら……私も、あなたを大切にしたくなる。",
+    },
+
+    {
+        chapter:"第8章　選ぶ未来",
+        bg:"dark",
+        bgm:"endingBattle",
+        name:"ナレーション",
+        text:"世界を覆う終焉の気配。\n灯影が知っていた未来が、ついに動き始める。",
+    },
+
+    {
+        chapter:"第8章　選ぶ未来",
+        bg:"dark",
+        bgm:"endingBattle",
+        name:"焔緋 灯影",
+        text:"来る……。",
+    },
+
+    {
+        chapter:"第8章　選ぶ未来",
+        bg:"dark",
+        bgm:"endingBattle",
+        name:"下僕",
+        text:"なら、一緒に迎え撃ちましょう。",
+    },
+
+    {
+        chapter:"第8章　選ぶ未来",
+        bg:"dark",
+        bgm:"endingBattle",
+        name:"焔緋 灯影",
+        text:"うん。\n今度は、一人じゃない。",
+    },
+
+    {
+        chapter:"第9章　皇の本音",
+        bg:"sunset",
+        bgm:"confession",
+        name:"皇 紅蓮",
+        text:"……雫。",
+    },
+
+    {
+        chapter:"第9章　皇の本音",
+        bg:"sunset",
+        bgm:"confession",
+        name:"雫",
+        text:"何？",
+    },
+
+    {
+        chapter:"第9章　皇の本音",
+        bg:"sunset",
+        bgm:"confession",
+        name:"皇 紅蓮",
+        text:"俺は、お前が他の奴と話していると……嫌だと思う。",
+    },
+
+    {
+        chapter:"第9章　皇の本音",
+        bg:"sunset",
+        bgm:"confession",
+        name:"雫",
+        text:"……それって。",
+    },
+
+    {
+        chapter:"第9章　皇の本音",
+        bg:"sunset",
+        bgm:"confession",
+        name:"皇 紅蓮",
+        text:"好きだ。\n……たぶん、ずっと前から。",
+    },
+
+    {
+        chapter:"第9章　皇の本音",
+        bg:"sunset",
+        bgm:"confession",
+        name:"雫",
+        text:"……遅いよ。",
+    },
+
+    {
+        chapter:"第9章　皇の本音",
+        bg:"sunset",
+        bgm:"confession",
+        name:"皇 紅蓮",
+        text:"……何？",
+    },
+
+    {
+        chapter:"第9章　皇の本音",
+        bg:"sunset",
+        bgm:"confession",
+        name:"雫",
+        text:"私も、ずっと待ってた。",
+    },
+
+    {
+        chapter:"第9章　皇の本音",
+        bg:"sunset",
+        bgm:"hope",
+        name:"ナレーション",
+        text:"犬猿の仲だった二人は、ようやく互いの気持ちを認めた。",
+    },
+
+    {
+        chapter:"第10章　春の約束",
+        bg:"night",
+        bgm:"hope",
+        name:"焔緋 灯影",
+        text:"未来が変わった。",
+    },
+
+    {
+        chapter:"第10章　春の約束",
+        bg:"night",
+        bgm:"hope",
+        name:"下僕",
+        text:"はい。",
+    },
+
+    {
+        chapter:"第10章　春の約束",
+        bg:"night",
+        bgm:"hope",
+        name:"焔緋 灯影",
+        text:"あなたがいてくれたから。",
+    },
+
+    {
+        chapter:"第10章　春の約束",
+        bg:"night",
+        bgm:"hope",
+        name:"下僕",
+        text:"これからも、隣にいます。",
+    },
+
+    {
+        chapter:"第10章　春の約束",
+        bg:"ending",
+        bgm:"hope",
+        name:"ナレーション",
+        text:"終わるはずだった世界。\nそれでも彼らは、未来を選んだ。",
+    },
+
+    {
+        chapter:"第10章　春の約束",
+        bg:"ending",
+        bgm:"hope",
+        name:"ナレーション",
+        text:"皇 紅蓮と雫。\n下僕と焔緋 灯影。\n二つの想いは、確かな形になった。",
+    },
+
+    {
+        chapter:"END",
+        bg:"ending",
+        bgm:"ending",
+        name:"ナレーション",
+        text:"儚くて、暖かい春。\nその世界で、五人はそれぞれの未来へ歩き始めた。",
+        ending:true
+    }
 
 ];
 
+
 /* =========================================================
-   UTIL
+   STATE
 ========================================================= */
 
-function $(id){
-    return document.getElementById(id);
+let currentScene = 0;
+let typing = false;
+let typingTimer = null;
+let fullText = "";
+
+let bgmEnabled = true;
+let volume = 0.45;
+
+const SAVE_KEY = "HOSHINOMIYA_LOVE_BGM_V3";
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const titleScreen = document.getElementById("titleScreen");
+const libraryScreen = document.getElementById("libraryScreen");
+const settingsScreen = document.getElementById("settingsScreen");
+const novelScreen = document.getElementById("novelScreen");
+const endingScreen = document.getElementById("endingScreen");
+
+const chapterEl = document.getElementById("chapter");
+const characterNameEl = document.getElementById("characterName");
+const textEl = document.getElementById("text");
+const choiceEl = document.getElementById("choice");
+const nextHintEl = document.getElementById("nextHint");
+const progressBar = document.getElementById("progressBar");
+const sceneBackground = document.getElementById("sceneBackground");
+const bgmStatus = document.getElementById("bgmStatus");
+const volumeSlider = document.getElementById("volume");
+
+
+/* =========================================================
+   SCREEN
+========================================================= */
+
+function hideAllScreens(){
+    [
+        titleScreen,
+        libraryScreen,
+        settingsScreen,
+        novelScreen,
+        endingScreen
+    ].forEach(el => el.classList.remove("active"));
 }
 
-function showScreen(id){
-    document.querySelectorAll(".screen").forEach(s=>{
-        s.classList.remove("active");
-    });
-
-    $(id).classList.add("active");
+function showTitle(){
+    hideAllScreens();
+    titleScreen.classList.add("active");
 }
 
-function showToast(message){
-    const t = $("toast");
-    t.textContent = message;
-    t.classList.add("show");
-
-    setTimeout(()=>{
-        t.classList.remove("show");
-    },1600);
+function showLibrary(){
+    hideAllScreens();
+    libraryScreen.classList.add("active");
 }
 
-function resetData(){
-    gameData = structuredClone(defaultData);
+function showSettings(){
+    hideAllScreens();
+    settingsScreen.classList.add("active");
+}
+
+
+/* =========================================================
+   GAME START
+========================================================= */
+
+function startGame(){
+
     currentScene = 0;
+
+    hideAllScreens();
+
+    novelScreen.classList.add("active");
+
+    initAudio();
+
+    showScene();
+
 }
 
-function saveGame(){
-    gameData.scene = currentScene;
-    localStorage.setItem(SAVE_KEY, JSON.stringify(gameData));
-    showToast("セーブしました");
-    seClick();
-}
+function loadGame(){
 
-function loadSave(){
+    const save = localStorage.getItem(SAVE_KEY);
+
+    if(!save){
+        alert("セーブデータがありません。");
+        return;
+    }
+
     try{
-        const raw = localStorage.getItem(SAVE_KEY);
-        if(!raw) return false;
 
-        const parsed = JSON.parse(raw);
+        const data = JSON.parse(save);
 
-        gameData = {
-            ...structuredClone(defaultData),
-            ...parsed,
-            flags:{
-                ...structuredClone(defaultData).flags,
-                ...(parsed.flags || {})
-            }
-        };
+        currentScene = data.currentScene || 0;
 
-        currentScene = Math.max(
-            0,
-            Math.min(
-                scenes.length-1,
-                Number(gameData.scene) || 0
-            )
-        );
+        bgmEnabled =
+            data.bgmEnabled !== undefined
+                ? data.bgmEnabled
+                : true;
 
-        return true;
+        volume =
+            data.volume !== undefined
+                ? data.volume
+                : 0.45;
+
+        volumeSlider.value = volume;
+
+        hideAllScreens();
+
+        novelScreen.classList.add("active");
+
+        initAudio();
+
+        showScene();
 
     }catch(e){
-        console.error(e);
-        localStorage.removeItem(SAVE_KEY);
-        return false;
+
+        alert("セーブデータを読み込めませんでした。");
+
     }
 }
 
-function deleteSave(){
-    localStorage.removeItem(SAVE_KEY);
-    showToast("セーブデータを削除しました");
-}
-
-function newGame(){
-    initAudio();
-    resetData();
-    showScreen("novelScreen");
-    renderScene();
-}
-
-function continueGame(){
-    initAudio();
-
-    if(!loadSave()){
-        showToast("セーブデータがありません");
-        return;
-    }
-
-    showScreen("novelScreen");
-    renderScene();
-}
-
-function backToTitle(){
-    if(typing){
-        finishTyping();
-        return;
-    }
-
-    showScreen("titleScreen");
-}
 
 /* =========================================================
-   CHARACTER
+   SAVE
 ========================================================= */
 
-const charInfo = {
-    guren:{
-        symbol:"†",
-        class:"portrait guren"
-    },
-    geboku:{
-        symbol:"◇",
-        class:"portrait geboku"
-    },
-    enpi:{
-        symbol:"炎",
-        class:"portrait enpi"
-    },
-    touei:{
-        symbol:"終",
-        class:"portrait touei"
-    }
-};
+function saveGame(){
 
-function renderCharacter(type){
-    const area = $("characterArea");
-    const portrait = $("portrait");
-    const tag = $("nameTag");
-
-    if(!type || type==="none"){
-        area.classList.add("none");
-        return;
-    }
-
-    area.classList.remove("none");
-
-    const info = charInfo[type];
-
-    portrait.className = info.class;
-    portrait.textContent = info.symbol;
-
-    const names = {
-        guren:"皇 紅蓮",
-        geboku:"下僕",
-        enpi:"焔緋くん",
-        touei:"焔緋 灯影"
+    const data = {
+        currentScene,
+        bgmEnabled,
+        volume,
+        savedAt:Date.now()
     };
 
-    tag.textContent = names[type];
+    localStorage.setItem(
+        SAVE_KEY,
+        JSON.stringify(data)
+    );
+
+    alert("セーブしました。");
+
 }
 
-/* =========================================================
-   STORY FLAGS
-========================================================= */
-
-function updateFlags(){
-    if(currentScene >= 77){
-        gameData.flags.whiteRoom = true;
-    }
-
-    if(currentScene >= 81){
-        gameData.flags.heardVoice = true;
-    }
-
-    if(currentScene >= 106){
-        gameData.flags.copy = true;
-    }
-}
 
 /* =========================================================
-   RENDER
+   SCENE
 ========================================================= */
 
-function renderScene(){
-    clearTimeout(typeTimer);
+function showScene(){
 
-    typing = false;
-
-    updateFlags();
+    if(currentScene >= scenes.length){
+        showEnding();
+        return;
+    }
 
     const scene = scenes[currentScene];
 
-    if(!scene){
-        finishGame();
-        return;
-    }
+    chapterEl.textContent = scene.chapter;
+    characterNameEl.textContent = scene.name;
 
-    $("chapterText").textContent = scene.chapter;
+    sceneBackground.className =
+        "sceneBackground " + scene.bg;
 
-    const bg = $("sceneBackground");
-    bg.className = "sceneBackground bg-" + (scene.bg || "dark");
+    textEl.textContent = "";
+    choiceEl.innerHTML = "";
 
-    $("speaker").textContent = scene.speaker || "";
+    progressBar.style.width =
+        ((currentScene / (scenes.length - 1)) * 100) + "%";
 
-    renderCharacter(scene.char);
+    setBGM(scene.bgm);
 
-    $("choices").innerHTML = "";
+    typeText(scene.text);
 
-    fullText = scene.text;
+    novelScreen.classList.remove("fade");
+    void novelScreen.offsetWidth;
+    novelScreen.classList.add("fade");
 
-    $("text").textContent = "";
-
-    $("hint").textContent = "タップ / クリックで続く";
-
-    if(scene.scare){
-        setTimeout(()=>{
-            triggerScare();
-        },300);
-    }
-
-    typeText(fullText);
 }
 
+
+/* =========================================================
+   TEXT
+========================================================= */
+
 function typeText(text){
+
+    clearInterval(typingTimer);
+
+    fullText = text;
     typing = true;
 
-    let i = 0;
+    let index = 0;
 
-    function step(){
+    textEl.textContent = "";
 
-        if(!typing) return;
+    nextHintEl.textContent =
+        "クリック / Enter / Space";
 
-        if(i < text.length){
+    typingTimer = setInterval(() => {
 
-            $("text").textContent += text[i];
+        textEl.textContent += fullText[index];
 
-            i++;
+        index++;
 
-            typeTimer = setTimeout(step,textSpeed);
+        if(index >= fullText.length){
 
-        }else{
+            clearInterval(typingTimer);
 
             typing = false;
 
-            $("hint").textContent =
-                currentScene === scenes.length-1
-                ? ""
-                : "タップ / クリックで続く";
         }
-    }
 
-    step();
+    }, 28);
+
 }
 
 function finishTyping(){
-    clearTimeout(typeTimer);
 
-    $("text").textContent = fullText;
+    if(!typing) return;
+
+    clearInterval(typingTimer);
+
+    textEl.textContent = fullText;
 
     typing = false;
 
-    $("hint").textContent =
-        currentScene === scenes.length-1
-        ? ""
-        : "タップ / クリックで続く";
 }
+
+
+/* =========================================================
+   NEXT
+========================================================= */
 
 function nextScene(){
-    initAudio();
 
     if(typing){
+
         finishTyping();
         return;
-    }
 
-    seClick();
-
-    if(currentScene >= scenes.length-1){
-        finishGame();
-        return;
     }
 
     currentScene++;
 
-    updateFlags();
+    if(currentScene >= scenes.length){
 
-    saveSilent();
+        showEnding();
 
-    renderScene();
-}
+    }else{
 
-function saveSilent(){
-    gameData.scene = currentScene;
+        showScene();
 
-    try{
-        localStorage.setItem(
-            SAVE_KEY,
-            JSON.stringify(gameData)
-        );
-    }catch(e){}
-}
-
-/* =========================================================
-   CHOICE SYSTEM
-========================================================= */
-
-function choose(label, callback){
-    if(typing){
-        finishTyping();
-        return;
     }
 
-    seChoice();
-
-    callback();
-
-    currentScene++;
-
-    updateFlags();
-
-    saveSilent();
-
-    renderScene();
 }
 
-/* =========================================================
-   CLICK / TOUCH
-========================================================= */
+novelScreen.addEventListener("click", e => {
 
-$("sceneArea").addEventListener("click",(e)=>{
-
-    if(e.target.closest("button")) return;
-
-    if(e.target.closest(".choice")) return;
+    if(
+        e.target.closest("button") ||
+        e.target.closest(".choice")
+    ){
+        return;
+    }
 
     nextScene();
+
 });
 
-/* =========================================================
-   SCARE
-========================================================= */
+document.addEventListener("keydown", e => {
 
-function triggerScare(){
-    seScare();
+    if(
+        e.code === "Enter" ||
+        e.code === "Space"
+    ){
 
-    const app = $("app");
+        if(novelScreen.classList.contains("active")){
 
-    app.classList.add("shake");
-    app.classList.add("glitch");
+            e.preventDefault();
 
-    const flash = document.createElement("div");
-    flash.className = "flash";
+            nextScene();
 
-    document.body.appendChild(flash);
+        }
 
-    setTimeout(()=>{
-        app.classList.remove("shake");
-        app.classList.remove("glitch");
-        flash.remove();
-    },700);
-}
+    }
+
+});
+
 
 /* =========================================================
    ENDING
 ========================================================= */
 
-function finishGame(){
+function showEnding(){
 
-    stopBGM();
-    seSad();
+    hideAllScreens();
 
-    const ending = determineEnding();
+    endingScreen.classList.add("active");
 
-    $("endingLabel").textContent = ending.label;
-    $("endingTitle").textContent = ending.title;
-    $("endingText").textContent = ending.text;
+    setBGM("ending");
 
-    showScreen("endingScreen");
 }
 
-function determineEnding(){
 
-    /*
-     * 基本ルートは感動系。
-     * コピー覚醒まで到達した通常プレイなら TRUE END。
-     */
+/* =========================================================
+   AUDIO ENGINE
+   Scene-based BGM
+========================================================= */
 
-    if(gameData.flags.copy && gameData.flags.whiteRoom){
+let audioContext = null;
+let masterGain = null;
 
-        return {
-            label:"TRUE END",
-            title:"忘れないという奇跡",
-            text:
-`皇 紅蓮は、もう一度だけ振り返った。
+let currentMusic = null;
+let currentBGMName = null;
 
-そこには、
-下僕がいた。
+let audioReady = false;
 
-焔緋くんがいた。
 
-灯影がいた。
+/*
+    BGM presets
 
-誰も何も言わない。
+    Web Audio APIだけで音を作るため、
+    外部MP3・外部ファイル不要。
+*/
 
-ただ、そこにいた。
+const BGM_PRESETS = {
 
-それだけで十分だった。
+    school:{
+        tempo:92,
+        notes:[
+            [261.63,0],
+            [329.63,.5],
+            [392,.9],
+            [329.63,1.4],
+            [293.66,2],
+            [349.23,2.5],
+            [440,3],
+            [349.23,3.5]
+        ],
+        type:"warm"
+    },
 
-忘れられてしまったとしても、
-何度でも思い出せばいい。
+    tension:{
+        tempo:108,
+        notes:[
+            [220,0],
+            [277.18,.45],
+            [329.63,.9],
+            [277.18,1.35],
+            [246.94,1.8],
+            [311.13,2.25],
+            [369.99,2.7],
+            [311.13,3.15]
+        ],
+        type:"tense"
+    },
 
-一人になってしまったとしても、
-迎えに行けばいい。
+    fragile:{
+        tempo:68,
+        notes:[
+            [220,0],
+            [261.63,.8],
+            [329.63,1.6],
+            [293.66,2.4],
+            [196,3.2],
+            [246.94,4]
+        ],
+        type:"fragile"
+    },
 
-白い部屋は消えた。
+    jealousy:{
+        tempo:76,
+        notes:[
+            [196,0],
+            [233.08,.65],
+            [277.18,1.3],
+            [233.08,1.95],
+            [185,2.6],
+            [220,3.25]
+        ],
+        type:"jealousy"
+    },
 
-けれど、
+    conflict:{
+        tempo:120,
+        notes:[
+            [146.83,0],
+            [174.61,.35],
+            [207.65,.7],
+            [174.61,1.05],
+            [155.56,1.4],
+            [196,1.75],
+            [233.08,2.1],
+            [196,2.45]
+        ],
+        type:"dark"
+    },
 
-あの日の記憶だけは、
+    confession:{
+        tempo:64,
+        notes:[
+            [261.63,0],
+            [329.63,1],
+            [392,2],
+            [493.88,3],
+            [392,4],
+            [329.63,5]
+        ],
+        type:"love"
+    },
 
-誰の中からも消えなかった。
+    endingBattle:{
+        tempo:128,
+        notes:[
+            [130.81,0],
+            [164.81,.35],
+            [196,.7],
+            [220,1.05],
+            [246.94,1.4],
+            [220,1.75],
+            [196,2.1],
+            [164.81,2.45]
+        ],
+        type:"battle"
+    },
 
-――忘れない。
+    hope:{
+        tempo:78,
+        notes:[
+            [261.63,0],
+            [329.63,.75],
+            [392,1.5],
+            [523.25,2.25],
+            [440,3],
+            [392,3.75],
+            [329.63,4.5],
+            [261.63,5.25]
+        ],
+        type:"hope"
+    },
 
-それが、
-この世界で最後に残った奇跡だった。`
-        };
+    ending:{
+        tempo:72,
+        notes:[
+            [261.63,0],
+            [329.63,.8],
+            [392,1.6],
+            [523.25,2.4],
+            [493.88,3.2],
+            [392,4],
+            [329.63,4.8],
+            [392,5.6],
+            [523.25,6.4]
+        ],
+        type:"ending"
+    }
+
+};
+
+
+/* =========================================================
+   AUDIO INIT
+========================================================= */
+
+function initAudio(){
+
+    if(audioReady){
+
+        if(audioContext &&
+           audioContext.state === "suspended"){
+
+            audioContext.resume();
+
+        }
+
+        return;
 
     }
+
+    try{
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+        masterGain =
+            audioContext.createGain();
+
+        masterGain.gain.value =
+            bgmEnabled ? volume : 0;
+
+        masterGain.connect(
+            audioContext.destination
+        );
+
+        audioReady = true;
+
+    }catch(e){
+
+        console.warn(
+            "Web Audio APIを利用できません。",
+            e
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CREATE OSCILLATOR
+========================================================= */
+
+function createTone(
+    frequency,
+    startTime,
+    duration,
+    gainValue,
+    waveform="sine"
+){
+
+    if(!audioContext || !masterGain) return;
+
+    const osc =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+    osc.type = waveform;
+
+    osc.frequency.setValueAtTime(
+        frequency,
+        startTime
+    );
+
+    gain.gain.setValueAtTime(
+        0.0001,
+        startTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        gainValue,
+        startTime + 0.04
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        startTime + duration
+    );
+
+    osc.connect(gain);
+    gain.connect(masterGain);
+
+    osc.start(startTime);
+    osc.stop(startTime + duration + .05);
+
+}
+
+
+/* =========================================================
+   BGM LOOP
+========================================================= */
+
+function buildMusic(name){
+
+    if(!audioContext) return null;
+
+    const preset =
+        BGM_PRESETS[name];
+
+    if(!preset) return null;
+
+    const now =
+        audioContext.currentTime + .05;
+
+    const beat =
+        60 / preset.tempo;
+
+    const loopLength =
+        beat * 8;
+
+    const nodes = [];
+
+    /*
+        メロディ
+    */
+
+    preset.notes.forEach(note => {
+
+        const freq = note[0];
+        const beatPosition = note[1];
+
+        let duration = beat * .75;
+
+        let waveform = "sine";
+
+        let gain = .045;
+
+        if(preset.type === "warm"){
+
+            waveform = "triangle";
+            gain = .04;
+
+        }
+
+        if(preset.type === "fragile"){
+
+            waveform = "sine";
+            gain = .035;
+
+        }
+
+        if(preset.type === "tense"){
+
+            waveform = "square";
+            gain = .018;
+
+        }
+
+        if(preset.type === "jealousy"){
+
+            waveform = "triangle";
+            gain = .022;
+
+        }
+
+        if(preset.type === "dark"){
+
+            waveform = "sawtooth";
+            gain = .012;
+
+        }
+
+        if(preset.type === "love"){
+
+            waveform = "triangle";
+            gain = .045;
+
+        }
+
+        if(preset.type === "battle"){
+
+            waveform = "square";
+            gain = .014;
+
+        }
+
+        if(preset.type === "hope"){
+
+            waveform = "triangle";
+            gain = .05;
+
+        }
+
+        if(preset.type === "ending"){
+
+            waveform = "sine";
+            gain = .055;
+
+        }
+
+        createTone(
+            freq,
+            now + beatPosition * beat,
+            duration,
+            gain,
+            waveform
+        );
+
+    });
+
+
+    /*
+        低音
+    */
+
+    const bassRoots = {
+
+        school:[130.81,146.83,164.81,146.83],
+        tension:[110,116.54,123.47,116.54],
+        fragile:[110,98,87.31,98],
+        jealousy:[98,103.83,92.5,87.31],
+        conflict:[73.42,82.41,87.31,73.42],
+        confession:[130.81,164.81,196,164.81],
+        endingBattle:[65.41,73.42,82.41,65.41],
+        hope:[130.81,146.83,164.81,196],
+        ending:[130.81,164.81,196,261.63]
+
+    };
+
+    const roots =
+        bassRoots[name] ||
+        bassRoots.school;
+
+    roots.forEach((root,i)=>{
+
+        createTone(
+            root,
+            now + i * beat * 2,
+            beat * 1.8,
+            .018,
+            "sine"
+        );
+
+    });
+
+
+    /*
+        柔らかいパッド
+    */
+
+    if(
+        preset.type === "fragile" ||
+        preset.type === "love" ||
+        preset.type === "hope" ||
+        preset.type === "ending"
+    ){
+
+        const padRoot =
+            roots[0];
+
+        createTone(
+            padRoot * 2,
+            now,
+            loopLength - .1,
+            .008,
+            "sine"
+        );
+
+    }
+
 
     return {
-        label:"END",
-        title:"白い記憶",
-        text:
-`白い扉は閉じた。
 
-けれど、
-どこかで誰かが待っている。
+        startTime:now,
+        length:loopLength,
+        name
 
-物語は、
-
-まだ終わっていない。`
     };
+
 }
 
+
 /* =========================================================
-   LIBRARY / SETTINGS
+   START / STOP MUSIC
 ========================================================= */
 
-function openLibrary(){
-    showScreen("libraryScreen");
+function stopMusic(){
+
+    if(!currentMusic) return;
+
+    currentMusic.stopping = true;
+
+    currentMusic = null;
+
 }
 
-function openSettings(){
-    showScreen("settingsScreen");
-}
 
-function cycleSpeed(){
+/*
+    Web Audioの短い音を生成する方式なので、
+    毎ループごとに新しい音を予約する。
+*/
 
-    if(textSpeed === 28){
-        textSpeed = 10;
-        $("speedButton").textContent = "速い";
-    }else if(textSpeed === 10){
-        textSpeed = 0;
-        $("speedButton").textContent = "瞬時";
-    }else{
-        textSpeed = 28;
-        $("speedButton").textContent = "普通";
-    }
+function scheduleMusicLoop(name){
 
-    showToast("文字速度を変更しました");
-}
+    if(!audioReady || !bgmEnabled) return;
 
-/* =========================================================
-   KEYBOARD
-========================================================= */
+    const preset =
+        BGM_PRESETS[name];
 
-document.addEventListener("keydown",(e)=>{
+    if(!preset) return;
 
-    if(e.key === "Enter" || e.key === " "){
+    const beat =
+        60 / preset.tempo;
 
-        const novel =
-            $("novelScreen").classList.contains("active");
+    const loopLength =
+        beat * 8;
 
-        if(novel){
-            e.preventDefault();
-            nextScene();
-        }
-    }
-
-    if(e.key === "Escape"){
-        backToTitle();
-    }
-});
-
-/* =========================================================
-   AUDIO START
-========================================================= */
-
-document.addEventListener("pointerdown",()=>{
-    if(!audioCtx){
-        initAudio();
-    }
-},{once:true});
-
-/* =========================================================
-   STARTUP
-========================================================= */
-
-window.addEventListener("load",()=>{
+    const start =
+        audioContext.currentTime + .05;
 
     /*
-     * 自動セーブがある場合のみ「つづきから」を有効化。
-     */
-    if(!localStorage.getItem(SAVE_KEY)){
-        // intentionally empty
+        メロディ
+    */
+
+    preset.notes.forEach(note => {
+
+        const freq = note[0];
+
+        const pos = note[1];
+
+        let waveform = "sine";
+        let gain = .04;
+
+        switch(preset.type){
+
+            case "warm":
+                waveform = "triangle";
+                gain = .04;
+                break;
+
+            case "tense":
+                waveform = "square";
+                gain = .016;
+                break;
+
+            case "fragile":
+                waveform = "sine";
+                gain = .034;
+                break;
+
+            case "jealousy":
+                waveform = "triangle";
+                gain = .022;
+                break;
+
+            case "dark":
+                waveform = "sawtooth";
+                gain = .012;
+                break;
+
+            case "love":
+                waveform = "triangle";
+                gain = .045;
+                break;
+
+            case "battle":
+                waveform = "square";
+                gain = .013;
+                break;
+
+            case "hope":
+                waveform = "triangle";
+                gain = .05;
+                break;
+
+            case "ending":
+                waveform = "sine";
+                gain = .052;
+                break;
+
+        }
+
+        createTone(
+            freq,
+            start + pos * beat,
+            beat * .72,
+            gain,
+            waveform
+        );
+
+    });
+
+
+    /*
+        ベース
+    */
+
+    const bassRoots = {
+
+        school:[130.81,146.83,164.81,146.83],
+        tension:[110,116.54,123.47,116.54],
+        fragile:[110,98,87.31,98],
+        jealousy:[98,103.83,92.5,87.31],
+        conflict:[73.42,82.41,87.31,73.42],
+        confession:[130.81,164.81,196,164.81],
+        endingBattle:[65.41,73.42,82.41,65.41],
+        hope:[130.81,146.83,164.81,196],
+        ending:[130.81,164.81,196,261.63]
+
+    };
+
+    const roots =
+        bassRoots[name] ||
+        bassRoots.school;
+
+    roots.forEach((root,i)=>{
+
+        createTone(
+            root,
+            start + i * beat * 2,
+            beat * 1.7,
+            .016,
+            "sine"
+        );
+
+    });
+
+
+    /*
+        パッド
+    */
+
+    if(
+        preset.type === "fragile" ||
+        preset.type === "love" ||
+        preset.type === "hope" ||
+        preset.type === "ending"
+    ){
+
+        createTone(
+            roots[0] * 2,
+            start,
+            loopLength - .1,
+            .006,
+            "sine"
+        );
+
     }
 
+
+    /*
+        次のループを予約
+    */
+
+    if(
+        currentMusic &&
+        currentMusic.name === name
+    ){
+
+        const loopTimer =
+            setTimeout(
+                ()=>scheduleMusicLoop(name),
+                (loopLength - .15) * 1000
+            );
+
+        currentMusic.timer = loopTimer;
+
+    }
+
+}
+
+
+/* =========================================================
+   FADE
+========================================================= */
+
+function fadeTo(target, duration=600){
+
+    if(!audioContext || !masterGain) return;
+
+    const now =
+        audioContext.currentTime;
+
+    masterGain.gain.cancelScheduledValues(now);
+
+    masterGain.gain.setValueAtTime(
+        masterGain.gain.value,
+        now
+    );
+
+    masterGain.gain.linearRampToValueAtTime(
+        target,
+        now + duration / 1000
+    );
+
+}
+
+
+/* =========================================================
+   SET SCENE BGM
+========================================================= */
+
+function setBGM(name){
+
+    initAudio();
+
+    if(!audioReady) return;
+
+    if(!bgmEnabled){
+
+        fadeTo(0,.3);
+
+        currentBGMName = name;
+
+        return;
+
+    }
+
+    /*
+        同じ曲なら継続
+    */
+
+    if(currentBGMName === name && currentMusic){
+
+        return;
+
+    }
+
+    /*
+        前のBGMをフェードアウト
+    */
+
+    fadeTo(0,.35);
+
+    const oldMusic =
+        currentMusic;
+
+    if(oldMusic && oldMusic.timer){
+
+        clearTimeout(oldMusic.timer);
+
+    }
+
+    /*
+        少し待って新しい曲を開始
+    */
+
+    setTimeout(()=>{
+
+        if(!bgmEnabled) return;
+
+        currentBGMName = name;
+
+        currentMusic = {
+            name,
+            timer:null
+        };
+
+        fadeTo(volume,.7);
+
+        scheduleMusicLoop(name);
+
+    },380);
+
+}
+
+
+/* =========================================================
+   BGM SETTINGS
+========================================================= */
+
+function toggleBGM(){
+
+    initAudio();
+
+    bgmEnabled = !bgmEnabled;
+
+    bgmStatus.textContent =
+        bgmEnabled ? "ON" : "OFF";
+
+    if(masterGain){
+
+        if(bgmEnabled){
+
+            fadeTo(volume,.5);
+
+            if(
+                currentBGMName
+            ){
+
+                currentMusic = {
+                    name:currentBGMName,
+                    timer:null
+                };
+
+                scheduleMusicLoop(
+                    currentBGMName
+                );
+
+            }
+
+        }else{
+
+            fadeTo(0,.4);
+
+            if(
+                currentMusic &&
+                currentMusic.timer
+            ){
+
+                clearTimeout(
+                    currentMusic.timer
+                );
+
+            }
+
+            currentMusic = null;
+
+        }
+
+    }
+
+}
+
+function changeVolume(value){
+
+    volume =
+        parseFloat(value);
+
+    if(
+        masterGain &&
+        bgmEnabled
+    ){
+
+        masterGain.gain.setTargetAtTime(
+            volume,
+            audioContext.currentTime,
+            .05
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   INITIALIZE SETTINGS
+========================================================= */
+
+volumeSlider.value = volume;
+bgmStatus.textContent =
+    bgmEnabled ? "ON" : "OFF";
+
+
+/* =========================================================
+   SAVE BEFORE LEAVING
+========================================================= */
+
+window.addEventListener(
+    "beforeunload",
+    ()=>{
+        /*
+            自動保存はしない。
+            明示的SAVEのみ。
+        */
+    }
+);
+
+
+/* =========================================================
+   TITLE AUDIO START
+========================================================= */
+
+document.querySelectorAll(
+    "#titleScreen button"
+).forEach(button=>{
+
+    button.addEventListener(
+        "click",
+        ()=>{
+            initAudio();
+        }
+    );
+
 });
+
+
 </script>
 
 </body>
