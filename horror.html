@@ -3,4895 +3,3113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Θαύμα - 白い部屋</title>
+<title>Θaύμα ― 白い記憶</title>
 
 <style>
 *{
-  box-sizing:border-box;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
 html,body{
-  margin:0;
-  padding:0;
-  width:100%;
-  min-height:100%;
-  background:#030305;
-  color:#ddd;
-  font-family:
-    "Yu Gothic",
-    "Hiragino Kaku Gothic ProN",
-    system-ui,
-    sans-serif;
-}
-
-body{
-  overflow-x:hidden;
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    background:#050507;
+    color:#eee;
+    font-family:
+        "Yu Gothic",
+        "Hiragino Kaku Gothic ProN",
+        Meiryo,
+        sans-serif;
+    overflow:hidden;
 }
 
 button{
-  font-family:inherit;
-}
-
-#game{
-  width:100%;
-  min-height:100vh;
-  position:relative;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 50% 40%, #11111a 0%, #050508 45%, #010102 100%);
-}
-
-#noise{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  opacity:.055;
-  z-index:20;
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      transparent 0px,
-      transparent 2px,
-      rgba(255,255,255,.12) 3px
-    );
-  mix-blend-mode:screen;
-}
-
-#vignette{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:19;
-  background:
-    radial-gradient(
-      ellipse at center,
-      transparent 35%,
-      rgba(0,0,0,.45) 70%,
-      rgba(0,0,0,.92) 100%
-    );
-}
-
-#flash{
-  position:fixed;
-  inset:0;
-  background:#fff;
-  opacity:0;
-  pointer-events:none;
-  z-index:30;
-}
-
-#bloodFlash{
-  position:fixed;
-  inset:0;
-  background:#300009;
-  opacity:0;
-  pointer-events:none;
-  z-index:29;
+    font:inherit;
 }
 
 #app{
-  width:min(900px,94%);
-  min-height:100vh;
-  margin:auto;
-  position:relative;
-  z-index:5;
-  padding:25px 0 40px;
+    width:100%;
+    height:100%;
+    position:relative;
+    overflow:hidden;
+    background:
+        radial-gradient(circle at 50% 45%, #17151b 0%, #08080b 45%, #020204 100%);
+}
+
+#noise{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:.055;
+    z-index:20;
+    background-image:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 2px,
+            rgba(255,255,255,.15) 3px
+        );
+}
+
+#vignette{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:19;
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 35%,
+            rgba(0,0,0,.35) 68%,
+            rgba(0,0,0,.9) 100%
+        );
 }
 
 .screen{
-  display:none;
+    position:absolute;
+    inset:0;
+    display:none;
 }
 
 .screen.active{
-  display:block;
+    display:flex;
 }
 
-.titleScreen{
-  min-height:90vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
+/* =========================
+   TITLE
+========================= */
+
+#titleScreen{
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    background:
+        radial-gradient(circle at center, #1a1520 0%, #07070a 48%, #010102 100%);
 }
 
-.titleScreen:not(.active){
-  display:none;
+.titleBox{
+    width:min(900px,92%);
+    animation:titleIn 1.5s ease;
 }
 
-.logo{
-  font-size:64px;
-  letter-spacing:12px;
-  margin:0;
-  color:#eee;
-  text-shadow:
-    0 0 8px #fff,
-    0 0 30px rgba(255,255,255,.15);
+@keyframes titleIn{
+    from{
+        opacity:0;
+        transform:translateY(25px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
 }
 
-.titleSub{
-  margin-top:10px;
-  color:#666;
-  letter-spacing:4px;
+.titleSmall{
+    letter-spacing:.5em;
+    color:#aaa;
+    font-size:12px;
+    margin-bottom:25px;
 }
 
-.warning{
-  margin-top:45px;
-  color:#777;
-  font-size:12px;
+.gameTitle{
+    margin:0;
+    font-size:clamp(42px,10vw,100px);
+    letter-spacing:.12em;
+    font-weight:300;
+    text-shadow:
+        0 0 12px rgba(255,255,255,.15),
+        0 0 40px rgba(160,80,170,.18);
+}
+
+.gameSub{
+    margin-top:14px;
+    color:#aaa;
+    letter-spacing:.3em;
+    font-size:14px;
+}
+
+.titleLine{
+    width:130px;
+    height:1px;
+    background:#777;
+    margin:35px auto;
+    opacity:.5;
 }
 
 .menu{
-  width:min(420px,100%);
-  margin-top:35px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    width:min(360px,90%);
+    margin:auto;
 }
 
 .menu button,
 .choice{
-  width:100%;
-  padding:15px;
-  margin:6px 0;
-  background:#09090e;
-  border:1px solid #292934;
-  border-radius:4px;
-  color:#aaa;
-  cursor:pointer;
-  transition:.2s;
+    border:1px solid #444;
+    background:rgba(10,10,14,.8);
+    color:#ddd;
+    padding:15px 20px;
+    cursor:pointer;
+    transition:.25s;
 }
 
 .menu button:hover,
 .choice:hover{
-  color:#fff;
-  border-color:#666;
-  background:#11111a;
+    background:#211d26;
+    border-color:#aaa;
+    transform:translateY(-2px);
 }
 
-.storyHeader{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  color:#666;
-  font-size:12px;
-  letter-spacing:2px;
-  margin-bottom:15px;
+.menu button:active,
+.choice:active{
+    transform:scale(.98);
 }
 
-.storyBox{
-  min-height:420px;
-  padding:30px;
-  border:1px solid #181820;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(12,12,18,.96),
-      rgba(3,3,6,.98)
-    );
-  box-shadow:
-    0 0 50px rgba(0,0,0,.7);
-  position:relative;
+.warning{
+    margin-top:25px;
+    font-size:11px;
+    color:#666;
 }
 
-.sceneTitle{
-  color:#aaa;
-  font-size:22px;
-  margin-bottom:30px;
-  letter-spacing:3px;
+/* =========================
+   NOVEL
+========================= */
+
+#novelScreen{
+    flex-direction:column;
 }
 
-.characterName{
-  color:#888;
-  font-size:13px;
-  margin-bottom:10px;
+.sceneBackground{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    transition:background 1s ease;
+}
+
+.bg-dark{
+    background:
+        radial-gradient(circle at 50% 40%, #19151d, #060609 70%);
+}
+
+.bg-white{
+    background:
+        radial-gradient(circle at center, #d9d9dc, #8b8b90 55%, #29292d 100%);
+}
+
+.bg-red{
+    background:
+        radial-gradient(circle at center, #3a080d, #100306 65%, #020102 100%);
+}
+
+.bg-memory{
+    background:
+        radial-gradient(circle at center, #24232d, #0a0a0e 75%);
+}
+
+.bg-end{
+    background:
+        radial-gradient(circle at center, #171421, #030305 75%);
+}
+
+.chapter{
+    position:relative;
+    z-index:3;
+    padding:22px 25px 0;
+    color:#aaa;
+    font-size:12px;
+    letter-spacing:.3em;
+}
+
+.chapter span{
+    color:#ddd;
+}
+
+.scene{
+    position:relative;
+    z-index:2;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:20px;
+}
+
+.character{
+    width:min(1000px,96%);
+    margin:0 auto 18px;
+    min-height:145px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+}
+
+.character.none{
+    display:none;
+}
+
+.portrait{
+    width:125px;
+    height:125px;
+    border:1px solid #444;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:44px;
+    background:rgba(0,0,0,.35);
+    box-shadow:0 0 40px rgba(0,0,0,.6);
+}
+
+.portrait.guren{
+    border-color:#7d2938;
+    color:#bd5163;
+}
+
+.portrait.geboku{
+    border-color:#597d8b;
+    color:#8ebdcc;
+}
+
+.portrait.enpi{
+    border-color:#9b6534;
+    color:#d49b5b;
+}
+
+.portrait.touei{
+    border-color:#aaa;
+    color:#eee;
+    box-shadow:0 0 50px rgba(255,255,255,.1);
+}
+
+.nameTag{
+    position:absolute;
+    bottom:0;
+    background:rgba(0,0,0,.75);
+    border:1px solid #444;
+    padding:6px 15px;
+    font-size:12px;
+    letter-spacing:.15em;
+}
+
+.dialogue{
+    width:min(1050px,96%);
+    margin:0 auto;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(5,5,8,.88),
+            rgba(3,3,5,.97)
+        );
+    border:1px solid #333;
+    padding:24px 25px 20px;
+    min-height:165px;
+    box-shadow:0 -15px 50px rgba(0,0,0,.35);
+}
+
+.speaker{
+    color:#bbb;
+    font-size:13px;
+    letter-spacing:.2em;
+    margin-bottom:14px;
 }
 
 .text{
-  min-height:240px;
-  white-space:pre-wrap;
-  line-height:2.1;
-  font-size:16px;
-  color:#c8c8cc;
+    line-height:2;
+    font-size:16px;
+    white-space:pre-wrap;
+    min-height:65px;
 }
 
-.text.horror{
-  color:#eee;
-  text-shadow:0 0 12px rgba(255,255,255,.12);
+.hint{
+    color:#666;
+    text-align:right;
+    font-size:10px;
+    margin-top:12px;
 }
 
 .choices{
-  margin-top:20px;
+    width:min(1050px,96%);
+    margin:12px auto 0;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
 }
 
 .choice{
-  text-align:left;
+    text-align:left;
+    padding:13px 17px;
+    font-size:14px;
 }
 
-.bottom{
-  margin-top:15px;
-  display:flex;
-  gap:8px;
+.choice small{
+    color:#777;
 }
 
-.bottom button{
-  flex:1;
-  padding:12px;
-  background:#08080c;
-  border:1px solid #22222c;
-  color:#777;
-  cursor:pointer;
+.bottomBar{
+    width:min(1050px,96%);
+    margin:12px auto 15px;
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
 }
 
-.panel{
-  border:1px solid #1d1d27;
-  background:#08080c;
-  padding:20px;
-  margin-bottom:15px;
+.bottomBar button{
+    border:1px solid #333;
+    background:#0a0a0d;
+    color:#888;
+    padding:8px 14px;
+    cursor:pointer;
 }
 
-.panel h2{
-  margin-top:0;
-  font-weight:normal;
-  letter-spacing:3px;
+.bottomBar button:hover{
+    color:#fff;
+    border-color:#777;
 }
 
-.status{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:8px;
+/* =========================
+   LIBRARY
+========================= */
+
+#libraryScreen,
+#settingsScreen{
+    flex-direction:column;
+    overflow:auto;
+    background:
+        radial-gradient(circle at top, #17151d, #050507 70%);
+    padding:35px 20px;
 }
 
-.stat{
-  padding:12px;
-  border:1px solid #20202a;
-  color:#999;
+.page{
+    width:min(1050px,100%);
+    margin:auto;
 }
 
-.stat b{
-  color:#ddd;
+.pageTitle{
+    font-size:28px;
+    font-weight:300;
+    letter-spacing:.2em;
+    margin-bottom:35px;
 }
 
-.ending{
-  text-align:center;
-  padding:60px 20px;
+.back{
+    margin-bottom:25px;
+    border:1px solid #444;
+    background:#0c0c10;
+    color:#ccc;
+    padding:9px 15px;
+    cursor:pointer;
 }
 
-.ending h2{
-  font-size:28px;
-  font-weight:normal;
-  letter-spacing:5px;
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
 }
 
-.ending p{
-  white-space:pre-wrap;
-  line-height:2;
-  color:#aaa;
+.card{
+    border:1px solid #333;
+    background:rgba(15,15,20,.75);
+    padding:20px;
+    min-height:240px;
 }
 
-.red{
-  color:#a84a57;
+.card h3{
+    margin:0 0 7px;
+    font-weight:400;
 }
 
-.white{
-  color:#eee;
+.card .type{
+    color:#777;
+    font-size:11px;
+    margin-bottom:15px;
 }
 
-.hidden{
-  display:none!important;
+.card p{
+    color:#aaa;
+    line-height:1.8;
+    font-size:13px;
 }
 
-#soundIndicator{
-  position:fixed;
-  right:12px;
-  bottom:12px;
-  z-index:50;
-  color:#555;
-  font-size:11px;
-  pointer-events:none;
+/* =========================
+   SETTINGS
+========================= */
+
+.setting{
+    border-bottom:1px solid #222;
+    padding:20px 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.setting button{
+    border:1px solid #444;
+    background:#0d0d11;
+    color:#ddd;
+    padding:9px 16px;
+    cursor:pointer;
+}
+
+.danger{
+    margin-top:30px;
+    border:1px solid #57252a !important;
+    color:#c97980 !important;
+}
+
+/* =========================
+   END
+========================= */
+
+#endingScreen{
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:25px;
+    background:
+        radial-gradient(circle at center, #1c1722, #050507 75%);
+}
+
+.endingBox{
+    width:min(850px,94%);
+    animation:endingIn 2s ease;
+}
+
+@keyframes endingIn{
+    from{
+        opacity:0;
+        transform:scale(.97);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+.endingLabel{
+    font-size:11px;
+    letter-spacing:.5em;
+    color:#777;
+}
+
+.endingTitle{
+    font-size:clamp(30px,7vw,65px);
+    font-weight:300;
+    margin:25px 0;
+}
+
+.endingText{
+    color:#aaa;
+    line-height:2.2;
+    white-space:pre-wrap;
+    font-size:15px;
+}
+
+.endingButtons{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    width:min(350px,90%);
+    margin:35px auto 0;
+}
+
+.endingButtons button{
+    padding:13px;
+    border:1px solid #444;
+    background:#0b0b0e;
+    color:#ddd;
+    cursor:pointer;
+}
+
+/* =========================
+   EFFECTS
+========================= */
+
+.flash{
+    position:fixed;
+    inset:0;
+    background:white;
+    z-index:100;
+    pointer-events:none;
+    animation:flash .18s ease;
+}
+
+@keyframes flash{
+    from{opacity:.9}
+    to{opacity:0}
 }
 
 .shake{
-  animation:shake .18s linear 2;
+    animation:shake .35s;
 }
 
 @keyframes shake{
-  0%{transform:translate(0)}
-  25%{transform:translate(-3px,2px)}
-  50%{transform:translate(3px,-2px)}
-  75%{transform:translate(-2px,-1px)}
-  100%{transform:translate(0)}
+    0%,100%{transform:translate(0)}
+    20%{transform:translate(-7px,3px)}
+    40%{transform:translate(6px,-3px)}
+    60%{transform:translate(-4px,-2px)}
+    80%{transform:translate(4px,3px)}
 }
 
 .glitch{
-  animation:glitch .25s steps(2,end) 2;
+    animation:glitch .6s;
 }
 
 @keyframes glitch{
-  0%{transform:translate(0)}
-  30%{transform:translate(5px,-2px)}
-  60%{transform:translate(-5px,2px)}
-  100%{transform:translate(0)}
+    0%{filter:none}
+    15%{filter:contrast(2) brightness(1.5)}
+    25%{filter:hue-rotate(70deg)}
+    45%{filter:none}
+    60%{filter:contrast(1.8)}
+    100%{filter:none}
 }
 
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:25px;
+    transform:translateX(-50%);
+    background:#111;
+    border:1px solid #444;
+    color:#ddd;
+    padding:10px 18px;
+    z-index:200;
+    font-size:12px;
+    opacity:0;
+    pointer-events:none;
+    transition:.3s;
+}
+
+.toast.show{
+    opacity:1;
+}
+
+/* mobile */
+
 @media(max-width:600px){
+    .scene{
+        padding:10px;
+    }
 
-  .logo{
-    font-size:43px;
-    letter-spacing:7px;
-  }
+    .character{
+        min-height:105px;
+        margin-bottom:10px;
+    }
 
-  .storyBox{
-    padding:20px;
-    min-height:470px;
-  }
+    .portrait{
+        width:90px;
+        height:90px;
+        font-size:30px;
+    }
 
-  .text{
-    font-size:15px;
-  }
+    .dialogue{
+        padding:17px;
+        min-height:180px;
+    }
 
+    .text{
+        font-size:14px;
+        line-height:1.9;
+    }
+
+    .chapter{
+        padding:15px 15px 0;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div id="game">
+<div id="app">
 
-  <div id="noise"></div>
-  <div id="vignette"></div>
-  <div id="flash"></div>
-  <div id="bloodFlash"></div>
+<div id="noise"></div>
+<div id="vignette"></div>
 
-  <div id="app">
+<!-- TITLE -->
+<section id="titleScreen" class="screen active">
+    <div class="titleBox">
+        <div class="titleSmall">A NOVEL HORROR STORY</div>
+        <h1 class="gameTitle">Θaύμα</h1>
+        <div class="gameSub">白い記憶</div>
 
-    <!-- ================= TITLE ================= -->
+        <div class="titleLine"></div>
 
-    <section id="title" class="screen active titleScreen">
+        <div class="menu">
+            <button onclick="newGame()">はじめから</button>
+            <button onclick="continueGame()">つづきから</button>
+            <button onclick="openLibrary()">人物設定</button>
+            <button onclick="openSettings()">設定</button>
+        </div>
 
-      <h1 class="logo">Θαύμα</h1>
+        <div class="warning">
+            ※ 音声・BGMがあります。音量に注意してください。
+        </div>
+    </div>
+</section>
 
-      <div class="titleSub">
-        白い部屋
-      </div>
+<!-- NOVEL -->
+<section id="novelScreen" class="screen">
+    <div id="sceneBackground" class="sceneBackground bg-dark"></div>
 
-      <div class="menu">
+    <div class="chapter">
+        <span id="chapterText">序章</span>
+    </div>
 
-        <button onclick="newGame()">
-          はじめから
-        </button>
+    <div class="scene" id="sceneArea">
 
-        <button onclick="continueGame()">
-          つづきから
-        </button>
+        <div id="characterArea" class="character none">
+            <div id="portrait" class="portrait">?</div>
+            <div id="nameTag" class="nameTag"></div>
+        </div>
 
-        <button onclick="showCharacters()">
-          登場人物
-        </button>
-
-        <button onclick="toggleSound()">
-          音量：<span id="soundText">ON</span>
-        </button>
-
-      </div>
-
-      <div class="warning">
-        ※ このゲームにはホラー演出・不気味な音・驚かせる演出が含まれます。
-      </div>
-
-    </section>
-
-
-    <!-- ================= STORY ================= -->
-
-    <section id="story" class="screen">
-
-      <div class="storyHeader">
-        <span id="chapterLabel">第1章</span>
-        <span id="sceneNumber">1 / 1</span>
-      </div>
-
-      <div id="storyBox" class="storyBox">
-
-        <div id="sceneTitle" class="sceneTitle"></div>
-
-        <div id="characterName" class="characterName"></div>
-
-        <div id="storyText" class="text"></div>
+        <div class="dialogue">
+            <div id="speaker" class="speaker"></div>
+            <div id="text" class="text"></div>
+            <div id="hint" class="hint">タップ / クリックで続く</div>
+        </div>
 
         <div id="choices" class="choices"></div>
 
-      </div>
+        <div class="bottomBar">
+            <button onclick="saveGame()">保存</button>
+            <button onclick="toggleBGM()">BGM</button>
+            <button onclick="backToTitle()">タイトル</button>
+        </div>
+    </div>
+</section>
 
-      <div class="bottom">
+<!-- LIBRARY -->
+<section id="libraryScreen" class="screen">
+    <div class="page">
+        <button class="back" onclick="showScreen('titleScreen')">← 戻る</button>
+        <div class="pageTitle">人物設定</div>
 
-        <button onclick="backTitle()">
-          タイトル
-        </button>
+        <div class="cards">
 
-        <button onclick="skipText()">
-          読み終える
-        </button>
+            <div class="card">
+                <h3>皇 紅蓮</h3>
+                <div class="type">最上位吸血鬼 × 幽霊</div>
+                <p>
+                    霊界から追放された存在。<br>
+                    強大な力を持つが、本音を隠すことが苦手。<br><br>
+                    HP 1000 / 攻撃 210 / 防御 100
+                </p>
+            </div>
 
-      </div>
+            <div class="card">
+                <h3>下僕</h3>
+                <div class="type">スライム（眷属・人間型）</div>
+                <p>
+                    究極眷属。<br>
+                    完全適応・未来予知・圧倒的戦闘技術を持つ。<br><br>
+                    物語の第6章後、未知の力に目覚める。
+                </p>
+            </div>
 
-    </section>
+            <div class="card">
+                <h3>焔緋くん</h3>
+                <div class="type">裏社会の何でも屋 / 26歳</div>
+                <p>
+                    冷静な判断力と高い戦闘能力を持つ。<br>
+                    情報収集、潜入、交渉にも長けている。<br><br>
+                    HP 900 / 攻撃 230 / 防御 80
+                </p>
+            </div>
 
-
-    <!-- ================= CHARACTERS ================= -->
-
-    <section id="characters" class="screen">
-
-      <div class="panel">
-
-        <h2>登場人物</h2>
-
-        <div class="status">
-
-          <div class="stat">
-            <b>皇 紅蓮</b><br>
-            霊界追放者
-          </div>
-
-          <div class="stat">
-            <b>下僕</b><br>
-            究極眷属
-          </div>
-
-          <div class="stat">
-            <b>焔緋くん</b><br>
-            裏社会の何でも屋
-          </div>
-
-          <div class="stat">
-            <b>焔緋 灯影</b><br>
-            終焉の管理者
-          </div>
+            <div class="card">
+                <h3>焔緋 灯影</h3>
+                <div class="type">終焉の管理者 / 種族？？？</div>
+                <p>
+                    焔緋くんとは別人。<br>
+                    終焉支配、永劫の焔、完全解析、無限再構築、神域武装を持つ。<br><br>
+                    HP 5000 / 攻撃 650 / 防御 500
+                </p>
+            </div>
 
         </div>
+    </div>
+</section>
 
-      </div>
+<!-- SETTINGS -->
+<section id="settingsScreen" class="screen">
+    <div class="page">
+        <button class="back" onclick="showScreen('titleScreen')">← 戻る</button>
 
-      <button class="menu button" onclick="backTitle()">
-        戻る
-      </button>
+        <div class="pageTitle">設定</div>
 
-    </section>
+        <div class="setting">
+            <span>BGM</span>
+            <button onclick="toggleBGM()">ON / OFF</button>
+        </div>
 
+        <div class="setting">
+            <span>文字速度</span>
+            <button onclick="cycleSpeed()" id="speedButton">普通</button>
+        </div>
 
-    <!-- ================= ENDING ================= -->
+        <div class="setting">
+            <span>セーブデータ</span>
+            <button class="danger" onclick="deleteSave()">セーブ削除</button>
+        </div>
+    </div>
+</section>
 
-    <section id="ending" class="screen">
+<!-- ENDING -->
+<section id="endingScreen" class="screen">
+    <div class="endingBox">
+        <div class="endingLabel" id="endingLabel">END</div>
+        <div class="endingTitle" id="endingTitle"></div>
+        <div class="endingText" id="endingText"></div>
 
-      <div class="ending">
+        <div class="endingButtons">
+            <button onclick="newGame()">もう一度遊ぶ</button>
+            <button onclick="showScreen('titleScreen')">タイトルへ</button>
+        </div>
+    </div>
+</section>
 
-        <h2 id="endingTitle"></h2>
-
-        <p id="endingText"></p>
-
-        <button onclick="newGame()">
-          もう一度
-        </button>
-
-        <button onclick="backTitle()">
-          タイトルへ
-        </button>
-
-      </div>
-
-    </section>
-
-  </div>
-
-  <div id="soundIndicator">
-    AUDIO: <span id="audioState">OFF</span>
-  </div>
+<div id="toast" class="toast"></div>
 
 </div>
-
 
 <script>
 "use strict";
 
 /* =========================================================
-   セーブ
+   GAME DATA
 ========================================================= */
 
-const SAVE_KEY = "THAUMA_HORROR_NOVEL_V1";
+const SAVE_KEY = "THAUMA_WHITE_MEMORY_V2";
 
-
-function defaultGame(){
-
-  return {
-    scene:0,
-    sound:true,
-    flags:{
-      trustedServant:false,
-      openedDoor:false,
-      investigated:false,
-      stayedWithGouen:false,
-      toueiQuestioned:false,
-      sawReflection:false
+const defaultData = {
+    scene: 0,
+    flags: {
+        door: false,
+        trusted: false,
+        helped: false,
+        whiteRoom: false,
+        heardVoice: false,
+        copy: false,
+        toueiChoice: false,
+        finalChoice: null
     }
-  };
-
-}
-
-
-let game = defaultGame();
-
-
-function save(){
-
-  try{
-    localStorage.setItem(
-      SAVE_KEY,
-      JSON.stringify(game)
-    );
-  }catch(e){
-    console.warn(e);
-  }
-
-}
-
-
-function load(){
-
-  try{
-
-    const raw =
-      localStorage.getItem(SAVE_KEY);
-
-    if(!raw){
-      return false;
-    }
-
-    const data =
-      JSON.parse(raw);
-
-    game = {
-      ...defaultGame(),
-      ...data,
-      flags:{
-        ...defaultGame().flags,
-        ...(data.flags || {})
-      }
-    };
-
-    return true;
-
-  }catch(e){
-
-    game = defaultGame();
-
-    return false;
-
-  }
-
-}
-
-
-/* =========================================================
-   キャラクター設定
-========================================================= */
-
-const characters = {
-
-  gouen:{
-    name:"皇 紅蓮",
-    title:"霊界追放者",
-    species:"最上位吸血鬼 × 幽霊"
-  },
-
-  geboku:{
-    name:"下僕",
-    title:"究極眷属",
-    species:"スライム（眷属・人間型）"
-  },
-
-  homurabikun:{
-    name:"焔緋くん",
-    title:"裏社会の何でも屋",
-    species:"人間"
-  },
-
-  touei:{
-    name:"焔緋 灯影",
-    title:"終焉の管理者",
-    species:"？？？"
-  }
-
 };
 
+let gameData = structuredClone(defaultData);
+let currentScene = 0;
+
+let typing = false;
+let typeTimer = null;
+let fullText = "";
+
+let textSpeed = 28;
 
 /* =========================================================
-   ストーリー
+   AUDIO
+========================================================= */
+
+let audioCtx = null;
+let master = null;
+let bgmEnabled = true;
+let bgmTimer = null;
+let bgmStep = 0;
+
+function initAudio(){
+    if(audioCtx) return;
+
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    master = audioCtx.createGain();
+    master.gain.value = 0.055;
+    master.connect(audioCtx.destination);
+
+    startBGM();
+}
+
+function tone(freq, duration, type="sine", volume=.08, delay=0){
+    if(!audioCtx || !bgmEnabled) return;
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = type;
+    osc.frequency.value = freq;
+
+    gain.gain.setValueAtTime(0, audioCtx.currentTime + delay);
+    gain.gain.linearRampToValueAtTime(
+        volume,
+        audioCtx.currentTime + delay + .03
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioCtx.currentTime + delay + duration
+    );
+
+    osc.connect(gain);
+    gain.connect(master);
+
+    osc.start(audioCtx.currentTime + delay);
+    osc.stop(audioCtx.currentTime + delay + duration + .05);
+}
+
+function startBGM(){
+    if(!audioCtx || !bgmEnabled || bgmTimer) return;
+
+    bgmStep = 0;
+
+    bgmTimer = setInterval(()=>{
+
+        if(!bgmEnabled) return;
+
+        /*
+         * 「怖さ」と「切なさ」を混ぜるため、
+         * 低い持続音 + 不協和音 + 高い短音を組み合わせる。
+         */
+
+        const progression = [
+            55,
+            61.74,
+            65.41,
+            58.27,
+            49,
+            65.41,
+            55,
+            46.25
+        ];
+
+        const base = progression[bgmStep % progression.length];
+
+        tone(base, 1.9, "sine", .045);
+        tone(base * 1.498, 1.2, "triangle", .018, .1);
+
+        if(bgmStep % 4 === 0){
+            tone(base * 2.01, .7, "sine", .012, .25);
+        }
+
+        /*
+         * たまに遠くで鳴るような高音。
+         */
+        if(bgmStep % 7 === 3){
+            tone(base * 5.02, .9, "sine", .009, .4);
+        }
+
+        bgmStep++;
+
+    }, 1100);
+}
+
+function stopBGM(){
+    if(bgmTimer){
+        clearInterval(bgmTimer);
+        bgmTimer = null;
+    }
+}
+
+function toggleBGM(){
+    bgmEnabled = !bgmEnabled;
+
+    if(bgmEnabled){
+        initAudio();
+        startBGM();
+        showToast("BGM ON");
+    }else{
+        stopBGM();
+        showToast("BGM OFF");
+    }
+}
+
+function seClick(){
+    if(!audioCtx || !bgmEnabled) return;
+    tone(180, .08, "square", .025);
+}
+
+function seChoice(){
+    if(!audioCtx || !bgmEnabled) return;
+    tone(280, .12, "sine", .035);
+    tone(420, .18, "sine", .018, .08);
+}
+
+function seScare(){
+    if(!audioCtx || !bgmEnabled) return;
+
+    tone(38, .7, "sawtooth", .08);
+    tone(41, .55, "sawtooth", .06, .08);
+    tone(82, .35, "square", .035, .1);
+}
+
+function seSad(){
+    if(!audioCtx || !bgmEnabled) return;
+
+    tone(261.63, 1.2, "sine", .025);
+    tone(233.08, 1.5, "sine", .02, .4);
+    tone(196, 1.8, "sine", .016, .9);
+}
+
+/* =========================================================
+   STORY
 ========================================================= */
 
 const scenes = [
 
-  /* 0 */
+/* 0 */
+{
+    chapter:"序章　白い部屋",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`目を覚ましたとき、
+
+そこには「何もなかった」。
+
+天井もない。
+床もない。
+壁さえ、あるのか分からない。
+
+ただ一つ。
 
-  {
-    chapter:"序章",
-    title:"目を覚ます",
-    character:"皇 紅蓮",
-
-    text:
-`暗い。
-
-何も見えない。
-
-何も聞こえない。
-
-――いや。
-
-音がする。
-
-コツ。
-
-コツ。
-
-コツ。
-
-誰かが、遠くで歩いている。
-
-紅蓮は目を開けた。
-
-そこには、白い天井があった。
-
-「……ここは？」
-
-返事はない。
-
-ただ、天井の隅にある黒い点だけが――
-
-ゆっくり動いた。`,
-
-    choices:[
-      {
-        text:"黒い点を見る",
-        next:1
-      },
-      {
-        text:"目を閉じる",
-        next:2
-      }
-    ]
-  },
-
-
-  /* 1 */
-
-  {
-    chapter:"序章",
-    title:"黒い点",
-    character:"皇 紅蓮",
-
-    horror:true,
-
-    text:
-`紅蓮は黒い点を見つめた。
-
-点。
-
-それは、穴だった。
-
-天井に穴が開いている。
-
-その向こうは真っ黒だった。
-
-そして――
-
-「……目？」
-
-穴の奥で何かが瞬いた。
-
-紅蓮が瞬きをすると、穴は消えていた。
-
-代わりに。
-
-耳元で声がした。
-
-「見つけた」
-
-紅蓮は振り返る。
-
-誰もいない。`,
-
-    choices:[
-      {
-        text:"部屋を調べる",
-        next:3
-      },
-      {
-        text:"声のした方向へ進む",
-        next:4
-      }
-    ]
-  },
-
-
-  /* 2 */
-
-  {
-    chapter:"序章",
-    title:"目を閉じる",
-    character:"皇 紅蓮",
-
-    text:
-`紅蓮は目を閉じた。
-
-静かだ。
-
-何も聞こえない。
-
-そう思った。
-
-しかし。
-
-「……ねえ」
-
-耳元。
-
-すぐそば。
-
-「どうして目を閉じたの？」
-
-紅蓮は目を開けた。
-
-そこには誰もいない。
-
-ただ床に、濡れた足跡があった。
-
-一つ。
-
-二つ。
-
-三つ。
-
-そして、その足跡は――
-
-紅蓮の背後で止まっていた。`,
-
-    choices:[
-      {
-        text:"振り返る",
-        next:3
-      },
-      {
-        text:"振り返らない",
-        next:5
-      }
-    ]
-  },
-
-
-  /* 3 */
-
-  {
-    chapter:"第1章",
-    title:"白い部屋",
-    character:"皇 紅蓮",
-
-    text:
-`部屋には何もない。
-
-ベッド。
-
-机。
-
-椅子。
-
-そして、一枚の扉。
-
-扉だけが、異様に古かった。
-
-白い部屋に。
-
-黒い扉。
-
-その扉には文字が刻まれている。
-
-Θαύμα。
-
-紅蓮が文字に触れた瞬間――
-
-コン。
-
-扉の向こうから、ノックが返ってきた。
-
-コン。
-
-コン。
-
-今度は二回。
-
-紅蓮は気づく。
-
-自分はまだ、扉を叩いていない。`,
-
-    choices:[
-      {
-        text:"扉を開ける",
-        next:6,
-        flag:"openedDoor"
-      },
-      {
-        text:"扉から離れる",
-        next:7
-      }
-    ]
-  },
-
-
-  /* 4 */
-
-  {
-    chapter:"第1章",
-    title:"声",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`紅蓮は声を追った。
-
-廊下がある。
-
-さっきまで、そんなものはなかった。
-
-廊下の先に人影。
-
-黒い。
-
-細い。
-
-動かない。
-
-「おい」
-
-紅蓮が声をかける。
-
-人影が首だけを動かした。
-
-こちらを見る。
-
-そして。
-
-「……皇 紅蓮」
-
-名前を呼んだ。
-
-紅蓮は凍りつく。
-
-自分の名前を知っている。`,
-
-    choices:[
-      {
-        text:"近づく",
-        next:8
-      },
-      {
-        text:"戻る",
-        next:3
-      }
-    ]
-  },
-
-
-  /* 5 */
-
-  {
-    chapter:"第1章",
-    title:"振り返らない",
-    character:"皇 紅蓮",
-
-    text:
-`紅蓮は振り返らなかった。
-
-足音が近づく。
-
-一歩。
-
-二歩。
-
-三歩。
-
-背後に誰かいる。
-
-それでも、紅蓮は動かない。
-
-すると足音が止まった。
-
-「……正解」
-
-声がした。
-
-次の瞬間。
-
-足音が遠ざかっていく。
-
-紅蓮が振り返ると――
-
-そこには誰もいなかった。
-
-ただ。
-
-床に文字が書かれている。
-
-「まだ、見ないで」`,
-
-    choices:[
-      {
-        text:"文字を調べる",
-        next:9
-      },
-      {
-        text:"無視する",
-        next:3
-      }
-    ]
-  },
-
-
-  /* 6 */
-
-  {
-    chapter:"第2章",
-    title:"扉の向こう",
-    character:"皇 紅蓮",
-
-    horror:true,
-
-    text:
-`扉を開ける。
-
-その向こうにいたのは――
-
-下僕だった。
-
-「主様」
-
-いつもの声。
-
-いつもの姿。
-
-紅蓮は少しだけ安心する。
-
-「お前、ここにいたのか」
-
-下僕は答えない。
-
-ただ、紅蓮を見ている。
-
-「……主様」
-
-「何だ？」
-
-下僕は小さく首を傾けた。
-
-「どうして、二人いるんですか？」
-
-紅蓮は振り返る。
-
-誰もいない。
-
-しかし。
-
-白い壁に映った紅蓮の影は――
-
-二つあった。`,
-
-    choices:[
-      {
-        text:"下僕を信じる",
-        next:10,
-        flag:"trustedServant"
-      },
-      {
-        text:"影を見る",
-        next:11,
-        flag:"sawReflection"
-      }
-    ]
-  },
-
-
-  /* 7 */
-
-  {
-    chapter:"第2章",
-    title:"離れる",
-    character:"皇 紅蓮",
-
-    text:
-`紅蓮は扉から離れた。
-
-すると廊下の照明が、一つずつ消えていく。
-
-パチ。
-
-パチ。
-
-パチ。
-
-最後の一つが消える。
-
-暗闇。
-
-その中で声がする。
-
-「……開けなかったんだ」
-
-少し寂しそうな声だった。
-
-「じゃあ、こっちから行くね」
-
-紅蓮は立ち止まる。
-
-遠くから。
-
-足音。
-
-近づいてくる。`,
-
-    choices:[
-      {
-        text:"下僕を探す",
-        next:12
-      },
-      {
-        text:"走る",
-        next:13
-      }
-    ]
-  },
-
-
-  /* 8 */
-
-  {
-    chapter:"第2章",
-    title:"人影",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`紅蓮が近づく。
-
-人影は動かない。
-
-あと数歩。
-
-あと一歩。
-
-顔が見える。
-
-――紅蓮だった。
-
-「……は？」
-
-目の前にいるのは、自分自身。
-
-もう一人の紅蓮が笑う。
-
-「やっと来た」
-
-そして。
-
-その顔から笑顔が消える。
-
-「お前は、本当に紅蓮なのか？」
-
-画面が一瞬暗くなる。`,
-
-    choices:[
-      {
-        text:"「当然だ」と答える",
-        next:14
-      },
-      {
-        text:"黙る",
-        next:15
-      }
-    ]
-  },
-
-
-  /* 9 */
-
-  {
-    chapter:"第2章",
-    title:"文字",
-    character:"？？？",
-
-    text:
-`床の文字を調べる。
-
-「まだ、見ないで」
-
-その下に、別の文字がある。
-
-「見たら、戻れない」
-
-さらに下。
-
-小さな文字。
-
-「この文字を書いたのは、あなた」
-
-紅蓮は手を見る。
-
-何もついていない。
-
-しかし。
-
-指先に黒いインクが付着していた。
-
-「……俺が書いた？」
-
-記憶にない。
-
-背後で、紙がめくれる音がした。`,
-
-    choices:[
-      {
-        text:"振り返る",
-        next:16
-      },
-      {
-        text:"目を閉じる",
-        next:17
-      }
-    ]
-  },
-
-
-  /* 10 */
-
-  {
-    chapter:"第3章",
-    title:"下僕",
-    character:"下僕",
-
-    text:
-`「主様を信じます」
-
-下僕は紅蓮の前に立つ。
-
-その瞬間。
-
-部屋の空気が変わった。
-
-「……来ます」
-
-「何が？」
-
-下僕は答えない。
-
-ただ、未来を見る。
-
-そして。
-
-初めて怯えた。
-
-「主様」
-
-「なんだ」
-
-「この先にいるものは――」
-
-下僕が言葉を止める。
-
-「私が知っている未来には、存在しません」`,
-
-    choices:[
-      {
-        text:"下僕と進む",
-        next:18,
-        flag:"stayedWithGouen"
-      },
-      {
-        text:"一人で進む",
-        next:19
-      }
-    ]
-  },
-
-
-  /* 11 */
-
-  {
-    chapter:"第3章",
-    title:"二つの影",
-    character:"皇 紅蓮",
-
-    horror:true,
-
-    text:
-`紅蓮は壁を見る。
-
-二つの影。
-
-一つは自分。
-
-もう一つは――
-
-少し遅れて動いている。
-
-紅蓮が右手を上げる。
-
-影は一秒後に右手を上げた。
-
-紅蓮が左を向く。
-
-影は正面を向いたまま。
-
-そして。
-
-影だけが、笑った。`,
-
-    choices:[
-      {
-        text:"影に触れる",
-        next:20
-      },
-      {
-        text:"下僕から離れない",
-        next:10
-      }
-    ]
-  },
-
-
-  /* 12 */
-
-  {
-    chapter:"第3章",
-    title:"再会",
-    character:"下僕",
-
-    text:
-`廊下の先に下僕がいた。
-
-「主様！」
-
-下僕が走ってくる。
-
-紅蓮も近づく。
-
-しかし。
-
-二人の間に、何かが横切った。
-
-黒い影。
-
-一瞬だった。
-
-「今のは？」
-
-下僕が答える。
-
-「見ない方がいいです」
-
-「なぜだ」
-
-「……見たら、あれもこちらを見るからです」`,
-
-    choices:[
-      {
-        text:"それでも見る",
-        next:21
-      },
-      {
-        text:"見ない",
-        next:18
-      }
-    ]
-  },
-
-
-  /* 13 */
-
-  {
-    chapter:"第3章",
-    title:"走る",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`紅蓮は走った。
-
-廊下を走る。
-
-曲がる。
-
-さらに曲がる。
-
-しかし。
-
-景色が変わらない。
-
-白い壁。
-
-黒い扉。
-
-白い壁。
-
-黒い扉。
-
-「……おかしい」
-
-後ろから。
-
-タッ。
-
-タッ。
-
-タッ。
-
-誰かが走ってくる。
-
-紅蓮はさらに速く走る。
-
-しかし。
-
-足音は、どんどん近くなる。`,
-
-    choices:[
-      {
-        text:"立ち止まる",
-        next:22
-      },
-      {
-        text:"走り続ける",
-        next:23
-      }
-    ]
-  },
-
-
-  /* 14 */
-
-  {
-    chapter:"第4章",
-    title:"当然",
-    character:"もう一人の紅蓮",
-
-    text:
-`「当然だ」
-
-紅蓮が答える。
-
-もう一人の紅蓮は笑った。
-
-「そう」
-
-そして一歩下がる。
-
-「じゃあ、証明して」
-
-「何を？」
-
-「お前が、あいつらを本当に知っているか」
-
-紅蓮の頭に四人の姿が浮かぶ。
-
-下僕。
-
-焔緋くん。
-
-灯影。
-
-そして――自分。
-
-「……どういう意味だ？」
-
-もう一人の紅蓮は答えなかった。`,
-
-    choices:[
-      {
-        text:"「仲間だ」と答える",
-        next:24
-      },
-      {
-        text:"質問を返す",
-        next:25
-      }
-    ]
-  },
-
-
-  /* 15 */
-
-  {
-    chapter:"第4章",
-    title:"沈黙",
-    character:"もう一人の紅蓮",
-
-    horror:true,
-
-    text:
-`紅蓮は黙った。
-
-もう一人の紅蓮は、ゆっくり近づく。
-
-「……正解」
-
-その瞬間。
-
-顔が崩れた。
-
-輪郭だけが残る。
-
-「知らない方がいいこともある」
-
-声だけが残る。
-
-「特に――灯影のことは」
-
-紅蓮の意識が一瞬途切れた。`,
-
-    choices:[
-      {
-        text:"灯影について考える",
-        next:26
-      },
-      {
-        text:"下僕を思い出す",
-        next:24
-      }
-    ]
-  },
-
-
-  /* 16 */
-
-  {
-    chapter:"第4章",
-    title:"振り返る",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`紅蓮は振り返った。
-
-誰もいない。
-
-ただ、一枚の写真が床に落ちている。
-
-写真には四人が写っていた。
-
-皇 紅蓮。
-
-下僕。
-
-焔緋くん。
-
-焔緋 灯影。
-
-しかし。
-
-写真の端に――
-
-もう一人いる。
-
-顔は黒く塗りつぶされている。
-
-写真の裏には。
-
-「五人目は、まだ起きていない」`,
-
-    choices:[
-      {
-        text:"写真を持つ",
-        next:27
-      },
-      {
-        text:"写真を捨てる",
-        next:28
-      }
-    ]
-  },
-
-
-  /* 17 */
-
-  {
-    chapter:"第4章",
-    title:"目を閉じる",
-    character:"？？？",
-
-    text:
-`紅蓮は目を閉じる。
-
-何も見ない。
-
-何も聞かない。
-
-そうすれば大丈夫だと思った。
-
-しかし。
-
-まぶたの裏に文字が浮かぶ。
-
-「Θαύμα」
-
-そして、その下。
-
-「あなたは、もう一度ここへ来る」
-
-紅蓮が目を開ける。
-
-部屋には誰もいない。
-
-ただ。
-
-白い扉だけが、少し開いていた。`,
-
-    choices:[
-      {
-        text:"扉へ向かう",
-        next:29
-      },
-      {
-        text:"下僕を探す",
-        next:10
-      }
-    ]
-  },
-
-
-  /* 18 */
-
-  {
-    chapter:"第5章",
-    title:"二人",
-    character:"下僕",
-
-    text:
-`紅蓮と下僕は並んで歩く。
-
-しばらくして。
-
-下僕が言った。
-
-「主様」
-
-「なんだ？」
-
-「もし私が、私ではなくなったら」
-
-紅蓮は下僕を見る。
-
-「その時は――」
-
-下僕は笑った。
-
-「どうしますか？」
-
-その質問だけが。
-
-なぜか、部屋中に響いた。`,
-
-    choices:[
-      {
-        text:"「それでもお前は下僕だ」",
-        next:30,
-        flag:"trustedServant"
-      },
-      {
-        text:"「その時は考える」",
-        next:31
-      }
-    ]
-  },
-
-
-  /* 19 */
-
-  {
-    chapter:"第5章",
-    title:"一人",
-    character:"皇 紅蓮",
-
-    text:
-`紅蓮は一人で進んだ。
-
-すぐに気づく。
-
-静かすぎる。
-
-足音すらしない。
-
-すると。
-
-後ろから声。
-
-「置いていかないで」
-
-下僕の声。
-
-紅蓮は振り返る。
-
-そこには下僕がいる。
-
-しかし。
-
-その足元に影がない。`,
-
-    choices:[
-      {
-        text:"声をかける",
-        next:32
-      },
-      {
-        text:"逃げる",
-        next:33
-      }
-    ]
-  },
-
-
-  /* 20 */
-
-  {
-    chapter:"第5章",
-    title:"影に触れる",
-    character:"皇 紅蓮",
-
-    horror:true,
-
-    text:
-`紅蓮が影に触れる。
-
-冷たい。
-
-そして。
-
-影の中から声がする。
-
-「やっと触れた」
-
-紅蓮は手を離す。
-
-しかし遅かった。
-
-手のひらに、小さな黒い印が残っている。
-
-印がゆっくり動く。
-
-まるで――
-
-心臓のように。`,
-
-    choices:[
-      {
-        text:"印を見続ける",
-        next:34
-      },
-      {
-        text:"手を隠す",
-        next:35
-      }
-    ]
-  },
-
-
-  /* 21 */
-
-  {
-    chapter:"第5章",
-    title:"見てしまう",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`紅蓮は影を見る。
-
-影がこちらを向く。
-
-顔はない。
-
-なのに。
-
-笑っていることだけは分かった。
-
-「――見たね」
-
-声がした。
-
-部屋の照明が消える。
-
-次に点いた時。
-
-影は消えていた。
-
-代わりに。
-
-下僕が紅蓮の後ろに立っている。
-
-「主様」
-
-「……なんだ」
-
-「今、誰と話していましたか？」`,
-
-    choices:[
-      {
-        text:"「お前とだ」",
-        next:30
-      },
-      {
-        text:"答えない",
-        next:36
-      }
-    ]
-  },
-
-
-  /* 22 */
-
-  {
-    chapter:"第6章",
-    title:"立ち止まる",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`紅蓮は立ち止まった。
-
-足音も止まった。
-
-静寂。
-
-そして。
-
-背後から。
-
-「……どうして止まったの？」
-
-紅蓮は振り返らない。
-
-「走って」
-
-声が続く。
-
-「走らないと、追いつかれるよ」
-
-紅蓮は気づいた。
-
-声は背後ではない。
-
-自分の――
-
-頭の中から聞こえている。`,
-
-    choices:[
-      {
-        text:"声に従う",
-        next:37
-      },
-      {
-        text:"その場に留まる",
-        next:38
-      }
-    ]
-  },
-
-
-  /* 23 */
-
-  {
-    chapter:"第6章",
-    title:"無限の廊下",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`走り続ける。
-
-しかし出口がない。
-
-そして。
-
-前方に人が立っている。
-
-焔緋くんだった。
-
-「遅かったね」
-
-紅蓮は立ち止まる。
-
-「お前、ここにいたのか？」
-
-焔緋くんは笑う。
-
-いつもの笑顔。
-
-でも。
-
-「……僕？」
-
-その言葉だけが不自然だった。`,
-
-    choices:[
-      {
-        text:"「焔緋くんだろ」",
-        next:39
-      },
-      {
-        text:"距離を取る",
-        next:40
-      }
-    ]
-  },
-
-
-  /* 24 */
-
-  {
-    chapter:"第7章",
-    title:"仲間",
-    character:"？？？",
-
-    text:
-`「仲間だ」
-
-紅蓮は答えた。
-
-もう一人の紅蓮はしばらく黙る。
-
-「……そう」
-
-そして笑う。
-
-「じゃあ、聞いて」
-
-白い部屋が暗くなる。
-
-遠くから声。
-
-焔緋くん。
-
-下僕。
-
-灯影。
-
-三人の声が同時に聞こえる。
-
-「紅蓮」
-
-「主様」
-
-「皇 紅蓮」
-
-三人とも、同じ言葉を言った。
-
-「――こっちを見ないで」`,
-
-    choices:[
-      {
-        text:"見ない",
-        next:41
-      },
-      {
-        text:"見る",
-        next:42
-      }
-    ]
-  },
-
-
-  /* 25 */
-
-  {
-    chapter:"第7章",
-    title:"質問",
-    character:"もう一人の紅蓮",
-
-    text:
-`「お前は誰だ？」
-
-紅蓮が聞く。
-
-もう一人の紅蓮は答える。
-
-「僕？」
-
-少し考える。
-
-「君だよ」
-
-「……俺？」
-
-「そう」
-
-そして。
-
-「正確には――」
-
-声が低くなる。
-
-「君が忘れた方」`,
-
-    choices:[
-      {
-        text:"「何を忘れた？」",
-        next:43
-      },
-      {
-        text:"逃げる",
-        next:44
-      }
-    ]
-  },
-
-
-  /* 26 */
-
-  {
-    chapter:"第7章",
-    title:"灯影",
-    character:"焔緋 灯影",
-
-    horror:true,
-
-    text:
-`暗闇の中。
-
-灯影が立っていた。
-
-「……ようやく気づいたか」
-
-「何を？」
-
-灯影は答えない。
-
-しばらくして。
-
-「この場所には、終焉がない」
-
-紅蓮は眉をひそめる。
-
-「どういう意味だ？」
-
-灯影がこちらを見る。
-
-「終わることができない場所だ」
-
-そして。
-
-「だから、何かが永遠に残る」`,
-
-    choices:[
-      {
-        text:"「何が残る？」",
-        next:45
-      },
-      {
-        text:"灯影を問い詰める",
-        next:46,
-        flag:"toueiQuestioned"
-      }
-    ]
-  },
-
-
-  /* 27 */
-
-  {
-    chapter:"第8章",
-    title:"五人目",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`写真を持った。
-
-その瞬間。
-
-写真の中の黒い部分が動いた。
-
-少しずつ。
-
-顔が見える。
-
-それは――
-
-紅蓮だった。
-
-しかし写真の中の紅蓮は。
-
-こちらを見て笑っている。
-
-そして写真の中から声がした。
-
-「次は、君が写真になる」`,
-
-    choices:[
-      {
-        text:"写真を破る",
-        next:47
-      },
-      {
-        text:"写真を見続ける",
-        next:48
-      }
-    ]
-  },
-
-
-  /* 28 */
-
-  {
-    chapter:"第8章",
-    title:"捨てる",
-    character:"？？？",
-
-    text:
-`紅蓮は写真を捨てた。
-
-床に落ちる。
-
-その瞬間。
-
-写真の中から小さな音。
-
-コン。
-
-コン。
-
-コン。
-
-写真を拾わなくても分かる。
-
-何かが。
-
-写真の内側から。
-
-叩いている。`,
-
-    choices:[
-      {
-        text:"無視する",
-        next:49
-      },
-      {
-        text:"拾う",
-        next:27
-      }
-    ]
-  },
-
-
-  /* 29 */
-
-  {
-    chapter:"第8章",
-    title:"少し開いた扉",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`扉は少しだけ開いている。
-
-その隙間から。
-
-真っ暗な空間。
-
-そして。
-
-誰かの目。
-
-紅蓮が近づくと、目は消える。
-
-代わりに。
-
-「遅い」
-
-声。
-
-「ずっと待ってた」
-
-扉が少しだけ開く。`,
-
-    choices:[
-      {
-        text:"扉を開ける",
-        next:50
-      },
-      {
-        text:"戻る",
-        next:10
-      }
-    ]
-  },
-
-
-  /* 30 */
-
-  {
-    chapter:"第8章",
-    title:"信じる",
-    character:"下僕",
-
-    text:
-`「それでもお前は下僕だ」
-
-紅蓮が言う。
-
-下僕は黙った。
-
-そして。
-
-「……ありがとうございます」
-
-一瞬。
-
-普通の下僕に戻ったように見えた。
-
-しかし。
-
-その背後。
-
-壁の影だけが。
-
-別の動きをしていた。`,
-
-    choices:[
-      {
-        text:"影を見る",
-        next:51
-      },
-      {
-        text:"下僕を見る",
-        next:52
-      }
-    ]
-  },
-
-
-  /* 31 */
-
-  {
-    chapter:"第8章",
-    title:"考える",
-    character:"下僕",
-
-    text:
-`「その時は考える」
-
-紅蓮が答える。
-
-下僕は笑う。
-
-「そうですか」
-
-そして。
-
-「では、その時まで」
-
-一歩。
-
-下僕が離れる。
-
-二歩。
-
-三歩。
-
-気づけば。
-
-廊下の向こうに消えていた。
-
-紅蓮は一人になる。`,
-
-    choices:[
-      {
-        text:"追いかける",
-        next:53
-      },
-      {
-        text:"その場に残る",
-        next:54
-      }
-    ]
-  },
-
-
-  /* 32 */
-
-  {
-    chapter:"第9章",
-    title:"影のない下僕",
-    character:"下僕",
-
-    horror:true,
-
-    text:
-`「下僕」
-
-紅蓮が呼ぶ。
-
-下僕は笑う。
-
-「はい、主様」
-
-「影は？」
-
-下僕の笑顔が止まる。
-
-「……影？」
-
-その瞬間。
-
-下僕の足元に。
-
-ゆっくり黒い影が現れる。
-
-しかし。
-
-その影は。
-
-下僕より先に笑った。`,
-
-    choices:[
-      {
-        text:"下僕を連れて逃げる",
-        next:55
-      },
-      {
-        text:"影を観察する",
-        next:56
-      }
-    ]
-  },
-
-
-  /* 33 */
-
-  {
-    chapter:"第9章",
-    title:"逃走",
-    character:"皇 紅蓮",
-
-    text:
-`紅蓮は走った。
-
-背後から声。
-
-「主様」
-
-走る。
-
-「主様」
-
-走る。
-
-「どうして逃げるんですか？」
-
-紅蓮は振り返らない。
-
-すると。
-
-声が変わる。
-
-「……紅蓮」
-
-その声は。
-
-下僕ではなかった。`,
-
-    choices:[
-      {
-        text:"振り返る",
-        next:57
-      },
-      {
-        text:"振り返らない",
-        next:58
-      }
-    ]
-  },
-
-
-  /* 34 */
-
-  {
-    chapter:"第9章",
-    title:"黒い印",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`手のひらの印を見る。
-
-動いている。
-
-少しずつ。
-
-形が変わる。
-
-文字になる。
-
-Θαύμα。
-
-その下に。
-
-「第六章」
-
-さらに。
-
-「終わっていない」
-
-紅蓮は息を止める。
-
-突然。
-
-印が消えた。
-
-代わりに。
-
-手のひらに、小さな扉の絵が残った。`,
-
-    choices:[
-      {
-        text:"扉の絵を押す",
-        next:59
-      },
-      {
-        text:"手を隠す",
-        next:60
-      }
-    ]
-  },
-
-
-  /* 35 */
-
-  {
-    chapter:"第9章",
-    title:"隠す",
-    character:"？？？",
-
-    text:
-`紅蓮は手を隠した。
-
-すると。
-
-灯影の声がした。
-
-「隠しても無駄だ」
-
-いつの間にか、灯影が立っている。
-
-「その印は、お前自身のものだ」
-
-「俺自身？」
-
-「そうだ」
-
-灯影は静かに言う。
-
-「ただし――」
-
-少し間を置いて。
-
-「今のお前のものではない」`,
-
-    choices:[
-      {
-        text:"詳しく聞く",
-        next:45
-      },
-      {
-        text:"聞かない",
-        next:61
-      }
-    ]
-  },
-
-
-  /* 36 */
-
-  {
-    chapter:"第9章",
-    title:"答えない",
-    character:"下僕",
-
-    text:
-`紅蓮は答えなかった。
-
-下僕も何も言わない。
-
-長い沈黙。
-
-そして。
-
-「……分かりました」
-
-下僕が離れる。
-
-紅蓮が顔を上げる。
-
-もうそこに下僕はいない。
-
-代わりに。
-
-床に一枚の紙。
-
-「私は、まだ下僕です」
-
-その文字の下に。
-
-「――今は」`,
-
-    choices:[
-      {
-        text:"紙を持つ",
-        next:62
-      },
-      {
-        text:"紙を置く",
-        next:63
-      }
-    ]
-  },
-
-
-  /* 37 */
-
-  {
-    chapter:"第10章",
-    title:"声に従う",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`「走って」
-
-声に従う。
-
-紅蓮は走る。
-
-しかし。
-
-走るほど、廊下が狭くなる。
-
-壁が近づく。
-
-照明が低くなる。
-
-そして。
-
-前方に灯影が立っていた。
-
-「止まれ」
-
-紅蓮は止まる。
-
-灯影は言う。
-
-「それ以上進めば、戻れなくなる」`,
-
-    choices:[
-      {
-        text:"止まる",
-        next:64
-      },
-      {
-        text:"進む",
-        next:65
-      }
-    ]
-  },
-
-
-  /* 38 */
-
-  {
-    chapter:"第10章",
-    title:"その場に留まる",
-    character:"？？？",
-
-    text:
-`紅蓮は動かなかった。
-
-すると。
-
-廊下の照明が全て消える。
-
-完全な暗闇。
-
-何も見えない。
-
-何も聞こえない。
-
-――数秒後。
-
-肩に手が置かれる。
-
-「見つけた」
-
-紅蓮は振り返る。`,
-
-    choices:[
-      {
-        text:"振り返る",
-        next:66
-      },
-      {
-        text:"振り返らない",
-        next:67
-      }
-    ]
-  },
-
-
-  /* 39 */
-
-  {
-    chapter:"第10章",
-    title:"焔緋くん",
-    character:"焔緋くん",
-
-    text:
-`「焔緋くんだろ」
-
-紅蓮が言う。
-
-焔緋くんは笑う。
-
-「うん」
-
-「ここで何をしてる？」
-
-「探してる」
-
-「何を？」
-
-笑顔が消える。
-
-「……出口」
-
-紅蓮は気づく。
-
-焔緋くんの手が震えている。
-
-「怖いのか？」
-
-「違う」
-
-少し間。
-
-「ここにいると、僕じゃなくなる気がする」`,
-
-    choices:[
-      {
-        text:"一緒に出口を探す",
-        next:68
-      },
-      {
-        text:"灯影を探す",
-        next:69
-      }
-    ]
-  },
-
-
-  /* 40 */
-
-  {
-    chapter:"第10章",
-    title:"距離",
-    character:"焔緋くん",
-
-    text:
-`紅蓮が距離を取る。
-
-焔緋くんは笑った。
-
-「警戒するんだ」
-
-「……お前、本当に焔緋くんか？」
-
-「もちろん」
-
-即答。
-
-しかし。
-
-その返事が早すぎた。
-
-焔緋くんは自分の名前を言い直す。
-
-「僕は、焔緋くん」
-
-その声が。
-
-一瞬だけ別人に聞こえた。`,
-
-    choices:[
-      {
-        text:"問い詰める",
-        next:70
-      },
-      {
-        text:"離れる",
-        next:68
-      }
-    ]
-  },
-
-
-  /* 41 */
-
-  {
-    chapter:"第11章",
-    title:"見ない",
-    character:"？？？",
-
-    text:
-`紅蓮は見なかった。
-
-声だけが聞こえる。
-
-「正解」
-
-一つ。
-
-二つ。
-
-三つ。
-
-足音が遠ざかる。
-
-そして。
-
-最後に一つ。
-
-コツ。
-
-すぐ後ろ。
-
-「……でも」
-
-声がした。
-
-「もう遅いよ」
-
-画面が暗くなる。`,
-
-    choices:[
-      {
-        text:"目を開ける",
-        next:71
-      },
-      {
-        text:"目を閉じたまま",
-        next:72
-      }
-    ]
-  },
-
-
-  /* 42 */
-
-  {
-    chapter:"第11章",
-    title:"見てしまった",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`紅蓮は見た。
-
-そこには。
-
-誰もいない。
-
-しかし。
-
-床には三人分の影。
-
-下僕。
-
-焔緋くん。
-
-灯影。
-
-そして。
-
-四つ目。
-
-紅蓮自身の影。
-
-最後に。
-
-五つ目。
-
-それは。
-
-こちらを向いていた。`,
-
-    choices:[
-      {
-        text:"五つ目を見る",
-        next:73
-      },
-      {
-        text:"目を閉じる",
-        next:72
-      }
-    ]
-  },
-
-
-  /* 43 */
-
-  {
-    chapter:"第11章",
-    title:"忘れたもの",
-    character:"もう一人の紅蓮",
-
-    text:
-`「何を忘れた？」
-
-紅蓮が聞く。
-
-もう一人の紅蓮は答える。
-
-「ここに来た理由」
-
-「……」
-
-「そして」
-
-笑う。
-
-「一度、ここから出たこと」
-
-紅蓮の記憶が揺れる。
-
-白い部屋。
-
-黒い扉。
-
-そして。
-
-自分が誰かに手を振っている記憶。
-
-「……誰だ？」
-
-記憶の人物は。
-
-灯影だった。`,
-
-    choices:[
-      {
-        text:"灯影を探す",
-        next:26
-      },
-      {
-        text:"記憶を拒む",
-        next:74
-      }
-    ]
-  },
-
-
-  /* 44 */
-
-  {
-    chapter:"第11章",
-    title:"逃げる",
-    character:"？？？",
-
-    text:
-`紅蓮は走る。
-
-もう一人の紅蓮は追ってこない。
-
-それが逆に怖かった。
-
-曲がり角。
-
-その先。
-
-下僕。
-
-焔緋くん。
-
-灯影。
-
-三人が立っている。
-
-「やっと戻ってきた」
-
-焔緋くんが言う。
-
-「遅かったですね」
-
-下僕が言う。
-
-灯影だけが黙っている。
-
-そして灯影が。
-
-「……誰を連れてきた？」
-
-と言った。`,
-
-    choices:[
-      {
-        text:"「俺一人だ」",
-        next:75
-      },
-      {
-        text:"後ろを見る",
-        next:73
-      }
-    ]
-  },
-
-
-  /* 45 */
-
-  {
-    chapter:"第12章",
-    title:"残るもの",
-    character:"焔緋 灯影",
-
-    text:
-`「何が残る？」
-
-紅蓮が聞く。
-
-灯影は答える。
-
-「記憶」
-
-「記憶？」
-
-「この場所では、失われたものが消えない」
-
-「なら――」
-
-紅蓮が言う。
-
-「俺が忘れたものも？」
-
-灯影は少しだけ目を伏せる。
-
-「……そうだ」
-
-そして。
-
-「だから、この場所は危険なんだ」`,
-
-    choices:[
-      {
-        text:"「記憶を探す」",
-        next:76
-      },
-      {
-        text:"「ここから出る」",
-        next:77
-      }
-    ]
-  },
-
-
-  /* 46 */
-
-  {
-    chapter:"第12章",
-    title:"灯影への質問",
-    character:"焔緋 灯影",
-
-    horror:true,
-
-    text:
-`「全部知ってるんだろ」
-
-紅蓮が言う。
-
-灯影は沈黙する。
-
-「なら答えろ」
-
-長い沈黙。
-
-「……私は」
-
-灯影が口を開く。
-
-「一度、この場所を終わらせた」
-
-紅蓮は息を呑む。
-
-「でも」
-
-灯影は白い扉を見る。
-
-「終わらなかった」
-
-そして。
-
-「だから今度は、お前が選べ」`,
-
-    choices:[
-      {
-        text:"扉を開ける",
-        next:50
-      },
-      {
-        text:"仲間を探す",
-        next:78
-      }
-    ]
-  },
-
-
-  /* 47 */
-
-  {
-    chapter:"第12章",
-    title:"写真を破る",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`写真を破る。
-
-紙は簡単に裂けた。
-
-しかし。
-
-裂けた写真の中から。
-
-「……痛い」
-
-声がした。
-
-紅蓮は固まる。
-
-「痛いよ」
-
-紙の向こうから。
-
-もう一度。
-
-「どうして破ったの？」
-
-部屋の照明が消える。`,
-
-    choices:[
-      {
-        text:"写真を捨てる",
-        next:79
-      },
-      {
-        text:"謝る",
-        next:80
-      }
-    ]
-  },
-
-
-  /* 48 */
-
-  {
-    chapter:"第12章",
-    title:"写真の中",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`写真を見続ける。
-
-黒い部分が広がる。
-
-四人の姿が消える。
-
-最後に残ったのは。
-
-紅蓮。
-
-そして。
-
-黒い五人目。
-
-五人目が写真の中で口を開く。
-
-「交代の時間だよ」
-
-画面が白くなる。`,
-
-    choices:[
-      {
-        text:"目を閉じる",
-        next:81
-      },
-      {
-        text:"見る",
-        next:82
-      }
-    ]
-  },
-
-
-  /* 49 */
-
-  {
-    chapter:"第13章",
-    title:"無視",
-    character:"？？？",
-
-    text:
-`紅蓮は写真を無視した。
-
-歩く。
-
-歩く。
-
-しばらくすると。
-
-後ろから紙を踏む音。
-
-カサ。
-
-カサ。
-
-カサ。
-
-写真が。
-
-自分で近づいてきている。
-
-紅蓮が振り返ると。
-
-写真が立っていた。`,
-
-    choices:[
-      {
-        text:"逃げる",
-        next:83
-      },
-      {
-        text:"写真を拾う",
-        next:27
-      }
-    ]
-  },
-
-
-  /* 50 */
-
-  {
-    chapter:"最終章",
-    title:"Θαύμα",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`紅蓮は扉を開けた。
-
-その向こうには。
-
-何もない。
-
-白。
-
-ただの白。
-
-しかし。
-
-その白い空間に。
-
-四つの椅子がある。
-
-紅蓮。
-
-下僕。
-
-焔緋くん。
-
-灯影。
-
-そして。
-
-五つ目の椅子。
-
-紅蓮が近づく。
-
-椅子には名前が刻まれている。
-
-「皇 紅蓮」
-
-「……俺？」
-
-その瞬間。
-
-背後で扉が閉じた。`,
-
-    choices:[
-      {
-        text:"椅子に座る",
-        next:84
-      },
-      {
-        text:"扉を開けようとする",
-        next:85
-      }
-    ]
-  },
-
-
-  /* 51 */
-
-  {
-    chapter:"最終章",
-    title:"影",
-    character:"下僕",
-
-    horror:true,
-
-    text:
-`影を見る。
-
-影は下僕の形をしていない。
-
-人間でもない。
-
-何か別のもの。
-
-下僕が振り返る。
-
-「主様？」
-
-紅蓮が影を見る。
-
-影も紅蓮を見る。
-
-そして。
-
-影が口を開く。
-
-「やっと、コピーできる」
-
-下僕が青ざめる。
-
-「……私ではありません」`,
-
-    choices:[
-      {
-        text:"下僕を守る",
-        next:86
-      },
-      {
-        text:"影を見続ける",
-        next:87
-      }
-    ]
-  },
-
-
-  /* 52 */
-
-  {
-    chapter:"最終章",
-    title:"下僕を見る",
-    character:"下僕",
-
-    text:
-`紅蓮は下僕を見る。
-
-いつもの姿。
-
-いつもの声。
-
-「主様」
-
-「……なんだ」
-
-「怖いですか？」
-
-紅蓮は答えない。
-
-下僕が笑う。
-
-「私は大丈夫です」
-
-しかし。
-
-その笑顔の奥に。
-
-何か別のものがいる気がした。`,
-
-    choices:[
-      {
-        text:"信じる",
-        next:88
-      },
-      {
-        text:"警戒する",
-        next:89
-      }
-    ]
-  },
-
-
-  /* 53 */
-
-  {
-    chapter:"最終章",
-    title:"追う",
-    character:"皇 紅蓮",
-
-    text:
-`紅蓮は下僕を追った。
-
-しかし。
-
-どこにもいない。
-
-代わりに。
-
-壁に文字。
-
-「探しているのは誰？」
-
-紅蓮が答える。
-
-「下僕だ」
-
-文字が変わる。
-
-「本当に？」
-
-そして。
-
-「なら、どうして顔を思い出せない？」`,
-
-    choices:[
-      {
-        text:"思い出そうとする",
-        next:90
-      },
-      {
-        text:"文字を消す",
-        next:91
-      }
-    ]
-  },
-
-
-  /* 54 */
-
-  {
-    chapter:"最終章",
-    title:"一人",
-    character:"皇 紅蓮",
-
-    text:
-`誰もいない。
-
-静かな部屋。
-
-紅蓮は座る。
-
-すると。
-
-隣に誰かが座った。
-
-見なくても分かる。
-
-「……下僕？」
-
-返事。
-
-「はい、主様」
-
-紅蓮は安心する。
-
-しかし。
-
-隣からもう一つの声。
-
-「私もいます」
-
-紅蓮は動けなくなった。`,
-
-    choices:[
-      {
-        text:"振り返る",
-        next:92
-      },
-      {
-        text:"動かない",
-        next:93
-      }
-    ]
-  },
-
-
-  /* 55 */
-
-  {
-    chapter:"終章",
-    title:"守る",
-    character:"皇 紅蓮",
-
-    text:
-`紅蓮は下僕の手を取る。
-
-「行くぞ」
-
-「はい」
-
-二人は走る。
-
-背後から影が追ってくる。
-
-しかし。
-
-下僕が振り返る。
-
-「もう、あなたの未来はありません」
-
-影が止まる。
-
-下僕の目が変わる。
-
-「私は――覚醒した」
-
-空気が震える。`,
-
-    choices:[
-      {
-        text:"下僕に任せる",
-        next:94
-      },
-      {
-        text:"自分も戦う",
-        next:95
-      }
-    ]
-  },
-
-
-  /* 56 */
-
-  {
-    chapter:"終章",
-    title:"観察",
-    character:"下僕",
-
-    horror:true,
-
-    text:
-`影を観察する。
-
-下僕が言う。
-
-「主様、離れてください」
-
-影が動く。
-
-下僕も動く。
-
-同じ動き。
-
-影が止まる。
-
-下僕も止まる。
-
-そして。
-
-影が笑う。
-
-下僕は笑っていない。
-
-「……コピーされている」
-
-下僕が呟いた。`,
-
-    choices:[
-      {
-        text:"逃げる",
-        next:96
-      },
-      {
-        text:"下僕を信じる",
-        next:94
-      }
-    ]
-  },
-
-
-  /* 57 */
-
-  {
-    chapter:"終章",
-    title:"振り返る",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`紅蓮が振り返る。
-
-誰もいない。
-
-しかし。
-
-声はすぐそば。
-
-「残念」
-
-そして。
-
-耳元。
-
-「私は、後ろにはいない」
-
-紅蓮の目の前。
-
-鏡がある。
-
-鏡の中だけ。
-
-誰かが立っている。`,
-
-    choices:[
-      {
-        text:"鏡を見る",
-        next:97
-      },
-      {
-        text:"鏡を壊す",
-        next:98
-      }
-    ]
-  },
-
-
-  /* 58 */
-
-  {
-    chapter:"終章",
-    title:"振り返らない",
-    character:"？？？",
-
-    text:
-`紅蓮は振り返らない。
-
-声が笑う。
-
-「正解」
-
-一歩。
-
-「正解」
-
-二歩。
-
-「正解」
-
-三歩。
-
-そして。
-
-「でも――」
-
-声が目の前から聞こえた。
-
-「どこを見てるの？」
-
-紅蓮の目の前に。
-
-誰かが立っていた。`,
-
-    choices:[
-      {
-        text:"目を閉じる",
-        next:99
-      },
-      {
-        text:"見る",
-        next:100
-      }
-    ]
-  },
-
-
-  /* 59 */
-
-  {
-    chapter:"終章",
-    title:"小さな扉",
-    character:"？？？",
-
-    text:
-`手のひらの扉を押す。
-
-カチッ。
-
-遠くで。
-
-大きな扉が開く音。
-
-紅蓮は顔を上げる。
-
-白い部屋の中央。
-
-Θαύμαの扉が開いている。
-
-その向こうから。
-
-下僕の声。
-
-「主様」
-
-焔緋くんの声。
-
-「紅蓮」
-
-灯影の声。
-
-「来い」
-
-そして。
-
-もう一つ。
-
-「おかえり」`,
-
-    choices:[
-      {
-        text:"扉へ向かう",
-        next:50
-      },
-      {
-        text:"声を信じない",
-        next:101
-      }
-    ]
-  },
-
-
-  /* 60 */
-
-  {
-    chapter:"終章",
-    title:"隠された扉",
-    character:"？？？",
-
-    text:
-`手を隠す。
-
-すると印が消える。
-
-紅蓮は安心する。
-
-しかし。
-
-床を見る。
-
-そこに。
-
-手のひらと同じ形の黒い跡がある。
-
-そして。
-
-その跡が。
-
-床の上でゆっくり扉になる。`,
-
-    choices:[
-      {
-        text:"扉を開ける",
-        next:50
-      },
-      {
-        text:"離れる",
-        next:102
-      }
-    ]
-  },
-
-
-  /* 61 */
-
-  {
-    chapter:"終章",
-    title:"聞かない",
-    character:"焔緋 灯影",
-
-    text:
-`紅蓮は何も聞かなかった。
-
-灯影はそれ以上言わない。
-
-しばらくして。
-
-「……それでいい」
-
-灯影が言う。
-
-「今はまだ」
-
-そして。
-
-彼は歩き出す。
-
-紅蓮はその背中を見る。
-
-灯影が一度だけ振り返る。
-
-「お前は、まだこちら側だ」
-
-その言葉の意味を。
-
-紅蓮は理解できなかった。`,
-
-    choices:[
-      {
-        text:"灯影についていく",
-        next:78
-      },
-      {
-        text:"一人で進む",
-        next:77
-      }
-    ]
-  },
-
-
-  /* 62 */
-
-  {
-    chapter:"終章",
-    title:"今は",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`紙を持つ。
-
-裏を見る。
-
-「今は」
-
-その文字の下に。
-
-新しい文字が現れる。
-
-「いつまで？」
-
-紅蓮が紙を落とす。
-
-紙は床に落ちない。
-
-空中で止まった。
-
-そして。
-
-こちらを向いた。`,
-
-    choices:[
-      {
-        text:"紙を読む",
-        next:103
-      },
-      {
-        text:"目を逸らす",
-        next:104
-      }
-    ]
-  },
-
-
-  /* 63 */
-
-  {
-    chapter:"終章",
-    title:"置いていく",
-    character:"？？？",
-
-    text:
-`紙を置いた。
-
-数歩進む。
-
-振り返る。
-
-紙はない。
-
-少し安心する。
-
-しかし。
-
-自分のポケットに。
-
-紙が入っている。
-
-紅蓮はそれを取り出す。
-
-文字が変わっている。
-
-「置いていかないで」`,
-
-    choices:[
-      {
-        text:"紙を読む",
-        next:103
-      },
-      {
-        text:"捨てる",
-        next:105
-      }
-    ]
-  },
-
-
-  /* 64 */
-
-  {
-    chapter:"終章",
-    title:"止まる",
-    character:"焔緋 灯影",
-
-    text:
-`紅蓮は止まった。
-
-灯影が言う。
-
-「正しい」
-
-「何が？」
-
-「戻るという選択」
-
-灯影が扉を開く。
-
-その向こう。
-
-仲間がいる。
-
-下僕。
-
-焔緋くん。
-
-「……戻れ」
-
-灯影が言う。
-
-「まだ終わっていない」`,
-
-    choices:[
-      {
-        text:"戻る",
-        next:106
-      },
-      {
-        text:"灯影と残る",
-        next:107
-      }
-    ]
-  },
-
-
-  /* 65 */
-
-  {
-    chapter:"終章",
-    title:"進む",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`紅蓮は進んだ。
-
-灯影の声が遠ざかる。
-
-「待て」
-
-それでも進む。
-
-白い部屋。
-
-黒い扉。
-
-その先に。
-
-何かがいる。
-
-そして。
-
-その何かが。
-
-紅蓮と同じ声で言った。
-
-「やっと会えた」`,
-
-    choices:[
-      {
-        text:"声に答える",
-        next:108
-      },
-      {
-        text:"戻る",
-        next:106
-      }
-    ]
-  },
-
-
-  /* 66 */
-
-  {
-    chapter:"終章",
-    title:"振り返る",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`紅蓮は振り返った。
-
-そこにいたのは。
-
-誰でもなかった。
-
-顔のない人影。
-
-しかし。
-
-服装だけは分かる。
-
-紅蓮自身の服。
-
-人影が手を伸ばす。
-
-そして。
-
-「交代」
-
-その一言だけ。
-
-画面が暗転する。`,
-
-    choices:[
-      {
-        text:"手を取る",
-        next:109
-      },
-      {
-        text:"拒む",
-        next:110
-      }
-    ]
-  },
-
-
-  /* 67 */
-
-  {
-    chapter:"終章",
-    title:"振り返らない",
-    character:"？？？",
-
-    text:
-`紅蓮は振り返らない。
-
-肩の手が消える。
-
-代わりに。
-
-前から声。
-
-「賢いね」
-
-紅蓮の目の前に。
-
-白い扉。
-
-扉には。
-
-「出口」
-
-と書かれている。
-
-その下に小さな文字。
-
-「※一人で入ってください」`,
-
-    choices:[
-      {
-        text:"入る",
-        next:111
-      },
-      {
-        text:"仲間を探す",
-        next:106
-      }
-    ]
-  },
-
-
-  /* 68 */
-
-  {
-    chapter:"終章",
-    title:"出口を探す",
-    character:"焔緋くん",
-
-    text:
-`焔緋くんと歩く。
-
-「紅蓮」
-
-「ん？」
-
-「もし僕が変になったら」
-
-焔緋くんは笑う。
-
-「置いていって」
-
-紅蓮は答えない。
-
-「約束して」
-
-笑顔。
-
-でも。
-
-その目は笑っていなかった。`,
-
-    choices:[
-      {
-        text:"約束する",
-        next:112
-      },
-      {
-        text:"約束しない",
-        next:113
-      }
-    ]
-  },
-
-
-  /* 69 */
-
-  {
-    chapter:"終章",
-    title:"灯影を探す",
-    character:"焔緋くん",
-
-    text:
-`「灯影を探そう」
-
-焔緋くんが頷く。
-
-「そうだね」
-
-しばらく歩く。
-
-すると。
-
-灯影がいた。
-
-「遅かったな」
-
-焔緋くんが言う。
-
-「……灯影」
-
-灯影は二人を見る。
-
-「二人？」
-
-「え？」
-
-灯影は紅蓮を見る。
-
-「お前の隣にいるのは誰だ？」`,
-
-    choices:[
-      {
-        text:"焔緋くんを見る",
-        next:114
-      },
-      {
-        text:"灯影に近づく",
-        next:115
-      }
-    ]
-  },
-
-
-  /* 70 */
-
-  {
-    chapter:"終章",
-    title:"問い詰める",
-    character:"焔緋くん",
-
-    horror:true,
-
-    text:
-`「お前は誰だ？」
-
-紅蓮が聞く。
-
-焔緋くんは黙る。
-
-数秒。
-
-そして。
-
-「……分からない」
-
-初めて。
-
-彼の笑顔が消えた。
-
-「僕が誰なのか」
-
-「何を知ってるのか」
-
-「全部、分からない」
-
-その瞬間。
-
-遠くから灯影の声。
-
-「それでいい」
-
-「まだ思い出すな」`,
-
-    choices:[
-      {
-        text:"灯影のところへ行く",
-        next:115
-      },
-      {
-        text:"焔緋くんを連れて逃げる",
-        next:116
-      }
-    ]
-  },
-
-
-  /* 71 */
-
-  {
-    chapter:"終章",
-    title:"目を開ける",
-    character:"？？？",
-
-    text:
-`目を開ける。
-
-そこには誰もいない。
-
-紅蓮は安心する。
-
-しかし。
-
-自分の手に。
-
-誰かの手形が残っている。
-
-白い。
-
-冷たい。
-
-そして。
-
-指が五本ではない。`,
-
-    choices:[
-      {
-        text:"手形を見る",
-        next:117
-      },
-      {
-        text:"無視する",
-        next:118
-      }
-    ]
-  },
-
-
-  /* 72 */
-
-  {
-    chapter:"終章",
-    title:"目を閉じたまま",
-    character:"？？？",
-
-    text:
-`目を閉じたまま。
-
-声がする。
-
-「まだ開けないで」
-
-紅蓮は動かない。
-
-「そのまま」
-
-声が近づく。
-
-「そのままなら」
-
-耳元。
-
-「私は君を見つけられない」
-
-紅蓮は気づく。
-
-声は。
-
-自分の声だった。`,
-
-    choices:[
-      {
-        text:"目を開ける",
-        next:119
-      },
-      {
-        text:"開けない",
-        next:120
-      }
-    ]
-  },
-
-
-  /* 73 */
-
-  {
-    chapter:"終章",
-    title:"五つ目",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`五つ目の影を見る。
-
-影が一歩近づく。
-
-紅蓮も一歩下がる。
-
-影が一歩。
-
-紅蓮が一歩。
-
-そして。
-
-影が止まる。
-
-「……やっぱり」
-
-声。
-
-「君だった」
-
-その瞬間。
-
-五つ目の影が紅蓮の足元に重なる。`,
-
-    choices:[
-      {
-        text:"動く",
-        next:121
-      },
-      {
-        text:"動かない",
-        next:122
-      }
-    ]
-  },
-
-
-  /* 74 */
-
-  {
-    chapter:"終章",
-    title:"拒絶",
-    character:"？？？",
-
-    text:
-`「そんな記憶、知らない」
-
-紅蓮が言う。
-
-もう一人の紅蓮は笑う。
-
-「そう」
-
-「なら大丈夫」
-
-「……何が？」
-
-「忘れたままでいられるから」
-
-白い部屋が揺れる。
-
-「でも」
-
-声が遠ざかる。
-
-「忘れたものは、いつか戻ってくる」`,
-
-    choices:[
-      {
-        text:"記憶を受け入れる",
-        next:76
-      },
-      {
-        text:"さらに忘れる",
-        next:123
-      }
-    ]
-  },
-
-
-  /* 75 */
-
-  {
-    chapter:"終章",
-    title:"一人だ",
-    character:"皇 紅蓮",
-
-    text:
-`「俺一人だ」
-
-紅蓮が答える。
-
-灯影はしばらく紅蓮を見る。
-
-「……そうか」
-
-下僕が近づく。
-
-「主様」
-
-焔緋くんも。
-
-「紅蓮」
-
-三人ともいる。
-
-それでも。
-
-灯影だけが言う。
-
-「なら、後ろを見るな」
-
-紅蓮は背後から。
-
-小さな笑い声を聞いた。`,
-
-    choices:[
-      {
-        text:"見ない",
-        next:124
-      },
-      {
-        text:"見る",
-        next:125
-      }
-    ]
-  },
-
-
-  /* 76 */
-
-  {
-    chapter:"終章",
-    title:"記憶",
-    character:"焔緋 灯影",
-
-    text:
-`灯影が手をかざす。
-
-白い空間に映像が浮かぶ。
-
-紅蓮。
-
-下僕。
-
-焔緋くん。
-
-灯影。
-
-四人が以前にも、この場所にいる。
-
-そして。
-
-紅蓮が扉を閉める。
-
-「俺が戻る」
-
-過去の紅蓮が言う。
-
-現在の紅蓮は呟く。
-
-「……俺は一度ここに来た」
-
-灯影が答える。
-
-「そうだ」`,
-
-    choices:[
-      {
-        text:"「なぜ忘れていた？」",
-        next:126
-      },
-      {
-        text:"「もう一度扉を閉める」",
-        next:127
-      }
-    ]
-  },
-
-
-  /* 77 */
-
-  {
-    chapter:"終章",
-    title:"出口",
-    character:"皇 紅蓮",
-
-    text:
-`「ここから出る」
-
-紅蓮は歩く。
-
-白い扉。
-
-その向こう。
-
-元の世界。
-
-下僕がいる。
-
-焔緋くんがいる。
-
-灯影もいる。
-
-紅蓮は扉に手をかける。
-
-その瞬間。
-
-背後から声。
-
-「行かないで」
-
-紅蓮は止まる。
-
-「ここにいて」
-
-声は優しい。
-
-とても優しい。
-
-だからこそ。
-
-怖かった。`,
-
-    choices:[
-      {
-        text:"振り返らず出る",
-        next:128
-      },
-      {
-        text:"振り返る",
-        next:129
-      }
-    ]
-  },
-
-
-  /* 78 */
-
-  {
-    chapter:"終章",
-    title:"四人",
-    character:"焔緋 灯影",
-
-    text:
-`四人が集まる。
-
-下僕。
-
-焔緋くん。
-
-灯影。
-
-紅蓮。
-
-灯影が言う。
-
-「ここから出る」
-
-下僕が頷く。
-
-焔緋くんも頷く。
-
-紅蓮が扉を見る。
-
-すると。
-
-扉の上に文字。
-
-「四人」
-
-その下。
-
-「本当に？」
-
-灯影が目を細めた。`,
-
-    choices:[
-      {
-        text:"四人で進む",
-        next:130
-      },
-      {
-        text:"人数を確認する",
-        next:131
-      }
-    ]
-  },
-
-
-  /* 79 */
-
-  {
-    chapter:"終章",
-    title:"捨てる",
-    character:"？？？",
-
-    text:
-`写真を捨てる。
-
-今度こそ消えた。
-
-紅蓮は歩く。
-
-しばらくして。
-
-ポケットに違和感。
-
-何か入っている。
-
-取り出す。
-
-写真。
-
-今度の写真には。
-
-五人。
-
-そして。
-
-写真の裏。
-
-「ありがとう」`,
-
-    choices:[
-      {
-        text:"写真を燃やす",
-        next:132
-      },
-      {
-        text:"持っていく",
-        next:133
-      }
-    ]
-  },
-
-
-  /* 80 */
-
-  {
-    chapter:"終章",
-    title:"謝る",
-    character:"？？？",
-
-    text:
-`「……ごめん」
-
-紅蓮が言う。
-
-裂けた写真から声。
-
-「いいよ」
-
-そして。
-
-「代わりに」
-
-少し間。
-
-「一つだけ、お願い」
-
-「何だ？」
-
-「次に会った時」
-
-声が笑う。
-
-「僕を忘れないで」`,
-
-    choices:[
-      {
-        text:"約束する",
-        next:134
-      },
-      {
-        text:"約束しない",
-        next:135
-      }
-    ]
-  },
-
-
-  /* 81 */
-
-  {
-    chapter:"終章",
-    title:"白",
-    character:"？？？",
-
-    text:
-`目を閉じる。
-
-白い。
-
-何もない。
-
-やがて。
-
-声が聞こえる。
-
-「終わったよ」
-
-紅蓮は目を開ける。
-
-自分の部屋。
-
-朝。
-
-全て夢だった。
-
-……そう思った。
-
-机の上に。
-
-一枚の写真がある。
-
-四人が写っている。
-
-そして。
-
-写真の端に。
-
-五人目。`,
-
-    choices:[
-      {
-        text:"写真を見る",
-        next:136
-      },
-      {
-        text:"写真を捨てる",
-        next:137
-      }
-    ]
-  },
-
-
-  /* 82 */
-
-  {
-    chapter:"終章",
-    title:"見続ける",
-    character:"？？？",
-
-    horror:true,
-
-    text:
-`見続ける。
-
-五人目が近づく。
-
-写真の中で。
-
-一歩。
+遠くに、白い扉だけが立っていた。`
+},
+
+/* 1 */
+{
+    chapter:"序章　白い部屋",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`扉には文字が刻まれている。
+
+『忘れた者だけが、ここから出られる』
+
+意味が分からない。
+
+それでも、その文字だけが妙に懐かしかった。`
+},
+
+/* 2 */
+{
+    chapter:"序章　白い部屋",
+    bg:"dark",
+    speaker:"？？？",
+    char:"none",
+    text:
+`「……また来た」`
+},
+
+/* 3 */
+{
+    chapter:"序章　白い部屋",
+    bg:"dark",
+    speaker:"？？？",
+    char:"none",
+    text:
+`振り返る。
+
+誰もいない。`
+},
+
+/* 4 */
+{
+    chapter:"序章　白い部屋",
+    bg:"dark",
+    speaker:"？？？",
+    char:"none",
+    text:
+`「今度こそ、最後にして」`
+},
+
+/* 5 */
+{
+    chapter:"序章　白い部屋",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`その声を聞いた瞬間、
+
+胸の奥が痛んだ。`
+},
+
+/* 6 */
+{
+    chapter:"序章　白い部屋",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`痛い理由だけが、
+
+思い出せなかった。`,
+    scare:true
+},
+
+/* 7 */
+{
+    chapter:"第一章　皇 紅蓮",
+    bg:"memory",
+    speaker:"",
+    char:"none",
+    text:
+`扉を開けた。`
+},
+
+/* 8 */
+{
+    chapter:"第一章　皇 紅蓮",
+    bg:"red",
+    speaker:"",
+    char:"guren",
+    text:
+`赤い月が浮かんでいた。
+
+その下に、一人の男が立っている。`
+},
+
+/* 9 */
+{
+    chapter:"第一章　皇 紅蓮",
+    bg:"red",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……誰だ、お前」`
+},
+
+/* 10 */
+{
+    chapter:"第一章　皇 紅蓮",
+    bg:"red",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「ここは俺の場所だったはずだ」`
+},
+
+/* 11 */
+{
+    chapter:"第一章　皇 紅蓮",
+    bg:"red",
+    speaker:"",
+    char:"none",
+    text:
+`皇 紅蓮。
+
+最上位吸血鬼。
+そして幽霊。
+
+霊界から追放された存在。`
+},
+
+/* 12 */
+{
+    chapter:"第一章　皇 紅蓮",
+    bg:"red",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……違うな」
+
+「追放された、じゃない」`
+},
+
+/* 13 */
+{
+    chapter:"第一章　皇 紅蓮",
+    bg:"red",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「俺は……」
+
+「最初から、いなかったことにされたんだ」`
+},
+
+/* 14 */
+{
+    chapter:"第一章　皇 紅蓮",
+    bg:"red",
+    speaker:"",
+    char:"none",
+    text:
+`その言葉だけが、
+
+妙に冷たく残った。`
+},
+
+/* 15 */
+{
+    chapter:"第二章　下僕",
+    bg:"dark",
+    speaker:"",
+    char:"geboku",
+    text:
+`「皇様」`
+},
+
+/* 16 */
+{
+    chapter:"第二章　下僕",
+    bg:"dark",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……下僕？」`
+},
+
+/* 17 */
+{
+    chapter:"第二章　下僕",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「はい」
+
+「探しました」`
+},
+
+/* 18 */
+{
+    chapter:"第二章　下僕",
+    bg:"dark",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「どうしてここにいる」`
+},
+
+/* 19 */
+{
+    chapter:"第二章　下僕",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「分かりません」
+
+「でも……皇様がいなくなる夢を見ました」`
+},
+
+/* 20 */
+{
+    chapter:"第二章　下僕",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`下僕は笑った。
+
+いつもの笑顔だった。
+
+けれど、
+
+その目だけは笑っていなかった。`
+},
+
+/* 21 */
+{
+    chapter:"第二章　下僕",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「だから、迎えに来ました」`
+},
+
+/* 22 */
+{
+    chapter:"第三章　何でも屋",
+    bg:"memory",
+    speaker:"",
+    char:"enpi",
+    text:
+`「……二人とも、そこで止まって」`
+},
+
+/* 23 */
+{
+    chapter:"第三章　何でも屋",
+    bg:"memory",
+    speaker:"焔緋くん",
+    char:"enpi",
+    text:
+`「その先、普通じゃない」`
+},
+
+/* 24 */
+{
+    chapter:"第三章　何でも屋",
+    bg:"memory",
+    speaker:"",
+    char:"none",
+    text:
+`現れたのは、
+
+裏社会で生きる「何でも屋」。
+
+焔緋くん。`
+},
+
+/* 25 */
+{
+    chapter:"第三章　何でも屋",
+    bg:"memory",
+    speaker:"焔緋くん",
+    char:"enpi",
+    text:
+`「俺は焔緋くん」
+
+「名前だけ覚えてくれればいい」`
+},
+
+/* 26 */
+{
+    chapter:"第三章　何でも屋",
+    bg:"memory",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「妙な名前だな」`
+},
+
+/* 27 */
+{
+    chapter:"第三章　何でも屋",
+    bg:"memory",
+    speaker:"焔緋くん",
+    char:"enpi",
+    text:
+`「お互い様だろ」`
+},
+
+/* 28 */
+{
+    chapter:"第三章　何でも屋",
+    bg:"memory",
+    speaker:"",
+    char:"none",
+    text:
+`一瞬だけ、
+
+三人の間に普通の空気が流れた。`
+},
+
+/* 29 */
+{
+    chapter:"第三章　何でも屋",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`そのとき。
+
+遠くから、
+
+「何か」が歩いてくる音がした。`
+},
+
+/* 30 */
+{
+    chapter:"第三章　何でも屋",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`一歩。
 
 また一歩。
 
-そして。
+けれど、
 
-写真の外へ。
+足音の数が多すぎる。`,
+    scare:true
+},
 
-手が伸びる。
-
-紅蓮は――
-
-目を閉じた。`,
-
-    choices:[
-      {
-        text:"目を開ける",
-        next:138
-      },
-      {
-        text:"開けない",
-        next:139
-      }
-    ]
-  },
-
-
-  /* 83 */
-
-  {
-    chapter:"終章",
-    title:"逃げる",
-    character:"？？？",
-
+/* 31 */
+{
+    chapter:"第三章　何でも屋",
+    bg:"dark",
+    speaker:"焔緋くん",
+    char:"enpi",
     text:
-`紅蓮は走る。
+`「走るぞ」`
+},
 
-写真が追ってくる。
-
-しかし。
-
-突然。
-
-写真が止まる。
-
-紅蓮も止まる。
-
-写真の中に。
-
-灯影がいる。
-
-灯影がこちらを見る。
-
-そして。
-
-「紅蓮」
-
-「……？」
-
-「まだ、終わっていない」`,
-
-    choices:[
-      {
-        text:"灯影を信じる",
-        next:140
-      },
-      {
-        text:"写真を捨てる",
-        next:79
-      }
-    ]
-  },
-
-
-  /* 84 */
-
-  {
-    chapter:"最終章",
-    title:"五つ目の椅子",
-    character:"？？？",
-
-    horror:true,
-
+/* 32 */
+{
+    chapter:"第三章　何でも屋",
+    bg:"dark",
+    speaker:"皇 紅蓮",
+    char:"guren",
     text:
-`紅蓮は椅子に座る。
+`「俺は逃げない」`
+},
 
-その瞬間。
-
-四つの椅子に。
-
-誰かが座った。
-
-下僕。
-
-焔緋くん。
-
-灯影。
-
-そして。
-
-もう一人の紅蓮。
-
-「やっと揃った」
-
-灯影が言う。
-
-紅蓮は気づく。
-
-自分が座っている椅子は。
-
-五つ目だった。`,
-
-    choices:[
-      {
-        text:"立ち上がる",
-        next:141
-      },
-      {
-        text:"そのまま座る",
-        next:142
-      }
-    ]
-  },
-
-
-  /* 85 */
-
-  {
-    chapter:"最終章",
-    title:"扉を開ける",
-    character:"？？？",
-
+/* 33 */
+{
+    chapter:"第三章　何でも屋",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
     text:
-`扉を開けようとする。
+`「では、僕も」`
+},
 
-開かない。
-
-もう一度。
-
-開かない。
-
-すると。
-
-背後から。
-
-「そこは出口じゃない」
-
-灯影の声。
-
-紅蓮が振り返る。
-
-灯影がいる。
-
-「では、どこだ？」
-
-灯影は五つ目の椅子を見る。
-
-「ここから出るためには」
-
-「誰か一人が、残る必要がある」`,
-
-    choices:[
-      {
-        text:"自分が残る",
-        next:143
-      },
-      {
-        text:"灯影に任せる",
-        next:144
-      }
-    ]
-  },
-
-
-  /* 86 */
-
-  {
-    chapter:"最終章",
-    title:"守る",
-    character:"下僕",
-
+/* 34 */
+{
+    chapter:"第三章　何でも屋",
+    bg:"dark",
+    speaker:"焔緋くん",
+    char:"enpi",
     text:
-`紅蓮は下僕の前に立つ。
+`「……本当に似た者同士だな、お前ら」`
+},
 
-「俺が守る」
-
-下僕が驚く。
-
-「主様……」
-
-影が迫る。
-
-しかし。
-
-下僕が前に出る。
-
-「いいえ」
-
-その目が光る。
-
-「今度は私が守ります」
-
-そして。
-
-「コピー」
-
-影の力を読み取る。
-
-「理解しました」
-
-下僕が笑う。
-
-「あなたの正体も」`,
-
-    choices:[
-      {
-        text:"「何だった？」",
-        next:145
-      },
-      {
-        text:"影を見ない",
-        next:146
-      }
-    ]
-  },
-
-
-  /* 87 */
-
-  {
-    chapter:"最終章",
-    title:"影の正体",
-    character:"下僕",
-
-    horror:true,
-
+/* 35 */
+{
+    chapter:"第四章　灯影",
+    bg:"white",
+    speaker:"",
+    char:"touei",
     text:
-`影が答える。
+`白い炎が、
 
-「私は、捨てられた未来」
+暗闇を切り裂いた。`
+},
 
-紅蓮は黙る。
+/* 36 */
+{
+    chapter:"第四章　灯影",
+    bg:"white",
+    speaker:"？？？",
+    char:"touei",
+    text:
+`「そこまでだ」`
+},
 
-「下僕が選ばなかった未来」
+/* 37 */
+{
+    chapter:"第四章　灯影",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`現れた男の名は、
 
-下僕の顔から
+焔緋 灯影。`
+},
+
+/* 38 */
+{
+    chapter:"第四章　灯影",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`焔緋くんとは別人。
+
+終焉の管理者。`
+},
+
+/* 39 */
+{
+    chapter:"第四章　灯影",
+    bg:"white",
+    speaker:"焔緋 灯影",
+    char:"touei",
+    text:
+`「君たちは、まだ知らない」`
+},
+
+/* 40 */
+{
+    chapter:"第四章　灯影",
+    bg:"white",
+    speaker:"焔緋 灯影",
+    char:"touei",
+    text:
+`「この世界は、
+
+君たちが忘れた記憶で作られている」`
+},
+
+/* 41 */
+{
+    chapter:"第四章　灯影",
+    bg:"white",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……じゃあ、この世界を壊せば」`
+},
+
+/* 42 */
+{
+    chapter:"第四章　灯影",
+    bg:"white",
+    speaker:"焔緋 灯影",
+    char:"touei",
+    text:
+`「君自身も消える」`
+},
+
+/* 43 */
+{
+    chapter:"第四章　灯影",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`誰も喋らなかった。`
+},
+
+/* 44 */
+{
+    chapter:"第五章　記憶",
+    bg:"memory",
+    speaker:"",
+    char:"none",
+    text:
+`夜。
+
+四人は小さな部屋に集まった。`
+},
+
+/* 45 */
+{
+    chapter:"第五章　記憶",
+    bg:"memory",
+    speaker:"焔緋くん",
+    char:"enpi",
+    text:
+`「なあ」
+
+「もし全部終わったら、どうする？」`
+},
+
+/* 46 */
+{
+    chapter:"第五章　記憶",
+    bg:"memory",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「皇様についていきます」`
+},
+
+/* 47 */
+{
+    chapter:"第五章　記憶",
+    bg:"memory",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……俺は」
+
+「みんなで帰りたい」`
+},
+
+/* 48 */
+{
+    chapter:"第五章　記憶",
+    bg:"memory",
+    speaker:"",
+    char:"none",
+    text:
+`皇 紅蓮が、
+
+初めて弱い声を出した。`
+},
+
+/* 49 */
+{
+    chapter:"第五章　記憶",
+    bg:"memory",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「俺はもう、
+
+一人になるのは嫌なんだ」`
+},
+
+/* 50 */
+{
+    chapter:"第五章　記憶",
+    bg:"memory",
+    speaker:"",
+    char:"none",
+    text:
+`その夜、
+
+誰も眠らなかった。`
+},
+
+/* 51 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"",
+    char:"none",
+    text:
+`翌朝。
+
+世界が割れた。`
+},
+
+/* 52 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"",
+    char:"none",
+    text:
+`空が赤く染まり、
+
+床に亀裂が走る。`
+},
+
+/* 53 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"焔緋 灯影",
+    char:"touei",
+    text:
+`「来る」`
+},
+
+/* 54 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"",
+    char:"none",
+    text:
+`世界の外側から、
+
+名前のない何かが侵入した。`
+},
+
+/* 55 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"焔緋くん",
+    char:"enpi",
+    text:
+`「数が多すぎる！」`
+},
+
+/* 56 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「下僕！」
+
+「後ろを頼む！」`
+},
+
+/* 57 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「了解しました」`
+},
+
+/* 58 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"",
+    char:"none",
+    text:
+`戦いが始まった。`
+},
+
+/* 59 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"",
+    char:"none",
+    text:
+`皇 紅蓮は血界を広げ、
+
+焔緋くんは道を切り開く。
+
+下僕は全てを見ていた。`
+},
+
+/* 60 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「皇様」
+
+「右です」`
+},
+
+/* 61 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「分かってる！」`
+},
+
+/* 62 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"",
+    char:"none",
+    text:
+`しかし、
+
+世界そのものが敵だった。`
+},
+
+/* 63 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"焔緋 灯影",
+    char:"touei",
+    text:
+`「皇 紅蓮」
+
+「そこから動くな」`
+},
+
+/* 64 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……灯影？」`
+},
+
+/* 65 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"",
+    char:"none",
+    text:
+`一瞬。
+
+白い炎が消えた。`
+},
+
+/* 66 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"",
+    char:"none",
+    text:
+`そして、
+
+皇 紅蓮の姿が消えた。`
+},
+
+/* 67 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「……皇様？」`
+},
+
+/* 68 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"焔緋くん",
+    char:"enpi",
+    text:
+`「紅蓮！」`
+},
+
+/* 69 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"",
+    char:"none",
+    text:
+`返事はない。`
+},
+
+/* 70 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"焔緋 灯影",
+    char:"touei",
+    text:
+`「……」`
+},
+
+/* 71 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"焔緋 灯影",
+    char:"touei",
+    text:
+`「……許さない」`
+},
+
+/* 72 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"",
+    char:"none",
+    text:
+`初めて、
+
+灯影の声が震えた。`
+},
+
+/* 73 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"焔緋 灯影",
+    char:"touei",
+    text:
+`「終焉支配――」`
+},
+
+/* 74 */
+{
+    chapter:"第六章　崩壊",
+    bg:"red",
+    speaker:"",
+    char:"none",
+    text:
+`世界が、
+
+静かになった。`,
+    scare:true
+},
+
+/* 75 */
+{
+    chapter:"第六章　崩壊",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`音が消えた。
+
+色も消えた。
+
+そして――`
+},
+
+/* 76 */
+{
+    chapter:"第六章　崩壊",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`「皇 紅蓮」という存在だけが、
+
+世界から切り離された。`
+},
+
+/* 77 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"",
+    char:"guren",
+    text:
+`「……ここは」`
+},
+
+/* 78 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`皇 紅蓮は、
+
+白い部屋で目を覚ました。`
+},
+
+/* 79 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「また、この部屋か」`
+},
+
+/* 80 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`目の前に、
+
+あの白い扉があった。`
+},
+
+/* 81 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"？？？",
+    char:"none",
+    text:
+`「覚えている？」`
+},
+
+/* 82 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……何を」`
+},
+
+/* 83 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"？？？",
+    char:"none",
+    text:
+`「君が、
+
+どうして一人になったのか」`
+},
+
+/* 84 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`記憶が流れ込んでくる。`
+},
+
+/* 85 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"？？？",
+    char:"none",
+    text:
+`「君は追放されたんじゃない」`
+},
+
+/* 86 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"？？？",
+    char:"none",
+    text:
+`「君は――」
+
+「守るために、外された」`
+},
+
+/* 87 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……俺が？」`
+},
+
+/* 88 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"？？？",
+    char:"none",
+    text:
+`「君が残れば、
+
+世界そのものが壊れるから」`
+},
+
+/* 89 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`皇 紅蓮は、
+
+しばらく何も言わなかった。`
+},
+
+/* 90 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……じゃあ」
+
+「みんなを守るために、
+
+俺は忘れられたのか」`
+},
+
+/* 91 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"？？？",
+    char:"none",
+    text:
+`「そう」`
+},
+
+/* 92 */
+{
+    chapter:"第七章　白い部屋",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`その答えは、
+
+あまりにも優しかった。`
+},
+
+/* 93 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"",
+    char:"geboku",
+    text:
+`その頃。
+
+下僕は一人で歩いていた。`
+},
+
+/* 94 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「皇様……」`
+},
+
+/* 95 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`未来が、
+
+いくつも見える。`
+},
+
+/* 96 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「全部違う」`
+},
+
+/* 97 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「どの未来でも、
+
+皇様が消えてしまう」`
+},
+
+/* 98 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`手が震えた。`
+},
+
+/* 99 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「だったら……」`
+},
+
+/* 100 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「未来を選ぶんじゃなくて」`
+},
+
+/* 101 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「未来そのものを、
+
+変えればいい」`
+},
+
+/* 102 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`その瞬間。
+
+世界が止まった。`
+},
+
+/* 103 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`下僕の身体に、
+
+見たことのない光が走る。`
+},
+
+/* 104 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「……これは？」`
+},
+
+/* 105 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"？？？",
+    char:"none",
+    text:
+`「君は、
+
+見たものを理解するだけじゃない」`
+},
+
+/* 106 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"？？？",
+    char:"none",
+    text:
+`「君は――」
+
+「それを、コピーできる」`
+},
+
+/* 107 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"",
+    char:"geboku",
+    text:
+`下僕は、
+
+ゆっくり顔を上げた。`
+},
+
+/* 108 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「コピー……」`
+},
+
+/* 109 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「これなら……」`
+},
+
+/* 110 */
+{
+    chapter:"第八章　下僕の目覚め",
+    bg:"dark",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「皇様を、
+
+迎えに行ける」`
+},
+
+/* 111 */
+{
+    chapter:"第九章　再会",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`白い扉が開く。`
+},
+
+/* 112 */
+{
+    chapter:"第九章　再会",
+    bg:"white",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……下僕？」`
+},
+
+/* 113 */
+{
+    chapter:"第九章　再会",
+    bg:"white",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「はい」`
+},
+
+/* 114 */
+{
+    chapter:"第九章　再会",
+    bg:"white",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「どうして……」`
+},
+
+/* 115 */
+{
+    chapter:"第九章　再会",
+    bg:"white",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「約束したからです」`
+},
+
+/* 116 */
+{
+    chapter:"第九章　再会",
+    bg:"white",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……そんな約束、
+
+俺は覚えてない」`
+},
+
+/* 117 */
+{
+    chapter:"第九章　再会",
+    bg:"white",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「僕は覚えています」`
+},
+
+/* 118 */
+{
+    chapter:"第九章　再会",
+    bg:"white",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「だから、それで十分です」`
+},
+
+/* 119 */
+{
+    chapter:"第九章　再会",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`皇 紅蓮は、
+
+何も言えなかった。`
+},
+
+/* 120 */
+{
+    chapter:"第九章　再会",
+    bg:"white",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……帰ろう」`
+},
+
+/* 121 */
+{
+    chapter:"第九章　再会",
+    bg:"white",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「はい」`
+},
+
+/* 122 */
+{
+    chapter:"終章　白い記憶",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`二人が扉を抜ける。`
+},
+
+/* 123 */
+{
+    chapter:"終章　白い記憶",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`しかし、
+
+扉の向こうには、
+
+もう一人立っていた。`,
+    scare:true
+},
+
+/* 124 */
+{
+    chapter:"終章　白い記憶",
+    bg:"dark",
+    speaker:"焔緋くん",
+    char:"enpi",
+    text:
+`「遅かったな」`
+},
+
+/* 125 */
+{
+    chapter:"終章　白い記憶",
+    bg:"dark",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……お前」`
+},
+
+/* 126 */
+{
+    chapter:"終章　白い記憶",
+    bg:"dark",
+    speaker:"焔緋くん",
+    char:"enpi",
+    text:
+`「待ってたんだよ」`
+},
+
+/* 127 */
+{
+    chapter:"終章　白い記憶",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`その後ろには、
+
+灯影がいた。`
+},
+
+/* 128 */
+{
+    chapter:"終章　白い記憶",
+    bg:"white",
+    speaker:"焔緋 灯影",
+    char:"touei",
+    text:
+`「終わらせる」`
+},
+
+/* 129 */
+{
+    chapter:"終章　白い記憶",
+    bg:"white",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……今度は、
+
+一緒に？」`
+},
+
+/* 130 */
+{
+    chapter:"終章　白い記憶",
+    bg:"white",
+    speaker:"焔緋 灯影",
+    char:"touei",
+    text:
+`「ああ」`
+},
+
+/* 131 */
+{
+    chapter:"終章　白い記憶",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`四人は、
+
+白い世界の中心へ歩いた。`
+},
+
+/* 132 */
+{
+    chapter:"終章　白い記憶",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`そこで、
+
+皇 紅蓮が立ち止まる。`
+},
+
+/* 133 */
+{
+    chapter:"終章　白い記憶",
+    bg:"white",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「なあ」`
+},
+
+/* 134 */
+{
+    chapter:"終章　白い記憶",
+    bg:"white",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「もしまた、
+
+俺が忘れられたら」`
+},
+
+/* 135 */
+{
+    chapter:"終章　白い記憶",
+    bg:"white",
+    speaker:"下僕",
+    char:"geboku",
+    text:
+`「何度でも、
+
+思い出させます」`
+},
+
+/* 136 */
+{
+    chapter:"終章　白い記憶",
+    bg:"white",
+    speaker:"皇 紅蓮",
+    char:"guren",
+    text:
+`「……そうか」`
+},
+
+/* 137 */
+{
+    chapter:"終章　白い記憶",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`皇 紅蓮は笑った。`
+},
+
+/* 138 */
+{
+    chapter:"終章　白い記憶",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`ずっと一人だった男が、
+
+初めて、
+
+安心したように笑った。`
+},
+
+/* 139 */
+{
+    chapter:"終章　白い記憶",
+    bg:"white",
+    speaker:"",
+    char:"none",
+    text:
+`白い世界が、
+
+ゆっくり崩れていく。`
+},
+
+/* 140 */
+{
+    chapter:"終章　白い記憶",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`最後に聞こえたのは、
+
+誰かの声だった。`
+},
+
+/* 141 */
+{
+    chapter:"終章　白い記憶",
+    bg:"dark",
+    speaker:"？？？",
+    char:"none",
+    text:
+`「忘れないで」`
+},
+
+/* 142 */
+{
+    chapter:"終章　白い記憶",
+    bg:"dark",
+    speaker:"",
+    char:"none",
+    text:
+`そして、
+
+扉は閉じた。`
+},
+
+/* 143 */
+{
+    chapter:"終幕",
+    bg:"end",
+    speaker:"",
+    char:"none",
+    text:
+`――それでも、
+
+誰も一人にはならなかった。`
+},
+
+/* 144 */
+{
+    chapter:"終幕",
+    bg:"end",
+    speaker:"",
+    char:"none",
+    text:
+`FIN.`
+}
+
+];
+
+/* =========================================================
+   UTIL
+========================================================= */
+
+function $(id){
+    return document.getElementById(id);
+}
+
+function showScreen(id){
+    document.querySelectorAll(".screen").forEach(s=>{
+        s.classList.remove("active");
+    });
+
+    $(id).classList.add("active");
+}
+
+function showToast(message){
+    const t = $("toast");
+    t.textContent = message;
+    t.classList.add("show");
+
+    setTimeout(()=>{
+        t.classList.remove("show");
+    },1600);
+}
+
+function resetData(){
+    gameData = structuredClone(defaultData);
+    currentScene = 0;
+}
+
+function saveGame(){
+    gameData.scene = currentScene;
+    localStorage.setItem(SAVE_KEY, JSON.stringify(gameData));
+    showToast("セーブしました");
+    seClick();
+}
+
+function loadSave(){
+    try{
+        const raw = localStorage.getItem(SAVE_KEY);
+        if(!raw) return false;
+
+        const parsed = JSON.parse(raw);
+
+        gameData = {
+            ...structuredClone(defaultData),
+            ...parsed,
+            flags:{
+                ...structuredClone(defaultData).flags,
+                ...(parsed.flags || {})
+            }
+        };
+
+        currentScene = Math.max(
+            0,
+            Math.min(
+                scenes.length-1,
+                Number(gameData.scene) || 0
+            )
+        );
+
+        return true;
+
+    }catch(e){
+        console.error(e);
+        localStorage.removeItem(SAVE_KEY);
+        return false;
+    }
+}
+
+function deleteSave(){
+    localStorage.removeItem(SAVE_KEY);
+    showToast("セーブデータを削除しました");
+}
+
+function newGame(){
+    initAudio();
+    resetData();
+    showScreen("novelScreen");
+    renderScene();
+}
+
+function continueGame(){
+    initAudio();
+
+    if(!loadSave()){
+        showToast("セーブデータがありません");
+        return;
+    }
+
+    showScreen("novelScreen");
+    renderScene();
+}
+
+function backToTitle(){
+    if(typing){
+        finishTyping();
+        return;
+    }
+
+    showScreen("titleScreen");
+}
+
+/* =========================================================
+   CHARACTER
+========================================================= */
+
+const charInfo = {
+    guren:{
+        symbol:"†",
+        class:"portrait guren"
+    },
+    geboku:{
+        symbol:"◇",
+        class:"portrait geboku"
+    },
+    enpi:{
+        symbol:"炎",
+        class:"portrait enpi"
+    },
+    touei:{
+        symbol:"終",
+        class:"portrait touei"
+    }
+};
+
+function renderCharacter(type){
+    const area = $("characterArea");
+    const portrait = $("portrait");
+    const tag = $("nameTag");
+
+    if(!type || type==="none"){
+        area.classList.add("none");
+        return;
+    }
+
+    area.classList.remove("none");
+
+    const info = charInfo[type];
+
+    portrait.className = info.class;
+    portrait.textContent = info.symbol;
+
+    const names = {
+        guren:"皇 紅蓮",
+        geboku:"下僕",
+        enpi:"焔緋くん",
+        touei:"焔緋 灯影"
+    };
+
+    tag.textContent = names[type];
+}
+
+/* =========================================================
+   STORY FLAGS
+========================================================= */
+
+function updateFlags(){
+    if(currentScene >= 77){
+        gameData.flags.whiteRoom = true;
+    }
+
+    if(currentScene >= 81){
+        gameData.flags.heardVoice = true;
+    }
+
+    if(currentScene >= 106){
+        gameData.flags.copy = true;
+    }
+}
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function renderScene(){
+    clearTimeout(typeTimer);
+
+    typing = false;
+
+    updateFlags();
+
+    const scene = scenes[currentScene];
+
+    if(!scene){
+        finishGame();
+        return;
+    }
+
+    $("chapterText").textContent = scene.chapter;
+
+    const bg = $("sceneBackground");
+    bg.className = "sceneBackground bg-" + (scene.bg || "dark");
+
+    $("speaker").textContent = scene.speaker || "";
+
+    renderCharacter(scene.char);
+
+    $("choices").innerHTML = "";
+
+    fullText = scene.text;
+
+    $("text").textContent = "";
+
+    $("hint").textContent = "タップ / クリックで続く";
+
+    if(scene.scare){
+        setTimeout(()=>{
+            triggerScare();
+        },300);
+    }
+
+    typeText(fullText);
+}
+
+function typeText(text){
+    typing = true;
+
+    let i = 0;
+
+    function step(){
+
+        if(!typing) return;
+
+        if(i < text.length){
+
+            $("text").textContent += text[i];
+
+            i++;
+
+            typeTimer = setTimeout(step,textSpeed);
+
+        }else{
+
+            typing = false;
+
+            $("hint").textContent =
+                currentScene === scenes.length-1
+                ? ""
+                : "タップ / クリックで続く";
+        }
+    }
+
+    step();
+}
+
+function finishTyping(){
+    clearTimeout(typeTimer);
+
+    $("text").textContent = fullText;
+
+    typing = false;
+
+    $("hint").textContent =
+        currentScene === scenes.length-1
+        ? ""
+        : "タップ / クリックで続く";
+}
+
+function nextScene(){
+    initAudio();
+
+    if(typing){
+        finishTyping();
+        return;
+    }
+
+    seClick();
+
+    if(currentScene >= scenes.length-1){
+        finishGame();
+        return;
+    }
+
+    currentScene++;
+
+    updateFlags();
+
+    saveSilent();
+
+    renderScene();
+}
+
+function saveSilent(){
+    gameData.scene = currentScene;
+
+    try{
+        localStorage.setItem(
+            SAVE_KEY,
+            JSON.stringify(gameData)
+        );
+    }catch(e){}
+}
+
+/* =========================================================
+   CHOICE SYSTEM
+========================================================= */
+
+function choose(label, callback){
+    if(typing){
+        finishTyping();
+        return;
+    }
+
+    seChoice();
+
+    callback();
+
+    currentScene++;
+
+    updateFlags();
+
+    saveSilent();
+
+    renderScene();
+}
+
+/* =========================================================
+   CLICK / TOUCH
+========================================================= */
+
+$("sceneArea").addEventListener("click",(e)=>{
+
+    if(e.target.closest("button")) return;
+
+    if(e.target.closest(".choice")) return;
+
+    nextScene();
+});
+
+/* =========================================================
+   SCARE
+========================================================= */
+
+function triggerScare(){
+    seScare();
+
+    const app = $("app");
+
+    app.classList.add("shake");
+    app.classList.add("glitch");
+
+    const flash = document.createElement("div");
+    flash.className = "flash";
+
+    document.body.appendChild(flash);
+
+    setTimeout(()=>{
+        app.classList.remove("shake");
+        app.classList.remove("glitch");
+        flash.remove();
+    },700);
+}
+
+/* =========================================================
+   ENDING
+========================================================= */
+
+function finishGame(){
+
+    stopBGM();
+    seSad();
+
+    const ending = determineEnding();
+
+    $("endingLabel").textContent = ending.label;
+    $("endingTitle").textContent = ending.title;
+    $("endingText").textContent = ending.text;
+
+    showScreen("endingScreen");
+}
+
+function determineEnding(){
+
+    /*
+     * 基本ルートは感動系。
+     * コピー覚醒まで到達した通常プレイなら TRUE END。
+     */
+
+    if(gameData.flags.copy && gameData.flags.whiteRoom){
+
+        return {
+            label:"TRUE END",
+            title:"忘れないという奇跡",
+            text:
+`皇 紅蓮は、もう一度だけ振り返った。
+
+そこには、
+下僕がいた。
+
+焔緋くんがいた。
+
+灯影がいた。
+
+誰も何も言わない。
+
+ただ、そこにいた。
+
+それだけで十分だった。
+
+忘れられてしまったとしても、
+何度でも思い出せばいい。
+
+一人になってしまったとしても、
+迎えに行けばいい。
+
+白い部屋は消えた。
+
+けれど、
+
+あの日の記憶だけは、
+
+誰の中からも消えなかった。
+
+――忘れない。
+
+それが、
+この世界で最後に残った奇跡だった。`
+        };
+
+    }
+
+    return {
+        label:"END",
+        title:"白い記憶",
+        text:
+`白い扉は閉じた。
+
+けれど、
+どこかで誰かが待っている。
+
+物語は、
+
+まだ終わっていない。`
+    };
+}
+
+/* =========================================================
+   LIBRARY / SETTINGS
+========================================================= */
+
+function openLibrary(){
+    showScreen("libraryScreen");
+}
+
+function openSettings(){
+    showScreen("settingsScreen");
+}
+
+function cycleSpeed(){
+
+    if(textSpeed === 28){
+        textSpeed = 10;
+        $("speedButton").textContent = "速い";
+    }else if(textSpeed === 10){
+        textSpeed = 0;
+        $("speedButton").textContent = "瞬時";
+    }else{
+        textSpeed = 28;
+        $("speedButton").textContent = "普通";
+    }
+
+    showToast("文字速度を変更しました");
+}
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener("keydown",(e)=>{
+
+    if(e.key === "Enter" || e.key === " "){
+
+        const novel =
+            $("novelScreen").classList.contains("active");
+
+        if(novel){
+            e.preventDefault();
+            nextScene();
+        }
+    }
+
+    if(e.key === "Escape"){
+        backToTitle();
+    }
+});
+
+/* =========================================================
+   AUDIO START
+========================================================= */
+
+document.addEventListener("pointerdown",()=>{
+    if(!audioCtx){
+        initAudio();
+    }
+},{once:true});
+
+/* =========================================================
+   STARTUP
+========================================================= */
+
+window.addEventListener("load",()=>{
+
+    /*
+     * 自動セーブがある場合のみ「つづきから」を有効化。
+     */
+    if(!localStorage.getItem(SAVE_KEY)){
+        // intentionally empty
+    }
+
+});
+</script>
+
+</body>
+</html>
