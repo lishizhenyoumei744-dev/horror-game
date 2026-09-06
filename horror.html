@@ -52,12 +52,8 @@
         }
 
         @keyframes darkAuraPulse {
-            0%, 100% {
-                filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.6)) drop-shadow(0 0 35px rgba(185, 28, 28, 0.8)) drop-shadow(0 0 60px rgba(0, 0, 0, 0.9));
-            }
-            50% {
-                filter: drop-shadow(0 0 25px rgba(255, 0, 85, 0.9)) drop-shadow(0 0 50px rgba(153, 27, 27, 0.95)) drop-shadow(0 0 80px rgba(56, 189, 248, 0.4));
-            }
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.6)) drop-shadow(0 0 35px rgba(185, 28, 28, 0.8)) drop-shadow(0 0 60px rgba(0, 0, 0, 0.9)); }
+            50% { filter: drop-shadow(0 0 25px rgba(255, 0, 85, 0.9)) drop-shadow(0 0 50px rgba(153, 27, 27, 0.95)) drop-shadow(0 0 80px rgba(56, 189, 248, 0.4)); }
         }
 
         @keyframes subtleGlitch {
@@ -75,13 +71,72 @@
         }
         .panel-title { font-size: 1.2rem; color: #38bdf8; margin-bottom: 10px; border-bottom: 1px solid rgba(56, 189, 248, 0.3); padding-bottom: 5px; }
 
-        .gacha-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
-        .pack-card {
-            background: rgba(8, 30, 58, 0.6); border: 1px solid rgba(56, 189, 248, 0.4);
-            border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.2s;
+        /* --- メメントモリ風ガチャ画面スタイル --- */
+        .memento-gacha-container {
+            width: 100%; height: 100%; position: relative;
+            background: radial-gradient(circle at center, #0b1120 0%, #020408 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            padding: 50px 15px 20px 15px; overflow: hidden;
         }
-        .pack-card:hover { background: rgba(56, 189, 248, 0.2); border-color: #38bdf8; transform: translateY(-2px); }
-        .pack-card.selected { border-color: #ffd700; background: rgba(255, 215, 0, 0.15); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+
+        /* 霧と水彩風グラデーション */
+        .memento-bg-fog {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(ellipse at 50% 40%, rgba(99, 102, 241, 0.15) 0%, rgba(2, 6, 23, 0.8) 75%);
+            pointer-events: none; animation: mementoFogPulse 8s infinite alternate ease-in-out;
+        }
+        @keyframes mementoFogPulse {
+            0% { opacity: 0.6; transform: scale(1); }
+            100% { opacity: 0.95; transform: scale(1.08); }
+        }
+
+        .memento-pack-select {
+            display: flex; gap: 8px; overflow-x: auto; width: 100%; max-width: 850px;
+            padding: 8px; z-index: 5; scrollbar-width: none;
+        }
+        .memento-pack-select::-webkit-scrollbar { display: none; }
+
+        .memento-tab {
+            background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 20px; padding: 6px 16px; color: #94a3b8; font-size: 0.8rem;
+            cursor: pointer; whitespace: nowrap; transition: all 0.3s; backdrop-filter: blur(8px);
+        }
+        .memento-tab.selected {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(217, 70, 239, 0.3));
+            border-color: #a855f7; color: #f8fafc; box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+            text-shadow: 0 0 8px rgba(255,255,255,0.8);
+        }
+
+        /* 神秘的な祈りの宝珠ステージ */
+        .memento-stage {
+            position: relative; width: 100%; height: 320px; display: flex;
+            justify-content: center; align-items: center; z-index: 5;
+        }
+        .memento-orb-ring {
+            position: absolute; width: 220px; height: 220px; border-radius: 50%;
+            border: 1px dashed rgba(168, 85, 247, 0.4);
+            animation: mementoRotateRing 25s linear infinite;
+        }
+        @keyframes mementoRotateRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .memento-orb {
+            width: 110px; height: 110px; border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #ffffff 0%, #a855f7 30%, #3b82f6 70%, #020617 100%);
+            box-shadow: 0 0 35px rgba(168, 85, 247, 0.8), inset 0 0 15px rgba(255,255,255,0.8);
+            cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; animation: mementoFloat 4s infinite ease-in-out;
+        }
+        .memento-orb:hover {
+            transform: scale(1.12);
+            box-shadow: 0 0 60px rgba(217, 70, 239, 0.9), inset 0 0 25px rgba(255,255,255,1);
+        }
+        @keyframes mementoFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+        .memento-result-area {
+            position: absolute; z-index: 10; display: none; flex-direction: column;
+            align-items: center; animation: mementoCardPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes mementoCardPop { 0% { transform: scale(0) rotate(-10deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
 
         .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; width: 100%; }
         .card {
@@ -147,44 +202,34 @@
             </div>
         </div>
 
-        <!-- ガチャ画面 -->
-        <div id="gachaScreen" class="screen">
-            <div class="panel" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-                <div class="panel-title">拡張パック選択 (各50種 / 全300種)</div>
+        <!-- ガチャ画面（メメントモリ風） -->
+        <div id="gachaScreen" class="screen" style="padding:0;">
+            <div class="memento-gacha-container">
+                <div class="memento-bg-fog"></div>
                 
-                <div class="gacha-grid" id="packGrid">
-                    <div class="pack-card selected" onclick="selectPack('normal', this)">
-                        <div style="font-size:1.5rem;">⚔️</div>
-                        <div style="font-size:0.8rem; font-weight:bold;">通常ガチャ</div>
-                    </div>
-                    <div class="pack-card" onclick="selectPack('holy', this)">
-                        <div style="font-size:1.5rem;">🛡️</div>
-                        <div style="font-size:0.8rem; font-weight:bold;">聖騎士ガチャ</div>
-                    </div>
-                    <div class="pack-card" onclick="selectPack('dark', this)">
-                        <div style="font-size:1.5rem;">🗡️</div>
-                        <div style="font-size:0.8rem; font-weight:bold;">黒騎士ガチャ</div>
-                    </div>
-                    <div class="pack-card" onclick="selectPack('mage', this)">
-                        <div style="font-size:1.5rem;">🔮</div>
-                        <div style="font-size:0.8rem; font-weight:bold;">魔道士ガチャ</div>
-                    </div>
-                    <div class="pack-card" onclick="selectPack('slime', this)">
-                        <div style="font-size:1.5rem;">🟢</div>
-                        <div style="font-size:0.8rem; font-weight:bold;">スライムガチャ</div>
-                    </div>
-                    <div class="pack-card" onclick="selectPack('ghost', this)">
-                        <div style="font-size:1.5rem;">👻</div>
-                        <div style="font-size:0.8rem; font-weight:bold;">幽霊ガチャ</div>
-                    </div>
+                <!-- ガチャパック選択タブ -->
+                <div class="memento-pack-select" id="packGrid">
+                    <div class="memento-tab selected" onclick="selectPack('normal', this)">⚔️ 通常ガチャ</div>
+                    <div class="memento-tab" onclick="selectPack('holy', this)">🛡️ 聖騎士ガチャ</div>
+                    <div class="memento-tab" onclick="selectPack('dark', this)">🗡️ 黒騎士ガチャ</div>
+                    <div class="memento-tab" onclick="selectPack('mage', this)">🔮 魔道士ガチャ</div>
+                    <div class="memento-tab" onclick="selectPack('slime', this)">🟢 スライムガチャ</div>
+                    <div class="memento-tab" onclick="selectPack('ghost', this)">👻 幽霊ガチャ</div>
                 </div>
 
-                <p style="margin-bottom: 10px; color: #aaa; font-size: 0.8rem;">1パック: 200 Θαύμα石</p>
-                <div id="packArea" style="width: 150px; height: 180px; background: linear-gradient(135deg, #0284c7, #0369a1); border: 2px solid #38bdf8; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-weight: bold; cursor: pointer; color: #fff; box-shadow: 0 0 20px rgba(56,189,248,0.5);" onclick="openPack()">
-                    <span>PACK OPEN</span>
+                <!-- ガチャ演出エリア（宝珠） -->
+                <div class="memento-stage">
+                    <div class="memento-orb-ring"></div>
+                    <div class="memento-orb" id="packArea" onclick="openPack()"></div>
+                    
+                    <div class="memento-result-area" id="gachaResultCard"></div>
                 </div>
-                <div id="gachaResultCard" style="margin-top: 10px; display: none;"></div>
-                <button class="btn btn-sec" style="margin-top:15px; width: 180px;" onclick="playSE('click'); showScreen('menuScreen')">戻る</button>
+
+                <!-- 操作ボタンバー -->
+                <div style="z-index: 5; text-align: center; margin-bottom: 10px;">
+                    <p style="color: #cbd5e1; font-size: 0.8rem; letter-spacing: 0.1em; margin-bottom: 8px;">宝珠に触れて祈りを捧げる (1回: 200 💎)</p>
+                    <button class="btn btn-sec" style="width: 160px; padding: 6px 10px; font-size: 0.8rem;" onclick="playSE('click'); showScreen('menuScreen')">メインメニューへ戻る</button>
+                </div>
             </div>
         </div>
 
@@ -256,6 +301,51 @@
     </div>
 
     <script>
+        /* --- 名前生成用データベース (IDとの互換性を保持) --- */
+        const NAME_TABLES = {
+            normal: {
+                pref: ["見習い", "疾風の", "鋼鉄の", "双剣の", "影の", "精鋭", "近衛", "蒼天の", "剛腕の", "不屈の", "紅蓮の", "幻影の", "神速の", "無双の", "覇王の"],
+                noun: ["剣士", "兵士", "騎士", "闘士", "狩人", "重装兵", "傭兵", "将軍", "勇者", "剣聖", "守護者", "戦将", "英雄", "皇兵", "戦神"],
+                spell: ["聖剣の一閃", "戦意高揚", "鉄壁の陣", "鋼鉄の加護", "英雄の覚醒", "全軍突撃", "勝鬨の喊声", "不屈の闘志", "王家の祝福", "神剣の誓い"]
+            },
+            holy: {
+                pref: ["聖なる", "光の", "輝く", "白銀の", "神聖な", "天界の", "断罪の", "祈りの", "慈悲の", "救世の", "太陽の", "極光の", "聖典の", "審判の", "神光の"],
+                noun: ["パラディン", "聖戦士", "盾侍", "ガーディアン", "審判官", "聖騎士", "天使", "護光者", "司祭兵", "大騎士", "聖槍兵", "光の使徒", "主天使", "熾天使", "聖王"],
+                spell: ["聖なる祈り", "光の盾", "神聖なる癒やし", "天罰の一撃", "聖光の加護", "裁きの光", "救世の余韻", "白銀の祈願", "浄化の波動", "神罰の降臨"]
+            },
+            dark: {
+                pref: ["漆黒の", "闇の", "復讐の", "影の", "冥府の", "呪いの", "深淵の", "黒炎の", "終焉の", "魔界の", "虚無の", "叛逆の", "狂気の", "滅びの", "暗黒の"],
+                noun: ["ナイト", "剣客", "処刑人", "魔剣士", "死神", "暗黒騎士", "影武者", "覇者", "凶刃", "魔将", "狂戦士", "冥王", "虚無の使者", "魔帝", "暗黒神"],
+                spell: ["黒炎の波動", "闇の契り", "深淵の呪詛", "吸魂の一撃", "影の奇襲", "漆黒の契約", "滅びの残響", "狂気の暴走", "冥府の誘い", "暗黒の審判"]
+            },
+            mage: {
+                pref: ["見習い", "元素の", "秘術の", "星屑の", "詠唱の", "叡智の", "賢者", "魔導の", "蒼炎の", "虚空の", "大魔導", "禁術の", "時空の", "真理の", "神智の"],
+                noun: ["術師", "魔導士", "召喚士", "占術師", "錬金術師", "結界師", "学者", "魔術師", "大賢者", "導術師", "エレメンタリスト", "魔導王", "禁術士", "星導士", "魔神"],
+                spell: ["ファイアボール", "マナ回復", "アイスバレット", "魔力展開", "雷撃の矢", "秘術の覚醒", "時空の歪み", "隕石落とし", "真理の探求", "全魔導開放"]
+            },
+            slime: {
+                pref: ["ぷにぷに", "水滴", "粘着", "巨大", "キング", "溶岩", "メタル", "猛毒", "クリスタル", "レインボー", "混沌の", "銀河", "超越", "神話の", "幻の"],
+                noun: ["スライム", "ゼリー", "ポヨン", "ドロロン", "マダー", "スライムナイト", "プリン", "ベホマスライム", "メタスラ", "ゴッドスライム", "モチ", "エンゼル", "カイザー", "エンペラー", "オリジン"],
+                spell: ["ぷにぷにの壁", "増殖の胞子", "ねばねばアタック", "スーパー粘液", "スライムの奇跡", "ゼリーバリア", "分裂爆発", "ドロドロの罠", "神スライムの恵み", "モチモチの極意"]
+            },
+            ghost: {
+                pref: ["彷徨う", "怨念の", "霧の", "墓場の", "幻影の", "ポルターガイスト", "幽体", "不浄の", "呪いの", "黄泉の", "憑依の", "亡霊", "虚無の", "死の", "冥界の"],
+                noun: ["ゴースト", "スピリット", "ファントム", "スペクター", "バンシー", "ポルター", "霊魂", "死霊", "魂魄", "怨霊", "幽鬼", " wraith ", "冥霊", "死霊王", "ソウルマスター"],
+                spell: ["ポルターガイスト", "怨念の呪い", "幽体離脱", "霊魂の吸収", "墓場の呼び声", "幻影の舞", "黄泉の冷気", "憑依の罠", "死の宣告", "冥界の誘惑"]
+            }
+        };
+
+        function generateCardName(packKey, isSpell, index) {
+            const table = NAME_TABLES[packKey];
+            if (isSpell) {
+                return table.spell[index % table.spell.length];
+            } else {
+                const p = table.pref[index % table.pref.length];
+                const n = table.noun[(index * 3) % table.noun.length];
+                return `${p}${n}`;
+            }
+        }
+
         /* --- カードデータベース --- */
         const CARDS_DATABASE = [];
         const packCategories = [
@@ -283,9 +373,10 @@
                     const atk = pack.baseAtk + (i * 35);
                     const def = pack.baseAtk - 200 + (i * 30);
                     const tributeReq = atk >= 2400 ? 2 : (atk >= 1800 ? 1 : 0);
+                    const cName = generateCardName(pack.key, false, i);
                     CARDS_DATABASE.push({
                         id: `c${globalIdCounter++}`, packKey: pack.key, type: 'MONSTER',
-                        name: `${pack.name} No.${i+1}`, icon: pack.icon,
+                        name: cName, icon: pack.icon,
                         rarity: atk > 2500 ? "EX" : (atk > 1800 ? "SSS" : "SR"),
                         atk: atk, def: def, tribute: tributeReq,
                         desc: `【${pack.name}系】攻撃力:${atk} / 守備力:${def}\n生贄必要数: ${tributeReq}体`
@@ -293,9 +384,10 @@
                 }
             }
             for (let i = 0; i < 10; i++) {
+                const sName = generateCardName(pack.key, true, i);
                 CARDS_DATABASE.push({
                     id: `c${globalIdCounter++}`, packKey: pack.key, type: 'SPELL',
-                    name: `${pack.name}の秘術 Lv.${i+1}`, icon: "✨", rarity: "SR",
+                    name: sName, icon: "✨", rarity: "SR",
                     effect: i % 2 === 0 ? "HEAL" : "DAMAGE", val: 500 + (i * 100),
                     desc: `【サポート】\n効果値: ${500 + (i * 100)}`
                 });
@@ -382,22 +474,34 @@
         /* --- ガチャ --- */
         function selectPack(key, el) {
             selectedPackKey = key;
-            document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('.memento-tab').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
             playSE('click');
+            const res = document.getElementById('gachaResultCard');
+            res.style.display = 'none';
         }
 
         function openPack() {
             if (gameState.gems < 200) { alert("Θαύμα石が足りません！"); return; }
             gameState.gems -= 200; updateGemUI(); playSE('click');
 
-            const targetPool = CARDS_DATABASE.filter(c => c.packKey === selectedPackKey);
-            const card = targetPool[Math.floor(Math.random() * targetPool.length)];
+            const orb = document.getElementById('packArea');
+            orb.style.transform = "scale(1.4)";
+            orb.style.boxShadow = "0 0 90px rgba(236, 72, 153, 1), inset 0 0 35px rgba(255,255,255,1)";
 
-            if (!gameState.ownedCardIds.includes(card.id)) gameState.ownedCardIds.push(card.id);
-            const res = document.getElementById('gachaResultCard'); res.style.display = 'block';
-            res.innerHTML = `<div class="card card-${card.type==='SPELL'?'SPELL':card.rarity}" style="margin:0 auto; width:130px;"><div class="card-icon">${card.icon}</div><div class="card-title">${card.name}</div></div>`;
-            saveData();
+            setTimeout(() => {
+                orb.style.transform = "";
+                orb.style.boxShadow = "";
+
+                const targetPool = CARDS_DATABASE.filter(c => c.packKey === selectedPackKey);
+                const card = targetPool[Math.floor(Math.random() * targetPool.length)];
+
+                if (!gameState.ownedCardIds.includes(card.id)) gameState.ownedCardIds.push(card.id);
+                const res = document.getElementById('gachaResultCard');
+                res.style.display = 'flex';
+                res.innerHTML = `<div class="card card-${card.type==='SPELL'?'SPELL':card.rarity}" style="width:140px; height:190px;"><div class="card-icon" style="font-size:2rem;">${card.icon}</div><div class="card-title" style="font-size:0.85rem;">${card.name}</div></div>`;
+                saveData();
+            }, 300);
         }
 
         /* --- 対戦相手の選択画面作成 --- */
