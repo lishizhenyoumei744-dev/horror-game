@@ -91,6 +91,8 @@
             box-shadow: 0 3px 8px rgba(0,0,0,0.7); cursor: pointer; transition: all 0.2s;
         }
         .card:hover { transform: translateY(-4px) scale(1.03); z-index: 5; border-color: #7dd3fc; }
+        .card-UR { border-color: #ff007f; box-shadow: 0 0 12px rgba(255, 0, 127, 0.8); animation: urGlow 1.5s infinite alternate; }
+        @keyframes urGlow { from { box-shadow: 0 0 8px #ff007f; } to { box-shadow: 0 0 18px #ff7700; } }
         .card-EX { border-color: #ffd700; box-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }
         .card-SSS { border-color: #c084fc; }
         .card-SPELL { border-color: #10b981; background: linear-gradient(135deg, #064e3b, #020612); }
@@ -268,16 +270,27 @@
         let globalIdCounter = 1;
         packCategories.forEach(pack => {
             for (let i = 0; i < 40; i++) {
-                const atk = pack.baseAtk + (i * 35);
-                const def = pack.baseAtk - 200 + (i * 30);
-                const tributeReq = atk >= 2400 ? 2 : (atk >= 1800 ? 1 : 0);
-                CARDS_DATABASE.push({
-                    id: `c${globalIdCounter++}`, packKey: pack.key, type: 'MONSTER',
-                    name: `${pack.name} No.${i+1}`, icon: pack.icon,
-                    rarity: atk > 2500 ? "EX" : (atk > 1800 ? "SSS" : "SR"),
-                    atk: atk, def: def, tribute: tributeReq,
-                    desc: `【${pack.name}系】攻撃力:${atk} / 守備力:${def}\n生贄必要数: ${tributeReq}体`
-                });
+                if (pack.key === 'slime' && i === 39) {
+                    // スライムガチャの最強枠（UR モチモチなスライム）
+                    CARDS_DATABASE.push({
+                        id: `c${globalIdCounter++}`, packKey: pack.key, type: 'MONSTER',
+                        name: `モチモチなスライム`, icon: '🟢',
+                        rarity: "UR",
+                        atk: 3000, def: 3000, tribute: 2,
+                        desc: `【スライム系最高峰】攻撃力:3000 / 守備力:3000\n生贄必要数: 2体\n全てを飲み込む最強のモチモチボディ。`
+                    });
+                } else {
+                    const atk = pack.baseAtk + (i * 35);
+                    const def = pack.baseAtk - 200 + (i * 30);
+                    const tributeReq = atk >= 2400 ? 2 : (atk >= 1800 ? 1 : 0);
+                    CARDS_DATABASE.push({
+                        id: `c${globalIdCounter++}`, packKey: pack.key, type: 'MONSTER',
+                        name: `${pack.name} No.${i+1}`, icon: pack.icon,
+                        rarity: atk > 2500 ? "EX" : (atk > 1800 ? "SSS" : "SR"),
+                        atk: atk, def: def, tribute: tributeReq,
+                        desc: `【${pack.name}系】攻撃力:${atk} / 守備力:${def}\n生贄必要数: ${tributeReq}体`
+                    });
+                }
             }
             for (let i = 0; i < 10; i++) {
                 CARDS_DATABASE.push({
