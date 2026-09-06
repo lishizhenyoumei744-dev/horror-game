@@ -3,569 +3,555 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>残響のアストライア - Echoes of Astraea</title>
+    <title>Θαύμα CARD ARCHIVE - Complete TCG Edition -</title>
     <style>
-        /* --- 基本スタイル --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
         body {
-            background-color: #020208;
-            color: #e2e8f0;
+            background-color: #01040a; color: #f1f5f9;
             font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow: hidden; height: 100vh; display: flex; justify-content: center; align-items: center;
         }
         #game-container {
-            width: 100%;
-            max-width: 1000px;
-            height: 100vh;
-            max-height: 700px;
-            position: relative;
-            background: #03030c;
-            box-shadow: 0 0 50px rgba(100, 150, 255, 0.15);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            width: 100%; max-width: 1100px; height: 100vh; max-height: 800px;
+            position: relative; background: radial-gradient(circle at center, #051329 0%, #01040a 100%);
+            box-shadow: 0 0 60px rgba(56, 189, 248, 0.3); display: flex; flex-direction: column; overflow: hidden;
+            border: 1px solid rgba(56, 189, 248, 0.3);
         }
         .screen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.8s ease;
-            z-index: 1;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s ease; z-index: 1; padding: 15px;
         }
-        .screen.active {
-            display: flex;
-            opacity: 1;
-            z-index: 2;
+        .screen.active { display: flex; opacity: 1; z-index: 2; }
+
+        /* ヘッダー */
+        .header-bar {
+            position: absolute; top: 0; left: 0; width: 100%; padding: 10px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.3); background: rgba(2, 10, 25, 0.9); backdrop-filter: blur(10px); z-index: 10;
         }
 
-        /* --- 共通ボタン --- */
-        .btn-container {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            width: 80%;
-            max-width: 320px;
-            z-index: 5;
-        }
+        /* UI要素 */
+        .btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 480px; margin-top: 25px; z-index: 5; }
         .btn {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(148, 163, 184, 0.4);
-            color: #f1f5f9;
-            padding: 14px 24px;
-            font-size: 0.95rem;
-            cursor: pointer;
-            text-align: center;
-            letter-spacing: 0.15em;
-            transition: all 0.4s ease;
-            border-radius: 6px;
-            font-family: inherit;
-            backdrop-filter: blur(4px);
+            background: rgba(8, 30, 58, 0.85); border: 1px solid rgba(56, 189, 248, 0.6);
+            color: #38bdf8; padding: 10px 15px; font-size: 0.9rem; cursor: pointer; text-align: center;
+            letter-spacing: 0.1em; transition: all 0.2s; border-radius: 6px; font-family: inherit;
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
         }
-        .btn:hover {
-            background: rgba(56, 189, 248, 0.2);
-            border-color: rgba(56, 189, 248, 0.8);
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
-            color: #ffffff;
-        }
+        .btn:hover { background: rgba(56, 189, 248, 0.3); border-color: #7dd3fc; box-shadow: 0 0 15px rgba(56, 189, 248, 0.8); color: #fff; }
+        .btn-sec { border-color: rgba(148, 163, 184, 0.4); color: #94a3b8; text-shadow: none; }
 
-        /* --- タイトル画面 --- */
-        #titleScreen {
-            position: relative;
-            background: radial-gradient(circle at center, #091026 0%, #03030c 100%);
+        #titleCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        
+        /* 👁️ 異常な存在感を放つグリッチ・タイトル */
+        .title-wrapper {
+            position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center;
         }
         .title-logo {
-            font-size: 2.8rem;
-            font-weight: 300;
-            letter-spacing: 0.25em;
-            color: #f8fafc;
-            text-shadow: 0 0 20px rgba(186, 230, 253, 0.6);
-            margin-bottom: 8px;
-            z-index: 3;
+            font-size: 4.2rem; font-weight: bold; letter-spacing: 0.25em; color: #f0f9ff;
+            text-shadow: 0 0 20px #38bdf8, 0 0 40px #0284c7;
+            position: relative; animation: glitchBase 3s infinite;
         }
-        .subtitle {
-            font-size: 0.95rem;
-            color: #94a3b8;
-            margin-bottom: 50px;
-            letter-spacing: 0.3em;
-            z-index: 3;
+        .title-logo::before, .title-logo::after {
+            content: "Θαύμα"; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8;
         }
-        #starCanvas {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
+        .title-logo::before {
+            color: #ff0055; z-index: -1; animation: glitchRed 0.4s infinite alternate-reverse; clip-path: inset(10% 0 30% 0);
+        }
+        .title-logo::after {
+            color: #00ffff; z-index: -2; animation: glitchBlue 0.3s infinite linear; clip-path: inset(40% 0 10% 0);
         }
 
-        /* --- ストーリー（ノベル）画面 --- */
-        #storyScreen {
-            background: #020208;
-            justify-content: flex-end;
+        @keyframes glitchBase {
+            0%, 90%, 100% { transform: translate(0,0) scale(1); filter: drop-shadow(0 0 15px #38bdf8); }
+            92% { transform: translate(-3px, 2px) skewX(5deg); filter: drop-shadow(0 0 30px #e0f2fe); }
+            94% { transform: translate(3px, -2px) scale(1.03); }
+            96% { transform: translate(-1px, -3px) rotate(-1deg); }
+            98% { transform: translate(2px, 1px) skewX(-3deg); }
         }
-        .story-bg {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
-            transition: background 1.5s ease;
-        }
-        .bg-night { background: radial-gradient(circle at 50% 30%, #0c1838 0%, #020208 80%); }
-        .bg-sunset { background: radial-gradient(circle at 50% 30%, #3b152b 0%, #08020a 80%); }
-        .bg-white { background: radial-gradient(circle at 50% 30%, #2a3a5c 0%, #050a14 80%); }
-        .bg-tears { background: radial-gradient(circle at 50% 30%, #111e38 0%, #01040a 80%); }
+        @keyframes glitchRed { 0% { transform: translate(-2px, -1px); } 100% { transform: translate(4px, 2px); } }
+        @keyframes glitchBlue { 0% { transform: translate(2px, 1px); } 100% { transform: translate(-3px, -2px); } }
 
-        .story-box {
-            position: relative;
-            z-index: 3;
-            width: 100%;
-            height: 38%;
-            background: rgba(5, 9, 20, 0.85);
-            border-top: 1px solid rgba(148, 163, 184, 0.25);
-            padding: 25px 35px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            cursor: pointer;
-            backdrop-filter: blur(8px);
+        .panel {
+            width: 100%; max-width: 950px; height: 84%; background: rgba(4, 15, 33, 0.93);
+            border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 15px;
+            overflow-y: auto; margin-top: 35px; backdrop-filter: blur(12px);
         }
-        .speaker-name {
-            color: #38bdf8;
-            font-size: 1.05rem;
-            letter-spacing: 0.1em;
-            margin-bottom: 12px;
-            font-weight: bold;
-        }
-        .story-text {
-            font-size: 1.05rem;
-            line-height: 2.0;
-            color: #f1f5f9;
-            height: 100%;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            letter-spacing: 0.05em;
-        }
+        .panel-title { font-size: 1.2rem; color: #38bdf8; margin-bottom: 10px; border-bottom: 1px solid rgba(56, 189, 248, 0.3); padding-bottom: 5px; }
 
-        /* 選択肢オーバーレイ */
-        #choiceOverlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 2, 8, 0.85);
-            z-index: 10;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            backdrop-filter: blur(5px);
+        /* カード・フィールド UI */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; width: 100%; }
+        .card {
+            aspect-ratio: 5/7; background: linear-gradient(135deg, #0b172d, #020612);
+            border: 1px solid #38bdf8; border-radius: 6px; padding: 6px; display: flex;
+            flex-direction: column; justify-content: space-between; position: relative;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.7); cursor: pointer; transition: all 0.2s;
         }
+        .card:hover { transform: translateY(-4px) scale(1.03); z-index: 5; border-color: #7dd3fc; }
+        .card-EX { border-color: #ffd700; box-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }
+        .card-SSS { border-color: #c084fc; }
+        .card-SPELL { border-color: #10b981; background: linear-gradient(135deg, #064e3b, #020612); }
+        .card-def-mode { transform: rotate(90deg) scale(0.85); border-color: #e2e8f0; }
 
-        /* --- パネル（章選択・設定・回想） --- */
-        .content-panel {
-            width: 88%;
-            max-width: 750px;
-            height: 82%;
-            background: rgba(8, 14, 28, 0.9);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 8px;
-            padding: 25px;
-            overflow-y: auto;
-            z-index: 5;
-            backdrop-filter: blur(10px);
-        }
-        .panel-title {
-            font-size: 1.4rem;
-            color: #38bdf8;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(56, 189, 248, 0.3);
-            padding-bottom: 8px;
-            letter-spacing: 0.15em;
-        }
-        .chapter-card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(148, 163, 184, 0.15);
-            padding: 14px 18px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-        .chapter-card.unlocked:hover {
-            border-color: rgba(56, 189, 248, 0.5);
-            background: rgba(30, 41, 59, 0.8);
-            cursor: pointer;
-        }
+        .card-icon { font-size: 1.5rem; text-align: center; margin: 2px 0; }
+        .card-title { font-size: 0.68rem; font-weight: bold; text-align: center; line-height: 1.1; }
+        .card-stats { font-size: 0.6rem; display: flex; justify-content: space-between; margin-top: 2px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2px; }
 
-        @media (max-width: 650px) {
-            .title-logo { font-size: 1.8rem; }
-            .subtitle { font-size: 0.8rem; }
-            .story-box { height: 50%; padding: 18px; }
-            .story-text { font-size: 0.95rem; line-height: 1.8; }
-        }
+        /* TCGバトルレイアウト */
+        .tcg-field { display: flex; flex-direction: column; justify-content: space-between; height: 100%; gap: 8px; }
+        .field-zone { background: rgba(2, 10, 25, 0.6); border: 1px dashed rgba(56, 189, 248, 0.3); border-radius: 6px; padding: 6px; height: 105px; display: flex; gap: 8px; align-items: center; justify-content: center; }
+        .hand-zone { background: rgba(5, 20, 45, 0.8); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 6px; padding: 6px; height: 110px; display: flex; gap: 8px; overflow-x: auto; align-items: center; }
+        .player-status { display: flex; justify-content: space-between; font-size: 0.9rem; color: #38bdf8; font-weight: bold; padding: 0 5px; }
+
+        .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 50; backdrop-filter: blur(5px); }
+        .modal-content { background: #06152d; border: 1px solid #38bdf8; padding: 20px; border-radius: 10px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; }
     </style>
 </head>
 <body>
 
     <div id="game-container">
+        <div class="header-bar">
+            <div style="font-size: 0.9rem; color: #38bdf8;">Θαύμα TCG - 150 CARDS -</div>
+            <div style="display:flex; gap:12px; align-items:center;">
+                <button class="btn btn-sec" style="padding: 3px 8px; font-size:0.75rem;" onclick="toggleAudio()" id="soundBtn">🎵 Sound: OFF</button>
+                <div>Θαύμα石: <span id="gemDisplay" style="color:#38bdf8; font-weight:bold;">1000</span> 💎</div>
+            </div>
+        </div>
+
         <!-- タイトル画面 -->
         <div id="titleScreen" class="screen active">
-            <canvas id="starCanvas"></canvas>
-            <div class="title-logo">残響のアストライア</div>
-            <div class="subtitle">― Echoes of Astraea ―</div>
-            <div class="btn-container">
-                <button class="btn" onclick="startNewGame()">物語を始める</button>
-                <button class="btn" onclick="loadGame()">続きを読む</button>
-                <button class="btn" onclick="openChapterSelect()">章選択 (全20章)</button>
+            <canvas id="titleCanvas"></canvas>
+            <div class="title-wrapper">
+                <div class="title-logo">Θαύμα</div>
+                <div style="color: #7dd3fc; margin-top: 10px; margin-bottom: 25px; letter-spacing: 0.35em; z-index: 3; font-size: 0.85rem; text-shadow: 0 0 10px #38bdf8;">― FULL STRATEGY CARD BATTLE ―</div>
+            </div>
+            <div class="btn-grid">
+                <button class="btn" onclick="playSE('click'); showScreen('menuScreen')">ゲームスタート</button>
+                <button class="btn btn-sec" onclick="playSE('click'); openModal('ruleModal')">ルール説明</button>
             </div>
         </div>
 
-        <!-- 章選択画面 -->
-        <div id="chapterSelectScreen" class="screen">
-            <div class="content-panel">
-                <div class="panel-title">物語の記憶（章一覧）</div>
-                <div id="chapterListContainer"></div>
-                <button class="btn" style="margin-top:20px; width: 100%;" onclick="showScreen('titleScreen')">タイトルへ戻る</button>
+        <!-- メニュー -->
+        <div id="menuScreen" class="screen">
+            <h2 style="color: #38bdf8; margin-bottom: 15px; letter-spacing: 0.1em;">メインメニュー</h2>
+            <div class="btn-grid">
+                <button class="btn" onclick="playSE('click'); showScreen('gachaScreen')">パック開封 (全150種)</button>
+                <button class="btn" onclick="playSE('click'); showScreen('battleSelectScreen')">Θαύμαカードバトル開始</button>
+                <button class="btn" onclick="playSE('click'); openArchiveScreen()">カード図鑑 (全150種)</button>
+                <button class="btn btn-sec" onclick="playSE('click'); openModal('ruleModal')">ルール説明</button>
+                <button class="btn btn-sec" style="grid-column: span 2;" onclick="playSE('click'); showScreen('titleScreen')">タイトルへ戻る</button>
             </div>
         </div>
 
-        <!-- 本編（ノベル）画面 -->
-        <div id="storyScreen" class="screen">
-            <div class="story-bg" id="storyBg"></div>
-            
-            <!-- 選択肢ダイアログ -->
-            <div id="choiceOverlay">
-                <div style="color: #e2e8f0; font-size: 1.1rem; margin-bottom: 10px;" id="choicePrompt">運命を選択してください</div>
-                <div id="choiceButtons" class="btn-container"></div>
-            </div>
-
-            <!-- メッセージボックス -->
-            <div class="story-box" onclick="nextStoryLine()">
-                <div>
-                    <div class="speaker-name" id="speakerName"></div>
-                    <div class="story-text" id="storyText"></div>
+        <!-- ガチャ -->
+        <div id="gachaScreen" class="screen">
+            <div class="panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <div class="panel-title">拡張パック：『創世と絶対領域』(全150種)</div>
+                <p style="margin-bottom: 15px; color: #aaa; font-size: 0.8rem;">1パック: 200 Θαύμα石 (全150種からランダム排出)</p>
+                <div id="packArea" style="width: 150px; height: 220px; background: linear-gradient(135deg, #0284c7, #0369a1); border: 2px solid #38bdf8; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-weight: bold; cursor: pointer; color: #fff; box-shadow: 0 0 30px rgba(56,189,248,0.5);" onclick="openPack()">
+                    <span>PACK OPEN</span>
                 </div>
-                <div style="text-align: right; font-size: 0.75rem; color: #64748b; margin-top: 5px;">Click to Next ▶</div>
+                <div id="gachaResultCard" style="margin-top: 15px; display: none;"></div>
+                <button class="btn btn-sec" style="margin-top:15px; width: 180px;" onclick="playSE('click'); showScreen('menuScreen')">戻る</button>
             </div>
         </div>
+
+        <!-- 対戦選択 -->
+        <div id="battleSelectScreen" class="screen">
+            <div class="panel">
+                <div class="panel-title">対戦相手選択</div>
+                <div id="battleList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                <button class="btn btn-sec" style="margin-top:15px; width: 100%;" onclick="playSE('click'); showScreen('menuScreen')">戻る</button>
+            </div>
+        </div>
+
+        <!-- バトル画面 -->
+        <div id="battleScreen" class="screen">
+            <div class="panel" style="padding: 10px;">
+                <div class="tcg-field">
+                    <!-- 相手 -->
+                    <div>
+                        <div class="player-status">
+                            <span id="enemyTitle">相手</span>
+                            <span style="color:#ef4444;">LP: <span id="enemyLP">4000</span></span>
+                        </div>
+                        <div class="field-zone" id="enemyField"></div>
+                    </div>
+
+                    <!-- ログ -->
+                    <div id="battleLog" style="height: 55px; border: 1px solid rgba(56,189,248,0.2); padding: 4px 8px; overflow-y: auto; font-size: 0.72rem; color: #cbd5e1; background: rgba(0,0,0,0.5); border-radius: 4px;"></div>
+
+                    <!-- 自分手札 ＆ フィールド -->
+                    <div>
+                        <div style="font-size:0.75rem; color:#7dd3fc; margin-bottom:2px;">【あなたのフィールド】</div>
+                        <div class="field-zone" id="playerField"></div>
+                        <div style="font-size:0.75rem; color:#7dd3fc; margin: 4px 0 2px 0;">【あなたの手札 (タップして選択操作)】</div>
+                        <div class="hand-zone" id="playerHand"></div>
+                        <div class="player-status" style="margin-top: 4px;">
+                            <span>あなた (PLAYER)</span>
+                            <span style="color:#10b981;">LP: <span id="playerLP">4000</span></span>
+                        </div>
+                    </div>
+
+                    <!-- コマンド -->
+                    <div style="display: flex; gap: 8px; justify-content: center;">
+                        <button class="btn" style="padding: 6px 12px; font-size: 0.75rem;" onclick="tcgAttackAll()">全員で攻撃</button>
+                        <button class="btn btn-sec" style="padding: 6px 12px; font-size: 0.75rem;" onclick="tcgEndTurn()">ターン終了</button>
+                        <button class="btn btn-sec" style="padding: 6px 12px; font-size: 0.75rem;" onclick="showScreen('battleSelectScreen')">降参</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 図鑑 -->
+        <div id="archiveScreen" class="screen">
+            <div class="panel">
+                <div class="panel-title" id="archiveProgress">カードアーカイブ (0/150)</div>
+                <div class="card-grid" id="cardGridArea"></div>
+                <button class="btn btn-sec" style="margin-top:15px; width: 100%;" onclick="playSE('click'); showScreen('menuScreen')">戻る</button>
+            </div>
+        </div>
+
+        <!-- ルールモーダル -->
+        <div id="ruleModal" class="modal">
+            <div class="modal-content">
+                <h3 style="color: #38bdf8; margin-bottom: 10px; border-bottom: 1px solid #38bdf8;">📜 Θαύμαカードバトル ルール説明</h3>
+                <ul style="font-size: 0.8rem; line-height: 1.5; color: #ccc; padding-left: 15px;">
+                    <li><b>手札から選択召喚</b>: 手札のモンスターをタップして「攻撃表示」または「シールド（守備表示）」で召喚！</li>
+                    <li><b>生贄（リリース）</b>: 攻撃力2000以上の高レベルモンスターを召喚するには、場にある仲間モンスターを1〜2体生贄にする必要があります。</li>
+                    <li><b>シールド（守備表示）</b>: 守備表示のモンスターは戦闘で破壊されてもプレイヤーのLPへダメージを防いでくれます！</li>
+                    <li><b>サポートカード（魔法）</b>: 手札から発動して「即時ダメージ」「LP回復」「攻撃力強化」など戦局を大きく変えられます。</li>
+                </ul>
+                <button class="btn" style="margin-top: 12px; width: 100%;" onclick="closeModal('ruleModal')">閉じる</button>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        /* --- 全20章 泣き系重厚シナリオデータ --- */
-        const gameStory = [
-            {
-                chapter: 1, title: "第1章：星の降る夜に", lines: [
-                    { speaker: "星空 (奏)", text: "病室の窓からは、今夜も吸い込まれるような星空が見えていた。", bg: "bg-night" },
-                    { speaker: "星空 (奏)", text: "僕の名前は奏（かなで）。この孤立した療養所で、光を失っていく日々を送っている。", bg: "bg-night" },
-                    { speaker: "アストライア", text: "「綺麗……。ねえ、君もあの星たちが聞こえる？」", bg: "bg-night" },
-                    { speaker: "星空 (奏)", text: "それが、僕と彼女――アストライアとの出会いだった。", bg: "bg-night" }
-                ]
-            },
-            {
-                chapter: 2, title: "第2章：ガラスの体", lines: [
-                    { speaker: "アストライア", text: "「私の体はね、少しずつ星の砂になって消えていくの」", bg: "bg-night" },
-                    { speaker: "星空 (奏)", text: "彼女は微笑みながら、透き通るような自分の手首を見つめた。", bg: "bg-night" },
-                    { speaker: "星空 (奏)", text: "不治の病『星化症候群』。感情が高ぶるたび、皮膚が光を帯びて結晶化していく奇病。", bg: "bg-night" },
-                    { speaker: "アストライア", text: "「だからね、泣くことも怒ることも……誰かを好きになることも許されないの」", bg: "bg-night" }
-                ]
-            },
-            {
-                chapter: 3, title: "第3章：ふたりだけの約束", lines: [
-                    { speaker: "星空 (奏)", text: "「だったら、僕が君の感情の代わりになる。君の代わりに泣いて、君の代わりに叫ぶよ」", bg: "bg-sunset" },
-                    { speaker: "アストライア", text: "「……ふふ、変な奏くん。でも、ありがとう」", bg: "bg-sunset" },
-                    { speaker: "星空 (奏)", text: "夕暮れの屋上で、僕たちは小さな指切りをした。それがすべての始まりだった。", bg: "bg-sunset" }
-                ]
-            },
-            {
-                chapter: 4, title: "第4章：失われていく日常", lines: [
-                    { speaker: "星空 (奏)", text: "日々は過ぎ、アストライアの右足はすでに輝く結晶へと変わりつつあった。", bg: "bg-night" },
-                    { speaker: "アストライア", text: "「車椅子を押してくれる奏くんの手、すごく温かいよ」", bg: "bg-night" },
-                    { speaker: "星空 (奏)", text: "僕は必死に笑顔を作った。涙がこぼれそうになるのを、必死で噛み殺しながら。", bg: "bg-night" }
-                ]
-            },
-            {
-                chapter: 5, title: "第5章：未完成の絵本", lines: [
-                    { speaker: "アストライア", text: "「私ね、物語を書いているの。星になった少女が、大切な人を探すお話」", bg: "bg-sunset" },
-                    { speaker: "星空 (奏)", text: "彼女のスケッチブックには、繊細で儚いイラストと、未完成の文章が並んでいた。", bg: "bg-sunset" },
-                    { speaker: "アストライア", text: "「結末は……まだ決められないの。だって、離れたくないから」", bg: "bg-sunset" }
-                ]
-            },
-            {
-                chapter: 6, title: "第6章：夜を越えて", lines: [
-                    { speaker: "星空 (奏)", text: "ある夜、アストライアの発作が起きた。激しい痛みが彼女の身体を襲う。", bg: "bg-tears" },
-                    { speaker: "アストライア", text: "「うぁ……あっ……奏くん……こわいよ……消えたくないよ……！」", bg: "bg-tears" },
-                    { speaker: "星空 (奏)", text: "僕は彼女を強く抱きしめた。光を放つ彼女の体が、冷たく、そして恐ろしいほど美しかった。", bg: "bg-tears" }
-                ]
-            },
-            {
-                chapter: 7, title: "第7章：残された時間", lines: [
-                    { speaker: "主治医", text: "「彼女の結晶化は最終段階に入りました。次の流星群の夜……それが限界でしょう」", bg: "bg-white" },
-                    { speaker: "星空 (奏)", text: "白い廊下で、宣告は残酷に響いた。残された時間はあとわずか。", bg: "bg-white" }
-                ]
-            },
-            {
-                chapter: 8, title: "第8章：最後の逃避行", lines: [
-                    { speaker: "星空 (奏)", text: "「行こう、アストライア。病院の外へ。君が見たかった海へ」", bg: "bg-night" },
-                    { speaker: "アストライア", text: "「奏くん……うん！ 私、奏くんとならどこへでも行ける」", bg: "bg-night" },
-                    { speaker: "星空 (奏)", text: "僕たちは真夜中の病院を抜け出し、海を目指して走り出した。", bg: "bg-night" }
-                ]
-            },
-            {
-                chapter: 9, title: "第9章：波音と面影", lines: [
-                    { speaker: "アストライア", text: "「わぁ……これが、夜の海……！ 星が海に映って、まるで宇宙みたい」", bg: "bg-night" },
-                    { speaker: "星空 (奏)", text: "車椅子から身を乗り出し、子供のように瞳を輝かせる彼女。", bg: "bg-night" },
-                    { speaker: "星空 (奏)", text: "だが、その両腕はすでに指先まで透明な輝きに覆われていた。", bg: "bg-night" }
-                ]
-            },
-            {
-                chapter: 10, title: "第10章：運命の選択", lines: [
-                    { speaker: "アストライア", text: "「ねえ、奏くん。もし私が完全に星になってしまったら……君はどうする？」", bg: "bg-night", choice: true,
-                      options: [
-                          { text: "「僕も君と一緒に星になる」", nextFlag: "bad" },
-                          { text: "「君の物語を僕が永遠に語り継ぐ」", nextFlag: "true" }
-                      ]
-                    }
-                ]
-            },
-            {
-                chapter: 11, title: "第11章：告白", lines: [
-                    { speaker: "アストライア", text: "「私ね……奏くんに出会えて、本当に幸せだったよ」", bg: "bg-sunset" },
-                    { speaker: "アストライア", text: "「生まれた時から病気で、ずっと一人だと思ってた。でも……君が世界をくれた」", bg: "bg-sunset" },
-                    { speaker: "星空 (奏)", text: "「僕だって……！ 君がいたから、暗闇の中でも生きていけたんだ！」", bg: "bg-sunset" }
-                ]
-            },
-            {
-                chapter: 12, title: "第12章：流星の夜", lines: [
-                    { speaker: "星空 (奏)", text: "そして、約束の夜がやってきた。空一面を埋め尽くす激しい流星群。", bg: "bg-white" },
-                    { speaker: "アストライア", text: "「綺麗……奏くん、見て……星が降ってくるよ……」", bg: "bg-white" },
-                    { speaker: "星空 (奏)", text: "彼女の声が、驚くほどかすかになっていく。", bg: "bg-white" }
-                ]
-            },
-            {
-                chapter: 13, title: "第13章：崩れゆく輝き", lines: [
-                    { speaker: "星空 (奏)", text: "アストライアの体が、強く、強く光り始めた。", bg: "bg-white" },
-                    { speaker: "アストライア", text: "「あ……もう、耳も……声も……うまく届かなくなってきちゃった……」", bg: "bg-white" },
-                    { speaker: "星空 (奏)", text: "「嫌だ……！ 頼むから消えないでくれ！ アストライア！！」", bg: "bg-white" }
-                ]
-            },
-            {
-                chapter: 14, title: "第14章：最後の涙", lines: [
-                    { speaker: "アストライア", text: "「泣かないで……奏くん。約束……したでしょ……？」", bg: "bg-tears" },
-                    { speaker: "アストライア", text: "「私の代わりに……生きて……笑って……」", bg: "bg-tears" },
-                    { speaker: "星空 (奏)", text: "彼女の目から、一滴の透明な涙がこぼれ落ちた。それは空気中で美しい結晶となった。", bg: "bg-tears" }
-                ]
-            },
-            {
-                chapter: 15, title: "第15章：光の抱擁", lines: [
-                    { speaker: "アストライア", text: "「大好きだよ、奏くん。永遠に……ずっと……」", bg: "bg-white" },
-                    { speaker: "星空 (奏)", text: "最後の言葉とともに、彼女の体が目もくらむような光の粒子へと弾けた。", bg: "bg-white" },
-                    { speaker: "星空 (奏)", text: "腕の中に残ったのは、温もりではなく、温かい光の残響だけだった。", bg: "bg-white" }
-                ]
-            },
-            {
-                chapter: 16, title: "第16章：残された世界", lines: [
-                    { speaker: "星空 (奏)", text: "彼女が消えてから、季節が一つ過ぎた。", bg: "bg-sunset" },
-                    { speaker: "星空 (奏)", text: "静もり返った病室。彼女の机の上には、一冊の絵本が残されていた。", bg: "bg-sunset" }
-                ]
-            },
-            {
-                chapter: 17, title: "第17章：最後のページ", lines: [
-                    { speaker: "星空 (奏)", text: "絵本の最後のページ。そこには彼女の筆跡でこう書かれていた。", bg: "bg-sunset" },
-                    { speaker: "アストライアの声", text: "『星になった少女は、いつでも君の空で見守っているよ。だから、見上げてね』", bg: "bg-sunset" }
-                ]
-            },
-            {
-                chapter: 18, title: "第18章：僕たちの残響", lines: [
-                    { speaker: "星空 (奏)", text: "僕は溢れ出る涙を拭い、ペンを取った。彼女の描いた未完成の物語に、続きを書くために。", bg: "bg-night" },
-                    { speaker: "星空 (奏)", text: "「君がくれた光を、僕は絶対に絶やさない」", bg: "bg-night" }
-                ]
-            },
-            {
-                chapter: 19, title: "第19章：アストライアの詩", lines: [
-                    { speaker: "星空 (奏)", text: "夜空を見上げると、一番眩しく輝く星が、まるで微笑むように瞬いた。", bg: "bg-night" },
-                    { speaker: "アストライアの声", text: "「ありがとう、奏くん。ずっと、ずっと愛してる」", bg: "bg-night" }
-                ]
-            },
-            {
-                chapter: 20, title: "第20章：永遠の星空へ（完結）", lines: [
-                    { speaker: "星空 (奏)", text: "風が吹き抜け、星々の歌声が聞こえる。僕たちの物語は、この永遠の空の下で続いていく――。", bg: "bg-night" },
-                    { speaker: "システム", text: "【残響のアストライア - True End】ごプレイありがとうございました。", bg: "bg-night" }
-                ]
-            }
+        /* --- 全150種類のカードデータ自動構築 --- */
+        const CARDS_DATABASE = [];
+        const characters = [
+            { name: "皇 紅蓮", icons: ["✝️", "👻", "🦇", "🩸"] },
+            { name: "焔緋 灯影", icons: ["🔹", "👁️", "🌌", "⚡"] },
+            { name: "焔緋くん", icons: ["🗡️", "🪙", "🔫", "🕶️"] },
+            { name: "タンスの皇", icons: ["🦶", "🚪", "💥", "🩹"] }
         ];
+        const titles = ["形態", "覚醒", "抜刀", "絶技", "真髄", "極限", "残響", "影舞", "支配", "血界", "神域", "一閃", "終焉", "幻影", "超越"];
 
-        /* --- ゲーム進行状態 --- */
-        let gameState = {
-            unlockedChapter: 1,
-            currentChapterIndex: 0,
-            currentLineIndex: 0,
-            routeFlag: 'true'
-        };
+        for (let i = 0; i < 100; i++) {
+            const char = characters[i % characters.length];
+            const icon = char.icons[i % char.icons.length];
+            const title = titles[i % titles.length];
+            const atk = 800 + (i * 25);
+            const def = 600 + (i * 20);
+            const tributeReq = atk >= 2400 ? 2 : (atk >= 1800 ? 1 : 0);
 
-        /* --- 画面切り替え --- */
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const target = document.getElementById(screenId);
-            if (target) target.classList.add('active');
+            CARDS_DATABASE.push({
+                id: `c${i+1}`, type: 'MONSTER',
+                name: `${char.name} [${title}]`, icon: icon,
+                rarity: atk > 2500 ? "EX" : (atk > 1800 ? "SSS" : "SR"),
+                atk: atk, def: def, tribute: tributeReq,
+                desc: `【モンスター】攻撃力:${atk} / 守備力:${def}\n生贄必要数: ${tributeReq}体`
+            });
         }
 
-        function startNewGame() {
-            gameState.currentChapterIndex = 0;
-            gameState.currentLineIndex = 0;
-            showScreen('storyScreen');
-            renderStoryLine();
+        const spellEffects = [
+            { name: "紅蓮の聖血", icon: "🍷", effect: "HEAL", val: 800, desc: "自身のLPを800回復する。" },
+            { name: "蒼炎の閃光", icon: "⚡", effect: "DAMAGE", val: 600, desc: "相手LPに600の直接ダメージ！" },
+            { name: "タンスの怪力", icon: "🩹", effect: "BUFF", val: 500, desc: "自場の全モンスターの攻撃力を500UP！" },
+            { name: "終焉の号令", icon: "📜", effect: "DESTROY", val: 0, desc: "相手の最強くモンスター1体を即死破壊する！" }
+        ];
+        for (let i = 100; i < 150; i++) {
+            const eff = spellEffects[i % spellEffects.length];
+            CARDS_DATABASE.push({
+                id: `c${i+1}`, type: 'SPELL',
+                name: `${eff.name} Lv.${(i-99)}`, icon: eff.icon, rarity: "SR",
+                effect: eff.effect, val: eff.val,
+                desc: `【サポートカード】\n${eff.desc}`
+            });
         }
 
-        function loadGame() {
-            const saved = localStorage.getItem('astraea_save');
-            if (saved) {
-                gameState = JSON.parse(saved);
-                showScreen('storyScreen');
-                renderStoryLine();
+        /* --- ゲーム状態 --- */
+        let gameState = { gems: 1000, ownedCardIds: Array.from({length: 15}, (_, i) => `c${i+1}`) };
+
+        /* --- Audio --- */
+        let audioCtx = null, isSoundOn = false, bgmOsc = null;
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        function toggleAudio() {
+            initAudio(); isSoundOn = !isSoundOn;
+            document.getElementById('soundBtn').innerText = `🎵 Sound: ${isSoundOn ? 'ON' : 'OFF'}`;
+            if (isSoundOn) startBGM(); else stopBGM();
+        }
+        function playSE(type) {
+            if (!isSoundOn || !audioCtx) return;
+            const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            if (type === 'click') { osc.frequency.setValueAtTime(800, audioCtx.currentTime); gain.gain.setValueAtTime(0.08, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.05); }
+            else if (type === 'attack') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(160, audioCtx.currentTime); gain.gain.setValueAtTime(0.15, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.12); }
+        }
+        function startBGM() { stopBGM(); bgmOsc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); bgmOsc.type = 'sine'; bgmOsc.frequency.setValueAtTime(200, audioCtx.currentTime); gain.gain.setValueAtTime(0.02, audioCtx.currentTime); bgmOsc.connect(gain); gain.connect(audioCtx.destination); bgmOsc.start(); }
+        function stopBGM() { if (bgmOsc) { bgmOsc.stop(); bgmOsc = null; } }
+
+        /* --- UI画面遷移 --- */
+        function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); updateGemUI(); }
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function updateGemUI() { document.getElementById('gemDisplay').innerText = gameState.gems; }
+
+        /* --- ガチャ --- */
+        function openPack() {
+            if (gameState.gems < 200) { alert("Θαύμα石が足りません！"); return; }
+            gameState.gems -= 200; updateGemUI(); playSE('click');
+            const card = CARDS_DATABASE[Math.floor(Math.random() * CARDS_DATABASE.length)];
+            if (!gameState.ownedCardIds.includes(card.id)) gameState.ownedCardIds.push(card.id);
+            const res = document.getElementById('gachaResultCard'); res.style.display = 'block';
+            res.innerHTML = `<div class="card card-${card.type==='SPELL'?'SPELL':card.rarity}" style="margin:0 auto; width:130px;"><div class="card-icon">${card.icon}</div><div class="card-title">${card.name}</div></div>`;
+            saveData();
+        }
+
+        /* --- TCGバトルエンジン --- */
+        let battleState = { pLP: 4000, eLP: 4000, pHand: [], pField: [], eField: [] };
+
+        function openBattleSelect() {
+            const list = document.getElementById('battleList');
+            const opps = [
+                { name: "🩸 皇 紅蓮 (血界デッキ)", idx: 0 },
+                { name: "🔹 焔緋 灯影 (神域デッキ)", idx: 25 },
+                { name: "🗡️ 焔緋くん (絶技デッキ)", idx: 50 },
+                { name: "🦶 タンスの皇 (打撲呪いデッキ)", idx: 75 }
+            ];
+            list.innerHTML = opps.map(o => `
+                <div class="card" style="aspect-ratio:auto; flex-direction:row; align-items:center; justify-content:space-between; padding:10px 15px;" onclick="startTCGBattle(${o.idx})">
+                    <div style="font-weight:bold; color:#38bdf8;">${o.name}</div>
+                    <button class="btn" style="padding:4px 10px; font-size:0.75rem;">バトル開始 (報酬:300 Θαύμα石)</button>
+                </div>
+            `).join('');
+        }
+
+        function startTCGBattle(oppIdx) {
+            playSE('click');
+            const ownedList = CARDS_DATABASE.filter(c => gameState.ownedCardIds.includes(c.id));
+            
+            battleState = {
+                pLP: 4000, eLP: 4000,
+                pHand: Array.from({length: 4}, () => ownedList[Math.floor(Math.random() * ownedList.length)]),
+                pField: [],
+                eField: [{ ...CARDS_DATABASE[oppIdx], mode: 'ATK' }, { ...CARDS_DATABASE[oppIdx + 1], mode: 'DEF' }]
+            };
+            document.getElementById('enemyTitle').innerText = CARDS_DATABASE[oppIdx].name;
+            updateBattleUI();
+            logAdd("Θαύμαカードバトル開始！ 手札からカードを選択して召喚・発動してください。");
+            showScreen('battleScreen');
+        }
+
+        function updateBattleUI() {
+            document.getElementById('playerLP').innerText = battleState.pLP;
+            document.getElementById('enemyLP').innerText = battleState.eLP;
+
+            document.getElementById('enemyField').innerHTML = battleState.eField.length ? battleState.eField.map(c => renderCardHTML(c, false)).join('') : '<span style="color:#64748b; font-size:0.75rem;">空（ダイレクト可能）</span>';
+            document.getElementById('playerField').innerHTML = battleState.pField.length ? battleState.pField.map(c => renderCardHTML(c, false)).join('') : '<span style="color:#64748b; font-size:0.75rem;">空（未召喚）</span>';
+            document.getElementById('playerHand').innerHTML = battleState.pHand.map((c, idx) => `<div onclick="selectHandCard(${idx})">${renderCardHTML(c, true)}</div>`).join('');
+        }
+
+        function renderCardHTML(c, isHand) {
+            const isSpell = c.type === 'SPELL';
+            const modeClass = c.mode === 'DEF' ? 'card-def-mode' : '';
+            return `
+                <div class="card card-${isSpell ? 'SPELL' : c.rarity} ${modeClass}" style="width:75px; height:98px;">
+                    <div class="card-icon" style="font-size:1.1rem;">${c.icon}</div>
+                    <div class="card-title" style="font-size:0.6rem;">${c.name}</div>
+                    ${!isSpell ? `<div class="card-stats"><span>${c.atk}</span><span>${c.def}</span></div>` : '<div style="font-size:0.55rem; color:#10b981; text-align:center;">サポート</div>'}
+                </div>
+            `;
+        }
+
+        function selectHandCard(handIdx) {
+            const card = battleState.pHand[handIdx];
+            if (!card) return;
+
+            if (card.type === 'SPELL') {
+                playSE('click');
+                if (card.effect === 'HEAL') { battleState.pLP += card.val; logAdd(`【${card.name}】発動！ LPが ${card.val} 回復！`); }
+                else if (card.effect === 'DAMAGE') { battleState.eLP = Math.max(0, battleState.eLP - card.val); logAdd(`【${card.name}】発動！ 相手に ${card.val} ダメージ！`); }
+                else if (card.effect === 'BUFF') { battleState.pField.forEach(m => m.atk += card.val); logAdd(`【${card.name}】発動！ 味方全員の攻撃力 +${card.val}！`); }
+                else if (card.effect === 'DESTROY' && battleState.eField.length) { logAdd(`【${card.name}】発動！ 相手の【${battleState.eField[0].name}】を破砕！`); battleState.eField.shift(); }
+                battleState.pHand.splice(handIdx, 1);
             } else {
-                alert("セーブデータが存在しません。");
+                if (battleState.pField.length >= 3) { alert("フィールドが満杯です！"); return; }
+                if (card.tribute > battleState.pField.length) { alert(`このモンスターを召喚するには生贄が ${card.tribute} 体必要です！`); return; }
+
+                const mode = confirm(`【${card.name}】を召喚します。\n「OK」= 攻撃表示\n「キャンセル」= シールド(守備表示)`) ? 'ATK' : 'DEF';
+                for (let i = 0; i < card.tribute; i++) battleState.pField.pop();
+
+                battleState.pField.push({ ...card, mode: mode });
+                battleState.pHand.splice(handIdx, 1);
+                logAdd(`【${card.name}】を ${mode === 'ATK' ? '攻撃表示' : 'シールド(守備表示)'} で召喚！`);
             }
+            updateBattleUI();
+            checkWin();
         }
 
-        /* --- 章選択画面 --- */
-        function openChapterSelect() {
-            const container = document.getElementById('chapterListContainer');
-            container.innerHTML = gameStory.map((ch, idx) => {
-                const isUnlocked = (idx + 1) <= gameState.unlockedChapter;
+        function tcgAttackAll() {
+            if (!battleState.pField.some(m => m.mode === 'ATK')) { alert("攻撃表示のモンスターがいません！"); return; }
+            playSE('attack');
+
+            battleState.pField.forEach(attacker => {
+                if (attacker.mode !== 'ATK') return;
+
+                if (battleState.eField.length > 0) {
+                    const target = battleState.eField[0];
+                    logAdd(`【${attacker.name}】 ➔ 【${target.name} (${target.mode})】へ攻撃！`);
+                    
+                    const targetPower = target.mode === 'ATK' ? target.atk : target.def;
+                    let dmg = attacker.atk - targetPower;
+
+                    if (target.name.includes("タンス") && Math.random() < 0.4) {
+                        dmg += 800; logAdd("🦶【タンスの小指打撲！】痛打で800ダメージ追加！");
+                    }
+
+                    if (dmg > 0) {
+                        battleState.eField.shift();
+                        if (target.mode === 'ATK') battleState.eLP = Math.max(0, battleState.eLP - dmg);
+                        logAdd(`相手モンスター破砕！ ${target.mode === 'ATK' ? `相手に ${dmg} ダメージ！` : '（シールドによりLPダメージをブロック！）'}`);
+                    } else if (dmg < 0) {
+                        battleState.pLP = Math.max(0, battleState.pLP - Math.abs(dmg));
+                        logAdd(`返り討ちに遭い ${Math.abs(dmg)} ダメージを受けた！`);
+                    }
+                } else {
+                    battleState.eLP = Math.max(0, battleState.eLP - attacker.atk);
+                    logAdd(`ダイレクトアタック！ 相手に ${attacker.atk} ダメージ！`);
+                }
+            });
+
+            updateBattleUI();
+            checkWin();
+        }
+
+        function tcgEndTurn() {
+            logAdd("ターンエンド。相手のターン！");
+            const ownedList = CARDS_DATABASE.filter(c => gameState.ownedCardIds.includes(c.id));
+            if (battleState.pHand.length < 5) battleState.pHand.push(ownedList[Math.floor(Math.random() * ownedList.length)]);
+
+            if (battleState.eField.length && battleState.pField.length) {
+                const eAttacker = battleState.eField[0];
+                const pTarget = battleState.pField[0];
+                const targetPower = pTarget.mode === 'ATK' ? pTarget.atk : pTarget.def;
+                if (eAttacker.atk > targetPower) {
+                    battleState.pField.shift();
+                    if (pTarget.mode === 'ATK') battleState.pLP = Math.max(0, battleState.pLP - (eAttacker.atk - targetPower));
+                    logAdd(`相手の反撃！ 味方モンスター破砕！`);
+                }
+            } else if (battleState.eField.length && !battleState.pField.length) {
+                battleState.pLP = Math.max(0, battleState.pLP - battleState.eField[0].atk);
+                logAdd(`相手のダイレクトアタック！ ${battleState.eField[0].atk} ダメージ！`);
+            }
+            updateBattleUI();
+            checkWin();
+        }
+
+        function checkWin() {
+            if (battleState.eLP <= 0) {
+                logAdd("🎉 勝利！ 300 Θαύμα石 獲得！"); gameState.gems += 300; updateGemUI(); saveData();
+            } else if (battleState.pLP <= 0) { logAdd("💀 敗北... LPが0になりました。"); }
+        }
+
+        function logAdd(msg) { const l = document.getElementById('battleLog'); l.innerHTML += `<div>${msg}</div>`; l.scrollTop = l.scrollHeight; }
+
+        /* 図鑑 */
+        function openArchiveScreen() {
+            document.getElementById('archiveProgress').innerText = `カードアーカイブ (${gameState.ownedCardIds.length}/150)`;
+            const grid = document.getElementById('cardGridArea');
+            grid.innerHTML = CARDS_DATABASE.map(c => {
+                const owned = gameState.ownedCardIds.includes(c.id);
                 return `
-                    <div class="chapter-card ${isUnlocked ? 'unlocked' : ''}" onclick="${isUnlocked ? `selectChapter(${idx})` : ''}">
-                        <div>
-                            <span style="color: ${isUnlocked ? '#38bdf8' : '#64748b'}; font-size: 0.9rem;">
-                                ${ch.title}
-                            </span>
-                        </div>
-                        <div style="font-size: 0.8rem; color: #64748b;">
-                            ${isUnlocked ? '▶ 再生' : '🔒 未解放'}
-                        </div>
+                    <div class="card card-${c.type==='SPELL'?'SPELL':c.rarity}" style="opacity:${owned?1:0.25}" onclick="${owned?`alert('${c.desc}')`:''}">
+                        <div class="card-icon">${owned ? c.icon : '❓'}</div>
+                        <div class="card-title">${owned ? c.name : '？？？？'}</div>
                     </div>
                 `;
             }).join('');
-            showScreen('chapterSelectScreen');
+            showScreen('archiveScreen');
         }
 
-        function selectChapter(index) {
-            gameState.currentChapterIndex = index;
-            gameState.currentLineIndex = 0;
-            showScreen('storyScreen');
-            renderStoryLine();
+        function saveData() { localStorage.setItem('thauma_tcg150_save', JSON.stringify(gameState)); }
+        function loadData() { const s = localStorage.getItem('thauma_tcg150_save'); if (s) gameState = JSON.parse(s); }
+
+        /* 👁️ 異界の狂気を表現する超進化アニメーション背景 Canvas */
+        const canvas = document.getElementById('titleCanvas'), ctx = canvas.getContext('2d');
+        let particles = [], angle = 0, pulse = 0;
+
+        function initCanvas() {
+            canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+            particles = Array.from({length: 120}, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2.5 + 0.5,
+                speedX: (Math.random() - 0.5) * 1.5,
+                speedY: (Math.random() - 0.5) * 1.5,
+                opacity: Math.random()
+            }));
         }
 
-        /* --- ストーリー描写 & 進行 --- */
-        function renderStoryLine() {
-            const ch = gameStory[gameState.currentChapterIndex];
-            if (!ch) return;
-
-            // 進行状況の自動保存
-            if (gameState.currentChapterIndex + 1 > gameState.unlockedChapter) {
-                gameState.unlockedChapter = gameState.currentChapterIndex + 1;
-            }
-            saveGame();
-
-            const line = ch.lines[gameState.currentLineIndex];
-            
-            // 背景更新
-            document.getElementById('storyBg').className = `story-bg ${line.bg || 'bg-night'}`;
-            document.getElementById('speakerName').innerText = line.speaker;
-            document.getElementById('storyText').innerText = line.text;
-
-            // 選択肢分岐チェック
-            const overlay = document.getElementById('choiceOverlay');
-            if (line.choice) {
-                overlay.style.display = 'flex';
-                const btnContainer = document.getElementById('choiceButtons');
-                btnContainer.innerHTML = line.options.map(opt => `
-                    <button class="btn" onclick="makeChoice('${opt.nextFlag}')">${opt.text}</button>
-                `).join('');
-            } else {
-                overlay.style.display = 'none';
-            }
-        }
-
-        function nextStoryLine() {
-            const overlay = document.getElementById('choiceOverlay');
-            if (overlay.style.display === 'flex') return; // 選択肢表示中はクリック進行不可
-
-            const ch = gameStory[gameState.currentChapterIndex];
-            if (gameState.currentLineIndex + 1 < ch.lines.length) {
-                gameState.currentLineIndex++;
-                renderStoryLine();
-            } else {
-                // 次の章へ
-                if (gameState.currentChapterIndex + 1 < gameStory.length) {
-                    gameState.currentChapterIndex++;
-                    gameState.currentLineIndex = 0;
-                    renderStoryLine();
-                } else {
-                    // 全章終了
-                    showScreen('titleScreen');
-                }
-            }
-        }
-
-        function makeChoice(flag) {
-            gameState.routeFlag = flag;
-            document.getElementById('choiceOverlay').style.display = 'none';
-            gameState.currentLineIndex++;
-            renderStoryLine();
-        }
-
-        function saveGame() {
-            localStorage.setItem('astraea_save', JSON.stringify(gameState));
-        }
-
-        /* --- タイトルバックグラウンド（星屑パーティクル） --- */
-        const canvas = document.getElementById('starCanvas');
-        const ctx = canvas.getContext('2d');
-        let stars = [];
-
-        function initStars() {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-            stars = [];
-            for (let i = 0; i < 120; i++) {
-                stars.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 2,
-                    alpha: Math.random(),
-                    speed: Math.random() * 0.02 + 0.005
-                });
-            }
-        }
-
-        function drawStars() {
+        function drawCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            stars.forEach(star => {
-                star.alpha += star.speed;
-                if (star.alpha > 1 || star.alpha < 0) star.speed = -star.speed;
-                ctx.fillStyle = `rgba(186, 230, 253, ${Math.abs(star.alpha)})`;
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-                ctx.fill();
+            angle += 0.01;
+            pulse += 0.03;
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(angle);
+            
+            const scale = 1 + Math.sin(pulse) * 0.08;
+            ctx.scale(scale, scale);
+
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.arc(0, 0, 180, 0, Math.PI * 2); ctx.stroke();
+            ctx.beginPath(); ctx.arc(0, 0, 210, 0, Math.PI * 2); ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(2, 132, 199, 0.3)';
+            ctx.beginPath();
+            for (let i = 0; i < 8; i++) {
+                const a = (i * Math.PI) / 4;
+                const x = Math.cos(a) * 180;
+                const y = Math.sin(a) * 180;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.closePath(); ctx.stroke();
+
+            ctx.rotate(-angle * 2);
+            ctx.strokeStyle = 'rgba(125, 211, 252, 0.4)';
+            ctx.beginPath(); ctx.rect(-100, -100, 200, 200); ctx.stroke();
+            ctx.restore();
+
+            particles.forEach(p => {
+                p.x += p.speedX;
+                p.y += p.speedY;
+
+                const dx = cx - p.x;
+                const dy = cy - p.y;
+                p.x += dx * 0.003;
+                p.y += dy * 0.003;
+
+                if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
+                    p.x = Math.random() * canvas.width;
+                    p.y = Math.random() * canvas.height;
+                }
+
+                ctx.fillStyle = `rgba(56, 189, 248, ${p.opacity * (0.6 + Math.sin(pulse) * 0.4)})`;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
             });
-            requestAnimationFrame(drawStars);
+
+            requestAnimationFrame(drawCanvas);
         }
 
-        window.addEventListener('resize', initStars);
-        window.addEventListener('DOMContentLoaded', () => {
-            initStars();
-            drawStars();
-        });
+        window.addEventListener('resize', initCanvas);
+        window.addEventListener('DOMContentLoaded', () => { loadData(); initCanvas(); drawCanvas(); updateGemUI(); openBattleSelect(); });
     </script>
 </body>
 </html>
