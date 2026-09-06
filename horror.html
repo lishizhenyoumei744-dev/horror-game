@@ -71,72 +71,72 @@
         }
         .panel-title { font-size: 1.2rem; color: #38bdf8; margin-bottom: 10px; border-bottom: 1px solid rgba(56, 189, 248, 0.3); padding-bottom: 5px; }
 
-        /* --- メメントモリ風ガチャ画面スタイル --- */
-        .memento-gacha-container {
+        /* ガチャ画面スタイル */
+        .gacha-container {
             width: 100%; height: 100%; position: relative;
             background: radial-gradient(circle at center, #0b1120 0%, #020408 100%);
             display: flex; flex-direction: column; align-items: center; justify-content: space-between;
             padding: 50px 15px 20px 15px; overflow: hidden;
         }
 
-        /* 霧と水彩風グラデーション */
-        .memento-bg-fog {
+        /* 霧と背景グラデーション */
+        .bg-fog {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(ellipse at 50% 40%, rgba(99, 102, 241, 0.15) 0%, rgba(2, 6, 23, 0.8) 75%);
-            pointer-events: none; animation: mementoFogPulse 8s infinite alternate ease-in-out;
+            pointer-events: none; animation: fogPulse 8s infinite alternate ease-in-out;
         }
-        @keyframes mementoFogPulse {
+        @keyframes fogPulse {
             0% { opacity: 0.6; transform: scale(1); }
             100% { opacity: 0.95; transform: scale(1.08); }
         }
 
-        .memento-pack-select {
+        .pack-select {
             display: flex; gap: 8px; overflow-x: auto; width: 100%; max-width: 850px;
             padding: 8px; z-index: 5; scrollbar-width: none;
         }
-        .memento-pack-select::-webkit-scrollbar { display: none; }
+        .pack-select::-webkit-scrollbar { display: none; }
 
-        .memento-tab {
+        .pack-tab {
             background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.3);
             border-radius: 20px; padding: 6px 16px; color: #94a3b8; font-size: 0.8rem;
-            cursor: pointer; whitespace: nowrap; transition: all 0.3s; backdrop-filter: blur(8px);
+            cursor: pointer; white-space: nowrap; transition: all 0.3s; backdrop-filter: blur(8px);
         }
-        .memento-tab.selected {
+        .pack-tab.selected {
             background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(217, 70, 239, 0.3));
             border-color: #a855f7; color: #f8fafc; box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
             text-shadow: 0 0 8px rgba(255,255,255,0.8);
         }
 
-        /* 神秘的な祈りの宝珠ステージ */
-        .memento-stage {
+        /* 祈りの宝珠ステージ */
+        .gacha-stage {
             position: relative; width: 100%; height: 320px; display: flex;
             justify-content: center; align-items: center; z-index: 5;
         }
-        .memento-orb-ring {
+        .orb-ring {
             position: absolute; width: 220px; height: 220px; border-radius: 50%;
             border: 1px dashed rgba(168, 85, 247, 0.4);
-            animation: mementoRotateRing 25s linear infinite;
+            animation: rotateRing 25s linear infinite;
         }
-        @keyframes mementoRotateRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes rotateRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .memento-orb {
+        .gacha-orb {
             width: 110px; height: 110px; border-radius: 50%;
             background: radial-gradient(circle at 35% 35%, #ffffff 0%, #a855f7 30%, #3b82f6 70%, #020617 100%);
             box-shadow: 0 0 35px rgba(168, 85, 247, 0.8), inset 0 0 15px rgba(255,255,255,0.8);
             cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative; animation: mementoFloat 4s infinite ease-in-out;
+            position: relative; animation: orbFloat 4s infinite ease-in-out;
         }
-        .memento-orb:hover {
+        .gacha-orb:hover {
             transform: scale(1.12);
             box-shadow: 0 0 60px rgba(217, 70, 239, 0.9), inset 0 0 25px rgba(255,255,255,1);
         }
-        @keyframes mementoFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        @keyframes orbFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 
-        .memento-result-area {
+        .gacha-result-area {
             position: absolute; z-index: 10; display: none; flex-direction: column;
-            align-items: center; animation: mementoCardPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            align-items: center; animation: cardPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        @keyframes mementoCardPop { 0% { transform: scale(0) rotate(-10deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+        @keyframes cardPop { 0% { transform: scale(0) rotate(-10deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
 
         .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; width: 100%; }
         .card {
@@ -202,27 +202,27 @@
             </div>
         </div>
 
-        <!-- ガチャ画面（メメントモリ風） -->
+        <!-- ガチャ画面 -->
         <div id="gachaScreen" class="screen" style="padding:0;">
-            <div class="memento-gacha-container">
-                <div class="memento-bg-fog"></div>
+            <div class="gacha-container">
+                <div class="bg-fog"></div>
                 
                 <!-- ガチャパック選択タブ -->
-                <div class="memento-pack-select" id="packGrid">
-                    <div class="memento-tab selected" onclick="selectPack('normal', this)">⚔️ 通常ガチャ</div>
-                    <div class="memento-tab" onclick="selectPack('holy', this)">🛡️ 聖騎士ガチャ</div>
-                    <div class="memento-tab" onclick="selectPack('dark', this)">🗡️ 黒騎士ガチャ</div>
-                    <div class="memento-tab" onclick="selectPack('mage', this)">🔮 魔道士ガチャ</div>
-                    <div class="memento-tab" onclick="selectPack('slime', this)">🟢 スライムガチャ</div>
-                    <div class="memento-tab" onclick="selectPack('ghost', this)">👻 幽霊ガチャ</div>
+                <div class="pack-select" id="packGrid">
+                    <div class="pack-tab selected" onclick="selectPack('normal', this)">⚔️ 通常ガチャ</div>
+                    <div class="pack-tab" onclick="selectPack('holy', this)">🛡️ 聖騎士ガチャ</div>
+                    <div class="pack-tab" onclick="selectPack('dark', this)">🗡️ 黒騎士ガチャ</div>
+                    <div class="pack-tab" onclick="selectPack('mage', this)">🔮 魔道士ガチャ</div>
+                    <div class="pack-tab" onclick="selectPack('slime', this)">🟢 スライムガチャ</div>
+                    <div class="pack-tab" onclick="selectPack('ghost', this)">👻 幽霊ガチャ</div>
                 </div>
 
                 <!-- ガチャ演出エリア（宝珠） -->
-                <div class="memento-stage">
-                    <div class="memento-orb-ring"></div>
-                    <div class="memento-orb" id="packArea" onclick="openPack()"></div>
+                <div class="gacha-stage">
+                    <div class="orb-ring"></div>
+                    <div class="gacha-orb" id="packArea" onclick="openPack()"></div>
                     
-                    <div class="memento-result-area" id="gachaResultCard"></div>
+                    <div class="gacha-result-area" id="gachaResultCard"></div>
                 </div>
 
                 <!-- 操作ボタンバー -->
@@ -301,7 +301,7 @@
     </div>
 
     <script>
-        /* --- 名前生成用データベース (IDとの互換性を保持) --- */
+        /* --- 名前生成用データベース --- */
         const NAME_TABLES = {
             normal: {
                 pref: ["見習い", "疾風の", "鋼鉄の", "双剣の", "影の", "精鋭", "近衛", "蒼天の", "剛腕の", "不屈の", "紅蓮の", "幻影の", "神速の", "無双の", "覇王の"],
@@ -361,7 +361,6 @@
         packCategories.forEach(pack => {
             for (let i = 0; i < 40; i++) {
                 if (pack.key === 'slime' && i === 39) {
-                    // スライムガチャの最強枠（UR モチモチなスライム）
                     CARDS_DATABASE.push({
                         id: `c${globalIdCounter++}`, packKey: pack.key, type: 'MONSTER',
                         name: `モチモチなスライム`, icon: '🟢',
@@ -398,7 +397,7 @@
         let gameState = { gems: 1000, ownedCardIds: Array.from({length: 20}, (_, i) => `c${i+1}`) };
         let selectedPackKey = 'normal';
 
-        /* --- かっこいいサウンド＆BGM生成 (Web Audio API) --- */
+        /* --- サウンド＆BGM (Web Audio API) --- */
         let audioCtx = null, isSoundOn = false, bgmTimer = null;
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -430,9 +429,8 @@
             }
         }
 
-        // ダークファンタジー風の重厚なBGMシーケンサー
-        const bassNotes = [110, 110, 130.81, 146.83, 110, 98, 110, 82.41]; // A2, C3, D3, A2, G2, A2, E2
-        const melodyNotes = [220, 261.63, 293.66, 329.63, 293.66, 261.63, 220, 196]; // A3, C4, D4, E4, D4, C4, A3, G3
+        const bassNotes = [110, 110, 130.81, 146.83, 110, 98, 110, 82.41];
+        const melodyNotes = [220, 261.63, 293.66, 329.63, 293.66, 261.63, 220, 196];
         let noteStep = 0;
 
         function startBGM() {
@@ -442,7 +440,6 @@
                 if (!isSoundOn || !audioCtx) return;
                 const now = audioCtx.currentTime;
                 
-                // 低音ベース
                 const bassOsc = audioCtx.createOscillator(), bassGain = audioCtx.createGain();
                 bassOsc.type = 'sawtooth';
                 bassOsc.frequency.setValueAtTime(bassNotes[noteStep % bassNotes.length], now);
@@ -451,7 +448,6 @@
                 bassOsc.connect(bassGain); bassGain.connect(audioCtx.destination);
                 bassOsc.start(now); bassOsc.stop(now + 0.35);
 
-                // メロディアルペジオ
                 const melOsc = audioCtx.createOscillator(), melGain = audioCtx.createGain();
                 melOsc.type = 'sine';
                 melOsc.frequency.setValueAtTime(melodyNotes[(noteStep * 3) % melodyNotes.length], now);
@@ -474,7 +470,7 @@
         /* --- ガチャ --- */
         function selectPack(key, el) {
             selectedPackKey = key;
-            document.querySelectorAll('.memento-tab').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('.pack-tab').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
             playSE('click');
             const res = document.getElementById('gachaResultCard');
@@ -504,7 +500,7 @@
             }, 300);
         }
 
-        /* --- 対戦相手の選択画面作成 --- */
+        /* --- 対戦相手の選択画面 --- */
         function openBattleSelect() {
             const list = document.getElementById('battleList');
             const opps = [
@@ -650,19 +646,15 @@
         function checkWin() {
             if (battleState.isEnded) return true;
 
-            // 勝利判定：敵モンスターが0体 または 敵LPが0
             if (battleState.eField.length === 0 || battleState.eLP <= 0) {
                 battleState.isEnded = true;
                 
-                // 確実に石を加算して保存
                 gameState.gems += battleState.rewardGems;
                 updateGemUI();
                 saveData();
 
-                // 勝利ログを出力
                 logAdd(`🎉 敵全滅！ バトル勝利！ 報酬: ${battleState.rewardGems} Θαύμα石獲得！`);
 
-                // メニュー（対戦相手選択画面）への即時復帰処理
                 setTimeout(() => {
                     alert(`🎉 VICTORIA！\n敵軍を完璧に全滅させました！\n報酬として ${battleState.rewardGems} Θαύμα石を獲得！`);
                     openBattleSelect();
