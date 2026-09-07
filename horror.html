@@ -40,7 +40,7 @@
         .btn:hover { background: rgba(56, 189, 248, 0.3); border-color: #7dd3fc; box-shadow: 0 0 15px rgba(56, 189, 248, 0.8); color: #fff; }
         .btn-sec { border-color: rgba(148, 163, 184, 0.4); color: #94a3b8; text-shadow: none; }
 
-        #titleCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        #titleCanvas, #hellGateCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         
         .title-wrapper { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; }
         .title-logo {
@@ -99,7 +99,6 @@
             padding: 50px 15px 20px 15px; overflow: hidden;
         }
 
-        /* 霧と背景グラデーション */
         .bg-fog {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(ellipse at 50% 40%, rgba(99, 102, 241, 0.15) 0%, rgba(2, 6, 23, 0.8) 75%);
@@ -127,7 +126,6 @@
             text-shadow: 0 0 8px rgba(255,255,255,0.8);
         }
 
-        /* 引っ張りガチャステージ */
         .gacha-stage {
             position: relative; width: 100%; height: 360px; display: flex;
             justify-content: center; align-items: center; z-index: 5;
@@ -140,7 +138,6 @@
         }
         @keyframes rotateRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* 矢印のガイド指示 */
         .pull-guide {
             position: absolute; bottom: 40px; color: #38bdf8; font-size: 0.85rem;
             letter-spacing: 0.1em; pointer-events: none; opacity: 0.8;
@@ -148,7 +145,6 @@
         }
         @keyframes guideBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
 
-        /* 引っ張るオーブ */
         .gacha-orb {
             width: 90px; height: 90px; border-radius: 50%;
             background: radial-gradient(circle at 35% 35%, #ffffff 0%, #a855f7 30%, #3b82f6 70%, #020617 100%);
@@ -158,7 +154,6 @@
         }
         .gacha-orb:active { cursor: grabbing; }
 
-        /* 引っ張り用のライン */
         #pullLine {
             position: absolute; top: 50%; left: 50%; width: 2px; background: rgba(56, 189, 248, 0.6);
             transform-origin: top center; pointer-events: none; z-index: 4; display: none;
@@ -198,6 +193,29 @@
 
         .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 50; backdrop-filter: blur(5px); }
         .modal-content { background: #06152d; border: 1px solid #38bdf8; padding: 20px; border-radius: 10px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; }
+
+        .achievement-card {
+            background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex;
+            justify-content: space-between; align-items: center; transition: all 0.2s;
+        }
+        .achievement-card.achieved {
+            border-color: #34d399; background: rgba(6, 78, 59, 0.4);
+            box-shadow: 0 0 10px rgba(52, 211, 153, 0.2);
+        }
+        .progress-bar-container {
+            width: 100%; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.4);
+            border-radius: 10px; height: 18px; margin: 10px 0 15px 0; overflow: hidden; position: relative;
+        }
+        .progress-bar-fill {
+            height: 100%; background: linear-gradient(90deg, #38bdf8, #34d399);
+            width: 0%; transition: width 0.4s ease;
+        }
+        .progress-text {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 0.75rem; color: #fff; font-weight: bold; text-shadow: 0 0 4px #000;
+        }
     </style>
 </head>
 <body>
@@ -206,7 +224,7 @@
         <div id="glitchOverlay"></div>
 
         <div class="header-bar">
-            <div style="font-size: 0.9rem; color: #38bdf8;">Θαύμα TCG - 300 CARDS -</div>
+            <div style="font-size: 0.9rem; color: #38bdf8;">Θαύμα TCG - 1000 CARDS -</div>
             <div style="display:flex; gap:12px; align-items:center;">
                 <button class="btn btn-sec" style="padding: 3px 8px; font-size:0.75rem;" onclick="toggleAudio()" id="soundBtn">🎵 Sound: OFF</button>
                 <div>Θαύμα石: <span id="gemDisplay" style="color:#38bdf8; font-weight:bold;">1000</span> 💎</div>
@@ -226,13 +244,27 @@
         </div>
 
         <div id="menuScreen" class="screen">
-            <h2 style="color: #38bdf8; margin-bottom: 15px; letter-spacing: 0.1em;">メインメニュー</h2>
+            <canvas id="hellGateCanvas"></canvas>
+            <h2 style="color: #ef4444; margin-bottom: 15px; letter-spacing: 0.2em; text-shadow: 0 0 12px rgba(239, 68, 68, 0.8); z-index: 5;">メインメニュー</h2>
             <div class="btn-grid">
                 <button class="btn" onclick="playSE('click'); showScreen('gachaScreen')">カードパック開封 (全6種)</button>
                 <button class="btn" onclick="playSE('click'); openBattleSelect()">Θαύμαカードバトル開始</button>
-                <button class="btn" onclick="playSE('click'); openArchiveScreen()">カード図鑑 (全300種)</button>
+                <button class="btn" onclick="playSE('click'); openArchiveScreen()">カード図鑑 (全1000種)</button>
+                <button class="btn" onclick="playSE('click'); openAchievementScreen()" id="achieveMenuBtn">🏆 大量ミッション (0/50)</button>
                 <button class="btn btn-sec" onclick="playSE('click'); openModal('ruleModal')">ルール説明</button>
-                <button class="btn btn-sec" style="grid-column: span 2;" onclick="playSE('click'); showScreen('titleScreen')">タイトルへ戻る</button>
+                <button class="btn btn-sec" onclick="playSE('click'); showScreen('titleScreen')">タイトルへ戻る</button>
+            </div>
+        </div>
+
+        <div id="achievementScreen" class="screen">
+            <div class="panel">
+                <div class="panel-title" id="achievementTitle">🏆 ミッション一覧 (0/50)</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="achieveProgressBar"></div>
+                    <div class="progress-text" id="achieveProgressText">達成率 0%</div>
+                </div>
+                <div id="achievementListArea" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                <button class="btn btn-sec" style="margin-top:15px; width: 100%;" onclick="playSE('click'); showScreen('menuScreen')">戻る</button>
             </div>
         </div>
 
@@ -241,12 +273,12 @@
                 <div class="bg-fog"></div>
                 
                 <div class="pack-select" id="packGrid">
-                    <div class="pack-tab selected" onclick="selectPack('normal', this)">⚔️ 通常ガチャ</div>
-                    <div class="pack-tab" onclick="selectPack('holy', this)">🛡️ 聖騎士ガチャ</div>
-                    <div class="pack-tab" onclick="selectPack('dark', this)">🗡️ 黒騎士ガチャ</div>
-                    <div class="pack-tab" onclick="selectPack('mage', this)">🔮 魔道士ガチャ</div>
-                    <div class="pack-tab" onclick="selectPack('slime', this)">🟢 スライムガチャ</div>
-                    <div class="pack-tab" onclick="selectPack('ghost', this)">👻 幽霊ガチャ</div>
+                    <div class="pack-tab selected" onclick="selectPack('normal', this)">⚔️ 通常ガチャ (167種)</div>
+                    <div class="pack-tab" onclick="selectPack('holy', this)">🛡️ 聖騎士ガチャ (167種)</div>
+                    <div class="pack-tab" onclick="selectPack('dark', this)">🗡️ 黒騎士ガチャ (167種)</div>
+                    <div class="pack-tab" onclick="selectPack('mage', this)">🔮 魔道士ガチャ (167種)</div>
+                    <div class="pack-tab" onclick="selectPack('slime', this)">🟢 スライムガチャ (166種)</div>
+                    <div class="pack-tab" onclick="selectPack('ghost', this)">👻 幽霊ガチャ (166種)</div>
                 </div>
 
                 <div class="gacha-stage" id="gachaStage">
@@ -270,7 +302,7 @@
 
         <div id="battleSelectScreen" class="screen">
             <div class="panel">
-                <div class="panel-title">対戦相手選択</div>
+                <div class="panel-title">対戦相手選択 (報酬ダイヤ超絶大幅UP!)</div>
                 <div id="battleList" style="display: flex; flex-direction: column; gap: 8px;"></div>
                 <button class="btn btn-sec" style="margin-top:15px; width: 100%;" onclick="playSE('click'); showScreen('menuScreen')">戻る</button>
             </div>
@@ -311,7 +343,7 @@
 
         <div id="archiveScreen" class="screen">
             <div class="panel">
-                <div class="panel-title" id="archiveProgress">カードアーカイブ (0/300)</div>
+                <div class="panel-title" id="archiveProgress">カードアーカイブ (0/1000)</div>
                 <div class="card-grid" id="cardGridArea"></div>
                 <button class="btn btn-sec" style="margin-top:15px; width: 100%;" onclick="playSE('click'); showScreen('menuScreen')">戻る</button>
             </div>
@@ -332,37 +364,37 @@
     </div>
 
     <script>
-        /* --- 名前生成用データベース --- */
+        /* --- 名前生成用データベース (1000枚拡張用) --- */
         const NAME_TABLES = {
             normal: {
-                pref: ["見習い", "疾風の", "鋼鉄の", "双剣の", "影の", "精鋭", "近衛", "蒼天の", "剛腕の", "不屈の", "紅蓮の", "幻影の", "神速の", "無双の", "覇王の"],
-                noun: ["剣士", "兵士", "騎士", "闘士", "狩人", "重装兵", "傭兵", "将軍", "勇者", "剣聖", "守護者", "戦将", "英雄", "皇兵", "戦神"],
-                spell: ["聖剣の一閃", "戦意高揚", "鉄壁の陣", "鋼鉄の加護", "英雄の覚醒", "全軍突撃", "勝鬨の喊声", "不屈の闘志", "王家の祝福", "神剣の誓い"]
+                pref: ["見習い", "疾風の", "鋼鉄の", "双剣の", "影の", "精鋭", "近衛", "蒼天の", "剛腕の", "不屈の", "紅蓮の", "幻影の", "神速の", "無双の", "覇王の", "次元の", "天界の", "極限の", "金獅子の", "閃光の", "虚空の", "太古の"],
+                noun: ["剣士", "兵士", "騎士", "闘士", "狩人", "重装兵", "傭兵", "将軍", "勇者", "剣聖", "守護者", "戦将", "英雄", "皇兵", "戦神", "剣王", "闘神", "覇者", "豪傑", "守護神", "斬撃将", "統帥"],
+                spell: ["聖剣の一閃", "戦意高揚", "鉄壁の陣", "鋼鉄の加護", "英雄の覚醒", "全軍突撃", "勝鬨の喊声", "不屈の闘志", "王家の祝福", "神剣の誓い", "覇王の咆哮", "極限集中", "勝利の栄光", "一騎当千", "不滅の意志"]
             },
             holy: {
-                pref: ["聖なる", "光の", "輝く", "白銀の", "神聖な", "天界の", "断罪の", "祈りの", "慈悲の", "救世の", "太陽の", "極光の", "聖典の", "審判の", "神光の"],
-                noun: ["パラディン", "聖戦士", "盾侍", "ガーディアン", "審判官", "聖騎士", "天使", "護光者", "司祭兵", "大騎士", "聖槍兵", "光の使徒", "主天使", "熾天使", "聖王"],
-                spell: ["聖なる祈り", "光の盾", "神聖なる癒やし", "天罰の一撃", "聖光の加護", "裁きの光", "救世の余韻", "白銀の祈願", "浄化の波動", "神罰の降臨"]
+                pref: ["聖なる", "光の", "輝く", "白銀の", "神聖な", "天界の", "断罪の", "祈りの", "慈悲の", "救世の", "太陽の", "極光の", "聖典の", "審判の", "神光の", "天罰の", "創世の", "純白の", "輝煌の", "天命の"],
+                noun: ["パラディン", "聖戦士", "盾侍", "ガーディアン", "審判官", "聖騎士", "天使", "護光者", "司祭兵", "大騎士", "聖槍兵", "光の使徒", "主天使", "熾天使", "聖王", "大天使", "救世主", "光神", "聖護帝", "天導師"],
+                spell: ["聖なる祈り", "光の盾", "神聖なる癒やし", "天罰の一撃", "聖光の加護", "裁きの光", "救世の余韻", "白銀の祈願", "浄化の波動", "神罰の降臨", "天界の光輝", "聖域の結界", "創世の恩寵", "不滅の聖光", "光明の福音"]
             },
             dark: {
-                pref: ["漆黒の", "闇の", "復讐の", "影の", "冥府の", "呪いの", "深淵の", "黒炎の", "終焉の", "魔界の", "虚無の", "叛逆の", "狂気の", "滅びの", "暗黒の"],
-                noun: ["ナイト", "剣客", "処刑人", "魔剣士", "死神", "暗黒騎士", "影武者", "覇者", "凶刃", "魔将", "狂戦士", "冥王", "虚無の使者", "魔帝", "暗黒神"],
-                spell: ["黒炎の波動", "闇の契り", "深淵の呪詛", "吸魂の一撃", "影の奇襲", "漆黒の契約", "滅びの残響", "狂気の暴走", "冥府の誘い", "暗黒の審判"]
+                pref: ["漆黒の", "闇の", "復讐の", "影の", "冥府の", "呪いの", "深淵の", "黒炎の", "終焉の", "魔界の", "虚無の", "叛逆の", "狂気の", "滅びの", "暗黒の", "災厄の", "煉獄の", "無慈悲な", "絶望の", "死の"],
+                noun: ["ナイト", "剣客", "処刑人", "魔剣士", "死神", "暗黒騎士", "影武者", "覇者", "凶刃", "魔将", "狂戦士", "冥王", "虚無の使者", "魔帝", "暗黒神", "魔皇", "絶望の王", "煉獄卿", "深淵王", "闇の執行者"],
+                spell: ["黒炎の波動", "闇の契り", "深淵の呪詛", "吸魂の一撃", "影の奇襲", "漆黒の契約", "滅びの残響", "狂気の暴走", "冥府の誘い", "暗黒の審判", "煉獄の劫火", "絶望の抱擁", "無の境界", "終焉の刻印", "漆黒の侵食"]
             },
             mage: {
-                pref: ["見習い", "元素の", "秘術の", "星屑の", "詠唱の", "叡智の", "賢者", "魔導の", "蒼炎の", "虚空の", "大魔導", "禁術の", "時空の", "真理の", "神智の"],
-                noun: ["術師", "魔導士", "召喚士", "占術師", "錬金術師", "結界師", "学者", "魔術師", "大賢者", "導術師", "エレメンタリスト", "魔導王", "禁術士", "星導士", "魔神"],
-                spell: ["ファイアボール", "マナ回復", "アイスバレット", "魔力展開", "雷撃の矢", "秘術の覚醒", "時空の歪み", "隕石落とし", "真理の探求", "全魔導開放"]
+                pref: ["見習い", "元素の", "秘術の", "星屑の", "詠唱の", "叡智の", "賢者", "魔導の", "蒼炎の", "虚空の", "大魔導", "禁術の", "時空の", "真理の", "神智の", "星空の", "混沌の", "深遠なる", "極大の", "天脈の"],
+                noun: ["術師", "魔導士", "召喚士", "占術師", "錬金術師", "結界師", "学者", "魔術師", "大賢者", "導術師", "エレメンタリスト", "魔導王", "禁術士", "星導士", "魔神", "大魔導師", "創星者", "真理の探求者", "虚空将", "魔導皇帝"],
+                spell: ["ファイアボール", "マナ回復", "アイスバレット", "魔力展開", "雷撃の矢", "秘術の覚醒", "時空の歪み", "隕石落とし", "真理の探求", "全魔導開放", "極大爆裂", "星屑の賛歌", "次元の扉", "混沌の波涛", "絶対零度"]
             },
             slime: {
-                pref: ["ぷにぷに", "水滴", "粘着", "巨大", "キング", "溶岩", "メタル", "猛毒", "クリスタル", "レインボー", "混沌の", "銀河", "超越", "神話の", "幻の"],
-                noun: ["スライム", "ゼリー", "ポヨン", "ドロロン", "マダー", "スライムナイト", "プリン", "ベホマスライム", "メタスラ", "ゴッドスライム", "モチ", "エンゼル", "カイザー", "エンペラー", "オリジン"],
-                spell: ["ぷにぷにの壁", "増殖の胞子", "ねばねばアタック", "スーパー粘液", "スライムの奇跡", "ゼリーバリア", "分裂爆発", "ドロドロの罠", "神スライムの恵み", "モチモチの極意"]
+                pref: ["ぷにぷに", "水滴", "粘着", "巨大", "キング", "溶岩", "メタル", "猛毒", "クリスタル", "レインボー", "混沌の", "銀河", "超越", "神話の", "幻の", "始祖の", "宇宙", "無限の", "終極の", "伝説の"],
+                noun: ["スライム", "ゼリー", "ポヨン", "ドロロン", "マダー", "スライムナイト", "プリン", "ベホマスライム", "メタスラ", "ゴッドスライム", "モチ", "エンゼル", "カイザー", "エンペラー", "オリジン", "スライムロード", "ゼリーキング", "ドロドロ神", "ポヨン帝", "超越スライム"],
+                spell: ["ぷにぷにの壁", "増殖の胞子", "ねばねばアタック", "スーパー粘液", "スライムの奇跡", "ゼリーバリア", "分裂爆発", "ドロドロの罠", "神スライムの恵み", "モチモチの極意", "限界突破スライム", "無限増殖", "粘液の津波", "ぷにぷにインパクト", "究極の弾力"]
             },
             ghost: {
-                pref: ["彷徨う", "怨念の", "霧の", "墓場の", "幻影の", "ポルターガイスト", "幽体", "不浄の", "呪いの", "黄泉の", "憑依の", "亡霊", "虚無の", "死の", "冥界の"],
-                noun: ["ゴースト", "スピリット", "ファントム", "スペクター", "バンシー", "ポルター", "霊魂", "死霊", "魂魄", "怨霊", "幽鬼", " wraith ", "冥霊", "死霊王", "ソウルマスター"],
-                spell: ["ポルターガイスト", "怨念の呪い", "幽体離脱", "霊魂の吸収", "墓場の呼び声", "幻影の舞", "黄泉の冷気", "憑依の罠", "死の宣告", "冥界の誘惑"]
+                pref: ["彷徨う", "怨念の", "霧の", "墓場の", "幻影の", "ポルターガイスト", "幽体", "不浄の", "呪いの", "黄泉の", "憑依の", "亡霊", "虚無の", "死の", "冥界の", "幽冥の", "煉獄の", "怪異の", "黒き霧の", "終焉の"],
+                noun: ["ゴースト", "スピリット", "ファントム", "スペクター", "バンシー", "ポルター", "霊魂", "死霊", "魂魄", "怨霊", "幽鬼", " wraith ", "冥霊", "死霊王", "ソウルマスター", "幽冥主", "怪異の王", "黄泉の使者", "死霊帝", "冥府の王"],
+                spell: ["ポルターガイスト", "怨念の呪い", "幽体離脱", "霊魂の吸収", "墓場の呼び声", "幻影の舞", "黄泉の冷気", "憑依の罠", "死の宣告", "冥界の誘惑", "魂の囁き", "幽冥の縛り", "怨霊の宴", "死霊の大行進", "黄泉の破滅"]
             }
         };
 
@@ -372,26 +404,31 @@
                 return table.spell[index % table.spell.length];
             } else {
                 const p = table.pref[index % table.pref.length];
-                const n = table.noun[(index * 3) % table.noun.length];
-                return `${p}${n}`;
+                const n = table.noun[(index * 7 + Math.floor(index / 10)) % table.noun.length];
+                const suffixNum = Math.floor(index / table.pref.length) + 1;
+                const suffix = suffixNum > 1 ? ` Mk-${suffixNum}` : '';
+                return `${p}${n}${suffix}`;
             }
         }
 
-        /* --- カードデータベース --- */
+        /* --- 全1000枚カードデータベース構築 --- */
         const CARDS_DATABASE = [];
         const packCategories = [
-            { key: 'normal', name: '通常', icon: '⚔️', baseAtk: 1000 },
-            { key: 'holy', name: '聖騎士', icon: '🛡️', baseAtk: 1200 },
-            { key: 'dark', name: '黒騎士', icon: '🗡️', baseAtk: 1400 },
-            { key: 'mage', name: '魔道士', icon: '🔮', baseAtk: 900 },
-            { key: 'slime', name: 'スライム', icon: '🟢', baseAtk: 600 },
-            { key: 'ghost', name: '幽霊', icon: '👻', baseAtk: 800 }
+            { key: 'normal', name: '通常', icon: '⚔️', baseAtk: 1000, count: 167 },
+            { key: 'holy', name: '聖騎士', icon: '🛡️', baseAtk: 1200, count: 167 },
+            { key: 'dark', name: '黒騎士', icon: '🗡️', baseAtk: 1400, count: 167 },
+            { key: 'mage', name: '魔道士', icon: '🔮', baseAtk: 900, count: 167 },
+            { key: 'slime', name: 'スライム', icon: '🟢', baseAtk: 600, count: 166 },
+            { key: 'ghost', name: '幽霊', icon: '👻', baseAtk: 800, count: 166 }
         ];
 
         let globalIdCounter = 1;
         packCategories.forEach(pack => {
-            for (let i = 0; i < 40; i++) {
-                if (pack.key === 'slime' && i === 39) {
+            const spellCount = Math.floor(pack.count * 0.2); // 約20%を呪文
+            const monsterCount = pack.count - spellCount;
+
+            for (let i = 0; i < monsterCount; i++) {
+                if (pack.key === 'slime' && i === monsterCount - 1) {
                     CARDS_DATABASE.push({
                         id: `c${globalIdCounter++}`, packKey: pack.key, type: 'MONSTER',
                         name: `モチモチなスライム`, icon: '🟢',
@@ -399,7 +436,7 @@
                         atk: 3000, def: 3000, tribute: 2,
                         desc: `【スライム系最高峰】攻撃力:3000 / 守備力:3000\n生贄必要数: 2体\n全てを飲み込む最強のモチモチボディ。`
                     });
-                } else if (pack.key === 'ghost' && i === 39) {
+                } else if (pack.key === 'ghost' && i === monsterCount - 1) {
                     CARDS_DATABASE.push({
                         id: `c${globalIdCounter++}`, packKey: pack.key, type: 'MONSTER',
                         name: `焔緋灯影`, icon: '🏮',
@@ -408,32 +445,93 @@
                         desc: `【幽霊系最高峰・最強モンスター】攻撃力:3000 / 守備力:3000\n生贄必要数: 2体\n緋色の燈火とともに顕現する幽冥の支配者。`
                     });
                 } else {
-                    const atk = pack.baseAtk + (i * 35);
-                    const def = pack.baseAtk - 200 + (i * 30);
+                    const atk = pack.baseAtk + (i * 15);
+                    const def = pack.baseAtk - 200 + (i * 12);
                     const tributeReq = atk >= 2400 ? 2 : (atk >= 1800 ? 1 : 0);
                     const cName = generateCardName(pack.key, false, i);
                     CARDS_DATABASE.push({
                         id: `c${globalIdCounter++}`, packKey: pack.key, type: 'MONSTER',
                         name: cName, icon: pack.icon,
-                        rarity: atk > 2500 ? "EX" : (atk > 1800 ? "SSS" : "SR"),
+                        rarity: atk > 2600 ? "EX" : (atk > 1800 ? "SSS" : "SR"),
                         atk: atk, def: def, tribute: tributeReq,
                         desc: `【${pack.name}系】攻撃力:${atk} / 守備力:${def}\n生贄必要数: ${tributeReq}体`
                     });
                 }
             }
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < spellCount; i++) {
                 const sName = generateCardName(pack.key, true, i);
                 CARDS_DATABASE.push({
                     id: `c${globalIdCounter++}`, packKey: pack.key, type: 'SPELL',
                     name: sName, icon: "✨", rarity: "SR",
-                    effect: i % 2 === 0 ? "HEAL" : "DAMAGE", val: 500 + (i * 100),
-                    desc: `【サポート】\n効果値: ${500 + (i * 100)}`
+                    effect: i % 2 === 0 ? "HEAL" : "DAMAGE", val: 500 + (i * 50),
+                    desc: `【サポート】\n効果値: ${500 + (i * 50)}`
                 });
             }
         });
 
+        /* --- 超大量ミッション定義データ (50種) --- */
+        const ACHIEVEMENTS_DEF = [
+            /* カード所持数ミッション (10種) */
+            { id: 'count_10', title: '初心者コレクター', desc: 'カードを10枚所持する', reward: 1000, check: (cnt) => cnt >= 10 },
+            { id: 'count_50', title: '見習い収集家', desc: 'カードを50枚所持する', reward: 2000, check: (cnt) => cnt >= 50 },
+            { id: 'count_100', title: 'カード愛好家', desc: 'カードを100枚所持する', reward: 3000, check: (cnt) => cnt >= 100 },
+            { id: 'count_200', title: '本格コレクター', desc: 'カードを200枚所持する', reward: 5000, check: (cnt) => cnt >= 200 },
+            { id: 'count_350', title: '熟練の収集家', desc: 'カードを350枚所持する', reward: 8000, check: (cnt) => cnt >= 350 },
+            { id: 'count_500', title: '折り返し地点！', desc: 'カードを500枚所持する', reward: 10000, check: (cnt) => cnt >= 500 },
+            { id: 'count_650', title: 'カードマスター', desc: 'カードを650枚所持する', reward: 15000, check: (cnt) => cnt >= 650 },
+            { id: 'count_800', title: '大コレクター', desc: 'カードを800枚所持する', reward: 20000, check: (cnt) => cnt >= 800 },
+            { id: 'count_950', title: '伝説の収集家', desc: 'カードを950枚所持する', reward: 30000, check: (cnt) => cnt >= 950 },
+            { id: 'count_1000', title: 'コンプリートキング', desc: 'カード全1000枚を所持する', reward: 50000, check: (cnt) => cnt >= 1000 },
+
+            /* 特定カード獲得ミッション (15種) */
+            { id: 'card_slime_ur', title: 'モチモチの覚醒', desc: 'UR「モチモチなスライム」を獲得', reward: 5000, check: (cnt, owned) => owned.some(c => c.name === 'モチモチなスライム') },
+            { id: 'card_ghost_ur', title: '幽冥の支配者', desc: 'UR「焔緋灯影」を獲得', reward: 5000, check: (cnt, owned) => owned.some(c => c.name === '焔緋灯影') },
+            { id: 'card_normal_max', title: '最強の通常戦士', desc: '通常パックのEXモンスターを獲得', reward: 3000, check: (cnt, owned) => owned.some(c => c.packKey === 'normal' && c.rarity === 'EX') },
+            { id: 'card_holy_max', title: '極光の聖騎士', desc: '聖騎士パックのEXモンスターを獲得', reward: 3000, check: (cnt, owned) => owned.some(c => c.packKey === 'holy' && c.rarity === 'EX') },
+            { id: 'card_dark_max', title: '暗黒の覇王', desc: '黒騎士パックのEXモンスターを獲得', reward: 3000, check: (cnt, owned) => owned.some(c => c.packKey === 'dark' && c.rarity === 'EX') },
+            { id: 'card_mage_max', title: '真理の魔神', desc: '魔道士パックのEXモンスターを獲得', reward: 3000, check: (cnt, owned) => owned.some(c => c.packKey === 'mage' && c.rarity === 'EX') },
+            { id: 'card_slime_king', title: 'スライムエンペラー', desc: 'スライムパックのEXモンスターを獲得', reward: 3000, check: (cnt, owned) => owned.some(c => c.packKey === 'slime' && c.rarity === 'EX') },
+            { id: 'card_ghost_king', title: '冥界の死霊王', desc: '幽霊パックのEXモンスターを獲得', reward: 3000, check: (cnt, owned) => owned.some(c => c.packKey === 'ghost' && c.rarity === 'EX') },
+            { id: 'card_spell_normal', title: '戦術開眼', desc: '通常パックのサポート呪文を獲得', reward: 1000, check: (cnt, owned) => owned.some(c => c.packKey === 'normal' && c.type === 'SPELL') },
+            { id: 'card_spell_holy', title: '聖なる祈願', desc: '聖騎士パックのサポート呪文を獲得', reward: 1000, check: (cnt, owned) => owned.some(c => c.packKey === 'holy' && c.type === 'SPELL') },
+            { id: 'card_spell_dark', title: '深淵の契り', desc: '黒騎士パックのサポート呪文を獲得', reward: 1000, check: (cnt, owned) => owned.some(c => c.packKey === 'dark' && c.type === 'SPELL') },
+            { id: 'card_spell_mage', title: '全魔導開放', desc: '魔道士パックのサポート呪文を獲得', reward: 1000, check: (cnt, owned) => owned.some(c => c.packKey === 'mage' && c.type === 'SPELL') },
+            { id: 'card_spell_slime', title: '粘液の秘術', desc: 'スライムパックのサポート呪文を獲得', reward: 1000, check: (cnt, owned) => owned.some(c => c.packKey === 'slime' && c.type === 'SPELL') },
+            { id: 'card_spell_ghost', title: '黄泉の冷気', desc: '幽霊パックのサポート呪文を獲得', reward: 1000, check: (cnt, owned) => owned.some(c => c.packKey === 'ghost' && c.type === 'SPELL') },
+            { id: 'card_any_sss', title: '精鋭の誇り', desc: 'SSSランクモンスターを獲得', reward: 2000, check: (cnt, owned) => owned.some(c => c.rarity === 'SSS') },
+
+            /* 対戦勝利数ミッション (10種) */
+            { id: 'win_1', title: '初勝利！', desc: 'カードバトルで1回勝利する', reward: 1500, check: (cnt, owned, state) => (state.winCount || 0) >= 1 },
+            { id: 'win_3', title: '連勝街道', desc: 'カードバトルで3回勝利する', reward: 3000, check: (cnt, owned, state) => (state.winCount || 0) >= 3 },
+            { id: 'win_5', title: '常勝無敗', desc: 'カードバトルで5回勝利する', reward: 5000, check: (cnt, owned, state) => (state.winCount || 0) >= 5 },
+            { id: 'win_10', title: '百戦錬磨', desc: 'カードバトルで10回勝利する', reward: 10000, check: (cnt, owned, state) => (state.winCount || 0) >= 10 },
+            { id: 'win_15', title: '戦場の覇者', desc: 'カードバトルで15回勝利する', reward: 15000, check: (cnt, owned, state) => (state.winCount || 0) >= 15 },
+            { id: 'win_20', title: '無双のデュエリスト', desc: 'カードバトルで20回勝利する', reward: 20000, check: (cnt, owned, state) => (state.winCount || 0) >= 20 },
+            { id: 'win_30', title: '不敗の神話', desc: 'カードバトルで30回勝利する', reward: 30000, check: (cnt, owned, state) => (state.winCount || 0) >= 30 },
+            { id: 'win_40', title: '闘神降臨', desc: 'カードバトルで40回勝利する', reward: 40000, check: (cnt, owned, state) => (state.winCount || 0) >= 40 },
+            { id: 'win_50', title: 'カードの神様', desc: 'カードバトルで50回勝利する', reward: 50000, check: (cnt, owned, state) => (state.winCount || 0) >= 50 },
+            { id: 'win_100', title: '超・絶対王者', desc: 'カードバトルで100回勝利する', reward: 100000, check: (cnt, owned, state) => (state.winCount || 0) >= 100 },
+
+            /* ダイヤ（石）富豪ミッション (15種) */
+            { id: 'gem_5000', title: 'ちょっとお金持ち', desc: 'ダイヤを5,000個以上保持する', reward: 2000, check: (cnt, owned, state) => state.gems >= 5000 },
+            { id: 'gem_10000', title: 'ダイヤ長者', desc: 'ダイヤを10,000個以上保持する', reward: 3000, check: (cnt, owned, state) => state.gems >= 10000 },
+            { id: 'gem_20000', title: '資産家', desc: 'ダイヤを20,000個以上保持する', reward: 5000, check: (cnt, owned, state) => state.gems >= 20000 },
+            { id: 'gem_30000', title: '大富豪', desc: 'ダイヤを30,000個以上保持する', reward: 8000, check: (cnt, owned, state) => state.gems >= 30000 },
+            { id: 'gem_50000', title: 'ダイヤ大名', desc: 'ダイヤを50,000個以上保持する', reward: 10000, check: (cnt, owned, state) => state.gems >= 50000 },
+            { id: 'gem_100000', title: '億万長者の第一歩', desc: 'ダイヤを100,000個以上保持する', reward: 20000, check: (cnt, owned, state) => state.gems >= 100000 },
+            { id: 'gem_150000', title: '宝石王', desc: 'ダイヤを150,000個以上保持する', reward: 25000, check: (cnt, owned, state) => state.gems >= 150000 },
+            { id: 'gem_200000', title: '世界一の富豪', desc: 'ダイヤを200,000個以上保持する', reward: 30000, check: (cnt, owned, state) => state.gems >= 200000 },
+            { id: 'gem_300000', title: '国家国家予算級', desc: 'ダイヤを300,000個以上保持する', reward: 40000, check: (cnt, owned, state) => state.gems >= 300000 },
+            { id: 'gem_500000', title: '無限の財宝', desc: 'ダイヤを500,000個以上保持する', reward: 50000, check: (cnt, owned, state) => state.gems >= 500000 },
+            { id: 'pack_normal_full', title: '通常マスター', desc: '通常パックのカードを100種類以上集める', reward: 5000, check: (cnt, owned) => owned.filter(c => c.packKey === 'normal').length >= 100 },
+            { id: 'pack_holy_full', title: '聖なるマスター', desc: '聖騎士パックのカードを100種類以上集める', reward: 5000, check: (cnt, owned) => owned.filter(c => c.packKey === 'holy').length >= 100 },
+            { id: 'pack_dark_full', title: '黒騎士マスター', desc: '黒騎士パックのカードを100種類以上集める', reward: 5000, check: (cnt, owned) => owned.filter(c => c.packKey === 'dark').length >= 100 },
+            { id: 'pack_mage_full', title: '魔導のマスター', desc: '魔道士パックのカードを100種類以上集める', reward: 5000, check: (cnt, owned) => owned.filter(c => c.packKey === 'mage').length >= 100 },
+            { id: 'pack_slime_full', title: 'スライムマスター', desc: 'スライムパックのカードを100種類以上集める', reward: 5000, check: (cnt, owned) => owned.filter(c => c.packKey === 'slime').length >= 100 }
+        ];
+
         /* --- ゲームデータ --- */
-        let gameState = { gems: 1000, ownedCardIds: Array.from({length: 20}, (_, i) => `c${i+1}`) };
+        let gameState = { gems: 1000, ownedCardIds: Array.from({length: 20}, (_, i) => `c${i+1}`), achievements: [], winCount: 0 };
         let selectedPackKey = 'normal';
         let gachaPullCount = 1;
 
@@ -533,11 +631,74 @@
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         function updateGemUI() { document.getElementById('gemDisplay').innerText = gameState.gems; }
 
+        /* --- 実績・ミッション判定処理 --- */
+        function checkAchievements() {
+            if (!gameState.achievements) gameState.achievements = [];
+            const ownedList = CARDS_DATABASE.filter(c => gameState.ownedCardIds.includes(c.id));
+            const count = ownedList.length;
+
+            ACHIEVEMENTS_DEF.forEach(ach => {
+                if (!gameState.achievements.includes(ach.id)) {
+                    if (ach.check(count, ownedList, gameState)) {
+                        gameState.achievements.push(ach.id);
+                        gameState.gems += ach.reward; // ミッション達成で大量ダイヤ即時付与！
+                        alert(`🏆 ミッション達成！\n「${ach.title}」\n報酬: ${ach.reward} 💎 ダイヤを獲得！`);
+                    }
+                }
+            });
+
+            updateAchievementUI();
+            updateGemUI();
+            saveData();
+        }
+
+        function updateAchievementUI() {
+            const count = gameState.achievements ? gameState.achievements.length : 0;
+            const total = ACHIEVEMENTS_DEF.length;
+            const pct = Math.floor((count / total) * 100);
+
+            const menuBtn = document.getElementById('achieveMenuBtn');
+            if (menuBtn) menuBtn.innerText = `🏆 大量ミッション (${count}/${total})`;
+
+            const title = document.getElementById('achievementTitle');
+            if (title) title.innerText = `🏆 ミッション一覧 (${count}/${total})`;
+
+            const fill = document.getElementById('achieveProgressBar');
+            if (fill) fill.style.width = `${pct}%`;
+
+            const txt = document.getElementById('achieveProgressText');
+            if (txt) txt.innerText = `達成率 ${pct}% (${count}/${total})`;
+        }
+
+        function openAchievementScreen() {
+            checkAchievements();
+            const listArea = document.getElementById('achievementListArea');
+            listArea.innerHTML = ACHIEVEMENTS_DEF.map(ach => {
+                const isAchieved = gameState.achievements && gameState.achievements.includes(ach.id);
+                return `
+                    <div class="achievement-card ${isAchieved ? 'achieved' : ''}">
+                        <div>
+                            <div style="font-weight:bold; color:${isAchieved ? '#34d399' : '#38bdf8'}; font-size:0.9rem;">
+                                ${isAchieved ? '✅' : '🔒'} ${ach.title}
+                            </div>
+                            <div style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">${ach.desc}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:0.8rem; font-weight:bold; color:#38bdf8;">+${ach.reward} 💎</div>
+                            <div style="font-size:0.75rem; font-weight:bold; color:${isAchieved ? '#34d399' : '#64748b'};">
+                                ${isAchieved ? '達成済み' : '未達成'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            showScreen('achievementScreen');
+        }
+
         /* --- ガチャ引っ張り処理 --- */
         let isDragging = false, startY = 0, currentY = 0;
         const orb = document.getElementById('packArea');
         const pullLine = document.getElementById('pullLine');
-        const stage = document.getElementById('gachaStage');
 
         function setGachaMode(count) {
             gachaPullCount = count;
@@ -657,32 +818,45 @@
                     </div>
                 `).join('');
 
+                checkAchievements();
                 saveData();
             }, 250);
         }
 
-        /* --- 対戦相手の選択画面 --- */
+        /* --- 大増量した対戦相手の選択画面 --- */
         function openBattleSelect() {
             const list = document.getElementById('battleList');
             const opps = [
-                { name: "⚔️ 通常騎士団", reward: 300, poolIdx: 0 },
-                { name: "🛡️ 聖騎士軍団", reward: 400, poolIdx: 50 },
-                { name: "🗡️ 黒騎士軍勢", reward: 500, poolIdx: 100 },
-                { name: "🔮 魔道士ギルド", reward: 600, poolIdx: 150 },
-                { name: "🟢 スライム大発生", reward: 250, poolIdx: 200 },
-                { name: "👻 幽霊屋敷の主", reward: 450, poolIdx: 250 }
+                { name: "🐣 駆け出しの訓練兵", reward: 800, poolIdx: 0 },
+                { name: "🟢 スライム大発生", reward: 1200, poolIdx: 668 },
+                { name: "⚔️ 通常騎士団・中堅", reward: 1800, poolIdx: 30 },
+                { name: "👻 幽霊屋敷の主", reward: 2500, poolIdx: 834 },
+                { name: "🛡️ 聖騎士軍団", reward: 3200, poolIdx: 167 },
+                { name: "🔮 魔道士ギルド", reward: 4000, poolIdx: 501 },
+                { name: "🗡️ 黒騎士軍勢", reward: 5000, poolIdx: 334 },
+                { name: "👑 スライムキング軍", reward: 6000, poolIdx: 750 },
+                { name: "🧙‍♂️ 大魔導士長", reward: 7000, poolIdx: 600 },
+                { name: "⚔️ 聖槍近衛兵団", reward: 8000, poolIdx: 280 },
+                { name: "💀 冥界の総司令", reward: 9000, poolIdx: 900 },
+                { name: "🔥 暗黒の絶望騎士", reward: 10000, poolIdx: 450 },
+                { name: "✨ 創世の天使軍", reward: 11000, poolIdx: 310 },
+                { name: "🌌 虚空の統帥者", reward: 12000, poolIdx: 130 },
+                { name: "🔴 暴走スライムロード", reward: 13000, poolIdx: 820 },
+                { name: "🏮 怨霊将軍", reward: 14000, poolIdx: 980 },
+                { name: "⚡ 覇王の近衛隊", reward: 15000, poolIdx: 490 },
+                { name: "👑 【神格】始祖の創世神", reward: 20000, poolIdx: 833 }
             ];
             list.innerHTML = opps.map(o => `
                 <div class="card" style="aspect-ratio:auto; flex-direction:row; align-items:center; justify-content:space-between; padding:12px 18px; width:100%; cursor:default;" onclick="startTCGBattle(${o.poolIdx}, ${o.reward})">
-                    <div style="font-weight:bold; color:#38bdf8; font-size:1.0rem;">${o.name}</div>
-                    <button class="btn" style="padding:6px 14px; font-size:0.8rem;">挑戦する (報酬:${o.reward} 💎)</button>
+                    <div style="font-weight:bold; color:#38bdf8; font-size:0.95rem;">${o.name}</div>
+                    <button class="btn" style="padding:6px 14px; font-size:0.8rem;">挑戦する (報酬: +${o.reward} 💎)</button>
                 </div>
             `).join('');
             showScreen('battleSelectScreen');
         }
 
         /* --- バトル処理 --- */
-        let battleState = { pLP: 4000, eLP: 4000, pHand: [], pField: [], eField: [], rewardGems: 300, isEnded: false };
+        let battleState = { pLP: 4000, eLP: 4000, pHand: [], pField: [], eField: [], rewardGems: 800, isEnded: false };
 
         function startTCGBattle(poolIdx, reward) {
             playSE('click');
@@ -692,7 +866,7 @@
                 pLP: 4000, eLP: 4000, rewardGems: reward, isEnded: false,
                 pHand: Array.from({length: 4}, () => ownedList[Math.floor(Math.random() * ownedList.length)]),
                 pField: [],
-                eField: [{ ...CARDS_DATABASE[poolIdx], mode: 'ATK' }, { ...CARDS_DATABASE[poolIdx + 1], mode: 'DEF' }]
+                eField: [{ ...CARDS_DATABASE[poolIdx], mode: 'ATK' }, { ...CARDS_DATABASE[(poolIdx + 1) % 1000], mode: 'DEF' }]
             };
             document.getElementById('enemyTitle').innerText = CARDS_DATABASE[poolIdx].name;
             document.getElementById('battleLog').innerHTML = '';
@@ -811,7 +985,9 @@
                 battleState.isEnded = true;
                 
                 gameState.gems += battleState.rewardGems;
+                gameState.winCount = (gameState.winCount || 0) + 1; // 勝利数を加算
                 updateGemUI();
+                checkAchievements();
                 saveData();
 
                 logAdd(`🎉 敵全滅！ バトル勝利！ 報酬: ${battleState.rewardGems} Θαύμα石獲得！`);
@@ -836,7 +1012,7 @@
 
         /* 図鑑 */
         function openArchiveScreen() {
-            document.getElementById('archiveProgress').innerText = `カードアーカイブ (${gameState.ownedCardIds.length}/300)`;
+            document.getElementById('archiveProgress').innerText = `カードアーカイブ (${gameState.ownedCardIds.length}/1000)`;
             const grid = document.getElementById('cardGridArea');
             grid.innerHTML = CARDS_DATABASE.map(c => {
                 const owned = gameState.ownedCardIds.includes(c.id);
@@ -850,10 +1026,16 @@
             showScreen('archiveScreen');
         }
 
-        function saveData() { localStorage.setItem('thauma_tcg300_save', JSON.stringify(gameState)); }
-        function loadData() { const s = localStorage.getItem('thauma_tcg300_save'); if (s) gameState = JSON.parse(s); }
+        function saveData() { localStorage.setItem('thauma_tcg1000_save', JSON.stringify(gameState)); }
+        function loadData() {
+            const s = localStorage.getItem('thauma_tcg1000_save');
+            if (s) gameState = JSON.parse(s);
+            if (!gameState.achievements) gameState.achievements = [];
+            if (!gameState.winCount) gameState.winCount = 0;
+            checkAchievements();
+        }
 
-        /* Canvas アニメーション (水色 × 赤色 ベースのグラフィック) */
+        /* --- タイトル Canvas アニメーション --- */
         const canvas = document.getElementById('titleCanvas'), ctx = canvas.getContext('2d');
         let particles = [], rings = [], angle = 0, pulse = 0;
 
@@ -879,14 +1061,12 @@
             angle += 0.01; pulse += 0.03;
             const cx = canvas.width / 2, cy = canvas.height / 2;
 
-            /* 背景グラデーション (赤 × 水色 × 深黒) */
             const bgGrd = ctx.createRadialGradient(cx, cy, 30, cx, cy, canvas.width * 0.75);
             bgGrd.addColorStop(0, 'rgba(10, 25, 45, 0.85)');
             bgGrd.addColorStop(0.4, 'rgba(45, 10, 20, 0.65)');
             bgGrd.addColorStop(1, 'rgba(1, 4, 10, 0.98)');
             ctx.fillStyle = bgGrd; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            /* 回転する立体魔法陣（赤・水色交差） */
             rings.forEach((ring, idx) => {
                 ctx.save();
                 ctx.translate(cx, cy);
@@ -900,7 +1080,6 @@
                 ctx.arc(0, 0, ring.r + Math.sin(pulse + idx) * 6, 0, Math.PI * 2);
                 ctx.stroke();
 
-                /* 幾何学的な四角形・三角形の交差 */
                 if (idx % 2 === 0) {
                     ctx.rotate(angle);
                     ctx.rect(-ring.r * 0.6, -ring.r * 0.6, ring.r * 1.2, ring.r * 1.2);
@@ -910,7 +1089,6 @@
                 ctx.restore();
             });
 
-            /* 浮遊する光の粒子（水色＆赤色） */
             particles.forEach(p => {
                 p.x += p.speedX; p.y += p.speedY;
                 if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
@@ -924,8 +1102,150 @@
             requestAnimationFrame(drawCanvas);
         }
 
-        window.addEventListener('resize', initCanvas);
-        window.addEventListener('DOMContentLoaded', () => { loadData(); initCanvas(); drawCanvas(); initPullAction(); updateGemUI(); });
+        /* --- メニュー背景：地獄の門 Canvas アニメーション --- */
+        const hCanvas = document.getElementById('hellGateCanvas'), hCtx = hCanvas.getContext('2d');
+        let fireParticles = [], hellTime = 0;
+
+        function initHellGate() {
+            hCanvas.width = hCanvas.offsetWidth; hCanvas.height = hCanvas.offsetHeight;
+            fireParticles = Array.from({length: 120}, () => ({
+                x: hCanvas.width / 2 + (Math.random() - 0.5) * 220,
+                y: hCanvas.height * 0.7 + Math.random() * 150,
+                size: Math.random() * 4 + 1.5,
+                vx: (Math.random() - 0.5) * 1.2,
+                vy: -Math.random() * 3.5 - 1.0,
+                life: Math.random(),
+                maxLife: 0.6 + Math.random() * 0.4
+            }));
+        }
+
+        function drawHellGate() {
+            hCtx.clearRect(0, 0, hCanvas.width, hCanvas.height);
+            hellTime += 0.02;
+            const cx = hCanvas.width / 2, cy = hCanvas.height / 2;
+
+            const bgGrd = hCtx.createRadialGradient(cx, cy, 20, cx, cy, hCanvas.width * 0.7);
+            const pulseGlow = Math.sin(hellTime * 2.5) * 0.15 + 0.35;
+            bgGrd.addColorStop(0, `rgba(255, 30, 0, ${pulseGlow})`);
+            bgGrd.addColorStop(0.3, 'rgba(120, 10, 0, 0.75)');
+            bgGrd.addColorStop(0.7, 'rgba(25, 2, 5, 0.95)');
+            bgGrd.addColorStop(1, '#01040a');
+            hCtx.fillStyle = bgGrd;
+            hCtx.fillRect(0, 0, hCanvas.width, hCanvas.height);
+
+            hCtx.save();
+            hCtx.translate(cx, cy);
+            for (let i = 0; i < 12; i++) {
+                const angle = (Math.PI * 2 / 12) * i + hellTime * 0.2;
+                hCtx.beginPath();
+                hCtx.moveTo(0, 0);
+                hCtx.arc(0, 0, 600, angle - 0.08, angle + 0.08);
+                hCtx.fillStyle = `rgba(255, 60, 0, ${0.03 + Math.sin(hellTime + i) * 0.02})`;
+                hCtx.fill();
+            }
+            hCtx.restore();
+
+            const gateW = Math.min(360, hCanvas.width * 0.5);
+            const gateH = gateW * 1.35;
+            const gateX = cx - gateW / 2;
+            const gateY = cy - gateH / 2 + 30;
+
+            const innerGlow = hCtx.createRadialGradient(cx, cy + 20, 10, cx, cy + 20, gateW * 0.6);
+            innerGlow.addColorStop(0, '#ffffff');
+            innerGlow.addColorStop(0.25, '#ff4500');
+            innerGlow.addColorStop(0.65, '#800000');
+            innerGlow.addColorStop(1, 'transparent');
+            hCtx.fillStyle = innerGlow;
+            hCtx.fillRect(gateX, gateY, gateW, gateH);
+
+            hCtx.save();
+            hCtx.translate(cx, cy + 20);
+            hCtx.rotate(-hellTime * 0.5);
+            hCtx.strokeStyle = 'rgba(255, 80, 0, 0.6)';
+            hCtx.lineWidth = 2;
+            hCtx.beginPath();
+            hCtx.arc(0, 0, gateW * 0.32, 0, Math.PI * 2);
+            hCtx.stroke();
+            for (let i = 0; i < 5; i++) {
+                const a = (Math.PI * 2 / 5) * i;
+                hCtx.lineTo(Math.cos(a) * gateW * 0.32, Math.sin(a) * gateW * 0.32);
+            }
+            hCtx.strokeStyle = 'rgba(255, 120, 0, 0.4)';
+            hCtx.stroke();
+            hCtx.restore();
+
+            hCtx.fillStyle = '#060205';
+            hCtx.strokeStyle = '#3d0c0c';
+            hCtx.lineWidth = 4;
+
+            hCtx.fillRect(gateX - 25, gateY - 30, 30, gateH + 60);
+            hCtx.strokeRect(gateX - 25, gateY - 30, 30, gateH + 60);
+            hCtx.fillRect(gateX + gateW - 5, gateY - 30, 30, gateH + 60);
+            hCtx.strokeRect(gateX + gateW - 5, gateY - 30, 30, gateH + 60);
+
+            hCtx.beginPath();
+            hCtx.arc(cx, gateY, gateW / 2 + 5, Math.PI, 0);
+            hCtx.lineTo(gateX + gateW + 25, gateY - 20);
+            hCtx.lineTo(gateX - 25, gateY - 20);
+            hCtx.closePath();
+            hCtx.fill();
+            hCtx.stroke();
+
+            const doorOpenRatio = 0.28 + Math.sin(hellTime) * 0.05;
+            hCtx.save();
+            hCtx.translate(gateX, gateY);
+            hCtx.transform(1 - doorOpenRatio, 0, -doorOpenRatio * 0.2, 1, 0, 0);
+            hCtx.fillStyle = '#0a0307';
+            hCtx.fillRect(0, 0, gateW / 2, gateH);
+            hCtx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
+            hCtx.strokeRect(5, 5, gateW / 2 - 10, gateH - 10);
+            hCtx.restore();
+
+            hCtx.save();
+            hCtx.translate(gateX + gateW, gateY);
+            hCtx.transform(1 - doorOpenRatio, 0, doorOpenRatio * 0.2, 1, - (gateW / 2) * (1 - doorOpenRatio), 0);
+            hCtx.fillStyle = '#0a0307';
+            hCtx.fillRect(0, 0, gateW / 2, gateH);
+            hCtx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
+            hCtx.strokeRect(5, 5, gateW / 2 - 10, gateH - 10);
+            hCtx.restore();
+
+            fireParticles.forEach(p => {
+                p.x += p.vx + Math.sin(hellTime + p.y * 0.02) * 0.8;
+                p.y += p.vy;
+                p.life += 0.015;
+
+                if (p.life >= p.maxLife || p.y < gateY - 50) {
+                    p.x = cx + (Math.random() - 0.5) * (gateW * 0.7);
+                    p.y = cy + 80 + Math.random() * 80;
+                    p.life = 0;
+                    p.vy = -Math.random() * 3.5 - 1.0;
+                }
+
+                const progress = p.life / p.maxLife;
+                const alpha = Math.sin(progress * Math.PI);
+                const size = p.size * (1 - progress * 0.5);
+
+                hCtx.fillStyle = progress < 0.3 ? `rgba(255, 255, 200, ${alpha})` : (progress < 0.7 ? `rgba(255, 100, 0, ${alpha})` : `rgba(180, 0, 0, ${alpha * 0.6})`);
+                hCtx.beginPath();
+                hCtx.arc(p.x, p.y, size, 0, Math.PI * 2);
+                hCtx.fill();
+            });
+
+            requestAnimationFrame(drawHellGate);
+        }
+
+        window.addEventListener('resize', () => { initCanvas(); initHellGate(); });
+        window.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            initCanvas();
+            drawCanvas();
+            initHellGate();
+            drawHellGate();
+            initPullAction();
+            updateGemUI();
+            checkAchievements();
+        });
     </script>
 </body>
 </html>
