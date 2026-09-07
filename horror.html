@@ -521,7 +521,7 @@
             { id: 'gem_100000', title: '億万長者の第一歩', desc: 'ダイヤを100,000個以上保持する', reward: 20000, check: (cnt, owned, state) => state.gems >= 100000 },
             { id: 'gem_150000', title: '宝石王', desc: 'ダイヤを150,000個以上保持する', reward: 25000, check: (cnt, owned, state) => state.gems >= 150000 },
             { id: 'gem_200000', title: '世界一の富豪', desc: 'ダイヤを200,000個以上保持する', reward: 30000, check: (cnt, owned, state) => state.gems >= 200000 },
-            { id: 'gem_300000', title: '国家国家予算級', desc: 'ダイヤを300,000個以上保持する', reward: 40000, check: (cnt, owned, state) => state.gems >= 300000 },
+            { id: 'gem_300000', title: '国家予算級', desc: 'ダイヤを300,000個以上保持する', reward: 40000, check: (cnt, owned, state) => state.gems >= 300000 },
             { id: 'gem_500000', title: '無限の財宝', desc: 'ダイヤを500,000個以上保持する', reward: 50000, check: (cnt, owned, state) => state.gems >= 500000 },
             { id: 'pack_normal_full', title: '通常マスター', desc: '通常パックのカードを100種類以上集める', reward: 5000, check: (cnt, owned) => owned.filter(c => c.packKey === 'normal').length >= 100 },
             { id: 'pack_holy_full', title: '聖なるマスター', desc: '聖騎士パックのカードを100種類以上集める', reward: 5000, check: (cnt, owned) => owned.filter(c => c.packKey === 'holy').length >= 100 },
@@ -1178,65 +1178,46 @@
             hCtx.strokeStyle = '#3d0c0c';
             hCtx.lineWidth = 4;
 
-            hCtx.fillRect(gateX - 25, gateY - 30, 30, gateH + 60);
-            hCtx.strokeRect(gateX - 25, gateY - 30, 30, gateH + 60);
-            hCtx.fillRect(gateX + gateW - 5, gateY - 30, 30, gateH + 60);
-            hCtx.strokeRect(gateX + gateW - 5, gateY - 30, 30, gateH + 60);
+            // 地獄の門の左右の柱とアーチを描画（途切れていた部分の補完）
+            const pillarW = 24;
+            hCtx.fillRect(gateX - pillarW, gateY, pillarW, gateH);
+            hCtx.strokeRect(gateX - pillarW, gateY, pillarW, gateH);
+            hCtx.fillRect(gateX + gateW, gateY, pillarW, gateH);
+            hCtx.strokeRect(gateX + gateW, gateY, pillarW, gateH);
 
-            hCtx.beginPath();
-            hCtx.arc(cx, gateY, gateW / 2 + 5, Math.PI, 0);
-            hCtx.lineTo(gateX + gateW + 25, gateY - 20);
-            hCtx.lineTo(gateX - 25, gateY - 20);
-            hCtx.closePath();
-            hCtx.fill();
-            hCtx.stroke();
+            // アーチ部分
+            hCtx.fillRect(gateX - pillarW, gateY - 30, gateW + pillarW * 2, 30);
+            hCtx.strokeRect(gateX - pillarW, gateY - 30, gateW + pillarW * 2, 30);
 
-            const doorOpenRatio = 0.28 + Math.sin(hellTime) * 0.05;
-            hCtx.save();
-            hCtx.translate(gateX, gateY);
-            hCtx.transform(1 - doorOpenRatio, 0, -doorOpenRatio * 0.2, 1, 0, 0);
-            hCtx.fillStyle = '#0a0307';
-            hCtx.fillRect(0, 0, gateW / 2, gateH);
-            hCtx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
-            hCtx.strokeRect(5, 5, gateW / 2 - 10, gateH - 10);
-            hCtx.restore();
-
-            hCtx.save();
-            hCtx.translate(gateX + gateW, gateY);
-            hCtx.transform(1 - doorOpenRatio, 0, doorOpenRatio * 0.2, 1, - (gateW / 2) * (1 - doorOpenRatio), 0);
-            hCtx.fillStyle = '#0a0307';
-            hCtx.fillRect(0, 0, gateW / 2, gateH);
-            hCtx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
-            hCtx.strokeRect(5, 5, gateW / 2 - 10, gateH - 10);
-            hCtx.restore();
-
+            // 炎の粒子アニメーション描画
             fireParticles.forEach(p => {
-                p.x += p.vx + Math.sin(hellTime + p.y * 0.02) * 0.8;
+                p.x += p.vx;
                 p.y += p.vy;
                 p.life += 0.015;
 
                 if (p.life >= p.maxLife || p.y < gateY - 50) {
-                    p.x = cx + (Math.random() - 0.5) * (gateW * 0.7);
-                    p.y = cy + 80 + Math.random() * 80;
+                    p.x = cx + (Math.random() - 0.5) * gateW * 0.8;
+                    p.y = gateY + gateH - 20;
                     p.life = 0;
-                    p.vy = -Math.random() * 3.5 - 1.0;
                 }
 
-                const progress = p.life / p.maxLife;
-                const alpha = Math.sin(progress * Math.PI);
-                const size = p.size * (1 - progress * 0.5);
-
-                hCtx.fillStyle = progress < 0.3 ? `rgba(255, 255, 200, ${alpha})` : (progress < 0.7 ? `rgba(255, 100, 0, ${alpha})` : `rgba(180, 0, 0, ${alpha * 0.6})`);
+                const alpha = (1 - p.life / p.maxLife);
+                hCtx.fillStyle = `rgba(255, ${Math.floor(150 * (1 - p.life))}, 0, ${alpha})`;
                 hCtx.beginPath();
-                hCtx.arc(p.x, p.y, size, 0, Math.PI * 2);
+                hCtx.arc(p.x, p.y, p.size * (1 - p.life * 0.5), 0, Math.PI * 2);
                 hCtx.fill();
             });
 
             requestAnimationFrame(drawHellGate);
         }
 
-        window.addEventListener('resize', () => { initCanvas(); initHellGate(); });
-        window.addEventListener('DOMContentLoaded', () => {
+        /* --- 初期化実行 --- */
+        window.addEventListener('resize', () => {
+            initCanvas();
+            initHellGate();
+        });
+
+        window.onload = () => {
             loadData();
             initCanvas();
             drawCanvas();
@@ -1244,8 +1225,8 @@
             drawHellGate();
             initPullAction();
             updateGemUI();
-            checkAchievements();
-        });
+            updateAchievementUI();
+        };
     </script>
 </body>
 </html>
