@@ -64,6 +64,26 @@
             95% { transform: translate(3px, -1px) skew(-3deg); }
         }
 
+        /* 画面遷移ノイズエフェクト */
+        #glitchOverlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 99; display: none; opacity: 0;
+            background: repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.15) 0px, rgba(255, 0, 80, 0.15) 2px, transparent 4px);
+            mix-blend-mode: hard-light;
+        }
+        .glitch-active {
+            display: block !important;
+            animation: glitchAnim 0.35s steps(2) forwards;
+        }
+        @keyframes glitchAnim {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); filter: invert(0%); }
+            20% { transform: translate(-10px, 8px) scale(1.02); filter: invert(30%) hue-rotate(90deg); }
+            40% { transform: translate(12px, -6px) scale(0.98); filter: invert(0%); }
+            60% { transform: translate(-8px, -4px) scale(1.01); filter: invert(50%) hue-rotate(180deg); }
+            80% { transform: translate(5px, 5px) scale(1.03); }
+            100% { opacity: 0; transform: translate(0, 0) scale(1); filter: invert(0%); }
+        }
+
         .panel {
             width: 100%; max-width: 950px; height: 84%; background: rgba(4, 15, 33, 0.93);
             border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 15px;
@@ -169,6 +189,8 @@
 <body>
 
     <div id="game-container">
+        <div id="glitchOverlay"></div>
+
         <div class="header-bar">
             <div style="font-size: 0.9rem; color: #38bdf8;">Θαύμα TCG - 300 CARDS -</div>
             <div style="display:flex; gap:12px; align-items:center;">
@@ -177,7 +199,6 @@
             </div>
         </div>
 
-        <!-- タイトル画面 -->
         <div id="titleScreen" class="screen active">
             <canvas id="titleCanvas"></canvas>
             <div class="title-wrapper">
@@ -185,12 +206,11 @@
                 <div style="color: #cbd5e1; margin-top: 10px; margin-bottom: 25px; letter-spacing: 0.35em; z-index: 3; font-size: 0.85rem; text-shadow: 0 0 10px #ef4444;">― FULL STRATEGY CARD BATTLE ―</div>
             </div>
             <div class="btn-grid">
-                <button class="btn" onclick="playSE('click'); showScreen('menuScreen')">ゲームスタート</button>
+                <button class="btn" onclick="startWithGlitch('menuScreen')">ゲームスタート</button>
                 <button class="btn btn-sec" onclick="playSE('click'); openModal('ruleModal')">ルール説明</button>
             </div>
         </div>
 
-        <!-- メニュー -->
         <div id="menuScreen" class="screen">
             <h2 style="color: #38bdf8; margin-bottom: 15px; letter-spacing: 0.1em;">メインメニュー</h2>
             <div class="btn-grid">
@@ -202,12 +222,10 @@
             </div>
         </div>
 
-        <!-- ガチャ画面 -->
         <div id="gachaScreen" class="screen" style="padding:0;">
             <div class="gacha-container">
                 <div class="bg-fog"></div>
                 
-                <!-- ガチャパック選択タブ -->
                 <div class="pack-select" id="packGrid">
                     <div class="pack-tab selected" onclick="selectPack('normal', this)">⚔️ 通常ガチャ</div>
                     <div class="pack-tab" onclick="selectPack('holy', this)">🛡️ 聖騎士ガチャ</div>
@@ -217,7 +235,6 @@
                     <div class="pack-tab" onclick="selectPack('ghost', this)">👻 幽霊ガチャ</div>
                 </div>
 
-                <!-- ガチャ演出エリア（宝珠） -->
                 <div class="gacha-stage">
                     <div class="orb-ring"></div>
                     <div class="gacha-orb" id="packArea" onclick="openPack()"></div>
@@ -225,7 +242,6 @@
                     <div class="gacha-result-area" id="gachaResultCard"></div>
                 </div>
 
-                <!-- 操作ボタンバー -->
                 <div style="z-index: 5; text-align: center; margin-bottom: 10px;">
                     <p style="color: #cbd5e1; font-size: 0.8rem; letter-spacing: 0.1em; margin-bottom: 8px;">宝珠に触れて祈りを捧げる (1回: 200 💎)</p>
                     <button class="btn btn-sec" style="width: 160px; padding: 6px 10px; font-size: 0.8rem;" onclick="playSE('click'); showScreen('menuScreen')">メインメニューへ戻る</button>
@@ -233,7 +249,6 @@
             </div>
         </div>
 
-        <!-- 対戦選択 -->
         <div id="battleSelectScreen" class="screen">
             <div class="panel">
                 <div class="panel-title">対戦相手選択</div>
@@ -242,7 +257,6 @@
             </div>
         </div>
 
-        <!-- バトル画面 -->
         <div id="battleScreen" class="screen">
             <div class="panel" style="padding: 10px;">
                 <div class="tcg-field">
@@ -276,7 +290,6 @@
             </div>
         </div>
 
-        <!-- 図鑑 -->
         <div id="archiveScreen" class="screen">
             <div class="panel">
                 <div class="panel-title" id="archiveProgress">カードアーカイブ (0/300)</div>
@@ -285,7 +298,6 @@
             </div>
         </div>
 
-        <!-- ルールモーダル -->
         <div id="ruleModal" class="modal">
             <div class="modal-content">
                 <h3 style="color: #38bdf8; margin-bottom: 10px; border-bottom: 1px solid #38bdf8;">📜 Θαύμαカードバトル ルール説明</h3>
@@ -368,6 +380,14 @@
                         atk: 3000, def: 3000, tribute: 2,
                         desc: `【スライム系最高峰】攻撃力:3000 / 守備力:3000\n生贄必要数: 2体\n全てを飲み込む最強のモチモチボディ。`
                     });
+                } else if (pack.key === 'ghost' && i === 39) {
+                    CARDS_DATABASE.push({
+                        id: `c${globalIdCounter++}`, packKey: pack.key, type: 'MONSTER',
+                        name: `焔緋灯影`, icon: '🏮',
+                        rarity: "UR",
+                        atk: 3000, def: 3000, tribute: 2,
+                        desc: `【幽霊系最高峰・最強モンスター】攻撃力:3000 / 守備力:3000\n生贄必要数: 2体\n緋色の燈火とともに顕現する幽冥の支配者。`
+                    });
                 } else {
                     const atk = pack.baseAtk + (i * 35);
                     const def = pack.baseAtk - 200 + (i * 30);
@@ -426,6 +446,14 @@
                 gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
                 gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'glitch') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime + 0.05);
+                osc.frequency.setValueAtTime(100, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
             }
         }
 
@@ -461,8 +489,19 @@
         }
         function stopBGM() { if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; } }
 
-        /* --- UI管理 --- */
+        /* --- UI管理 & ノイズ遷移演出 --- */
         function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); updateGemUI(); }
+        function startWithGlitch(targetScreenId) {
+            playSE('glitch');
+            const overlay = document.getElementById('glitchOverlay');
+            overlay.classList.remove('glitch-active');
+            void overlay.offsetWidth;
+            overlay.classList.add('glitch-active');
+
+            setTimeout(() => {
+                showScreen(targetScreenId);
+            }, 200);
+        }
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         function updateGemUI() { document.getElementById('gemDisplay').innerText = gameState.gems; }
@@ -692,77 +731,71 @@
         function saveData() { localStorage.setItem('thauma_tcg300_save', JSON.stringify(gameState)); }
         function loadData() { const s = localStorage.getItem('thauma_tcg300_save'); if (s) gameState = JSON.parse(s); }
 
-        /* Canvas アニメーション */
+        /* Canvas アニメーション (水色 × 赤色 ベースのグラフィック) */
         const canvas = document.getElementById('titleCanvas'), ctx = canvas.getContext('2d');
-        let particles = [], fogParticles = [], angle = 0, pulse = 0;
+        let particles = [], rings = [], angle = 0, pulse = 0;
 
         function initCanvas() {
             canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-            particles = Array.from({length: 120}, () => ({
+            particles = Array.from({length: 100}, () => ({
                 x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-                size: Math.random() * 2.5 + 0.5, speedX: (Math.random() - 0.5) * 1.5,
-                speedY: (Math.random() - 0.5) * 1.5, opacity: Math.random(), isBlood: Math.random() < 0.3
+                size: Math.random() * 2.5 + 0.8, speedX: (Math.random() - 0.5) * 1.8,
+                speedY: (Math.random() - 0.5) * 1.8, opacity: Math.random(),
+                isCyan: Math.random() < 0.5
             }));
-            fogParticles = Array.from({length: 15}, () => ({
-                x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-                radius: Math.random() * 150 + 100, vx: (Math.random() - 0.5) * 0.4,
-                vy: (Math.random() - 0.5) * 0.4, alpha: Math.random() * 0.15 + 0.05
-            }));
+
+            rings = [
+                { r: 120, speed: 0.006, color: 'rgba(56, 189, 248, 0.4)', dash: [10, 15] },
+                { r: 180, speed: -0.009, color: 'rgba(239, 68, 68, 0.5)', dash: [20, 10] },
+                { r: 240, speed: 0.004, color: 'rgba(56, 189, 248, 0.25)', dash: [5, 5] },
+                { r: 300, speed: -0.003, color: 'rgba(220, 38, 38, 0.3)', dash: [40, 20] }
+            ];
         }
 
         function drawCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            angle += 0.008; pulse += 0.025;
+            angle += 0.01; pulse += 0.03;
             const cx = canvas.width / 2, cy = canvas.height / 2;
 
-            const bgGrd = ctx.createRadialGradient(cx, cy, 50, cx, cy, canvas.width * 0.7);
-            bgGrd.addColorStop(0, 'rgba(15, 23, 42, 0.8)');
-            bgGrd.addColorStop(0.5, 'rgba(30, 10, 20, 0.6)');
-            bgGrd.addColorStop(1, 'rgba(1, 4, 10, 0.95)');
+            /* 背景グラデーション (赤 × 水色 × 深黒) */
+            const bgGrd = ctx.createRadialGradient(cx, cy, 30, cx, cy, canvas.width * 0.75);
+            bgGrd.addColorStop(0, 'rgba(10, 25, 45, 0.85)');
+            bgGrd.addColorStop(0.4, 'rgba(45, 10, 20, 0.65)');
+            bgGrd.addColorStop(1, 'rgba(1, 4, 10, 0.98)');
             ctx.fillStyle = bgGrd; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            fogParticles.forEach(f => {
-                f.x += f.vx; f.y += f.vy;
-                if (f.x < -100) f.x = canvas.width + 100; if (f.x > canvas.width + 100) f.x = -100;
-                if (f.y < -100) f.y = canvas.height + 100; if (f.y > canvas.height + 100) f.y = -100;
+            /* 回転する立体魔法陣（赤・水色交差） */
+            rings.forEach((ring, idx) => {
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle * (idx % 2 === 0 ? 1 : -1.2) * ring.speed * 100);
+                
+                ctx.strokeStyle = ring.color;
+                ctx.lineWidth = 1.8;
+                ctx.setLineDash(ring.dash);
 
-                const fogGrd = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.radius);
-                fogGrd.addColorStop(0, `rgba(139, 0, 0, ${f.alpha})`);
-                fogGrd.addColorStop(0.5, `rgba(15, 23, 42, ${f.alpha * 0.5})`);
-                fogGrd.addColorStop(1, 'transparent');
-                ctx.fillStyle = fogGrd;
-                ctx.beginPath(); ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath();
+                ctx.arc(0, 0, ring.r + Math.sin(pulse + idx) * 6, 0, Math.PI * 2);
+                ctx.stroke();
+
+                /* 幾何学的な四角形・三角形の交差 */
+                if (idx % 2 === 0) {
+                    ctx.rotate(angle);
+                    ctx.rect(-ring.r * 0.6, -ring.r * 0.6, ring.r * 1.2, ring.r * 1.2);
+                    ctx.stroke();
+                }
+
+                ctx.restore();
             });
 
-            ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle);
-            const scale = 1 + Math.sin(pulse) * 0.08; ctx.scale(scale, scale);
-
-            ctx.strokeStyle = 'rgba(220, 38, 38, 0.35)'; ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.arc(0, 0, 180, 0, Math.PI * 2); ctx.stroke();
-            ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
-            ctx.beginPath(); ctx.arc(0, 0, 210, 0, Math.PI * 2); ctx.stroke();
-
-            ctx.strokeStyle = 'rgba(153, 27, 27, 0.4)';
-            ctx.beginPath();
-            for (let i = 0; i < 8; i++) {
-                const a = (i * Math.PI) / 4;
-                const x = Math.cos(a) * 180, y = Math.sin(a) * 180;
-                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-            }
-            ctx.closePath(); ctx.stroke();
-
-            ctx.rotate(-angle * 2.2);
-            ctx.strokeStyle = 'rgba(125, 211, 252, 0.35)';
-            ctx.beginPath(); ctx.rect(-100, -100, 200, 200); ctx.stroke();
-            ctx.restore();
-
+            /* 浮遊する光の粒子（水色＆赤色） */
             particles.forEach(p => {
                 p.x += p.speedX; p.y += p.speedY;
                 if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
                     p.x = Math.random() * canvas.width; p.y = Math.random() * canvas.height;
                 }
-                const alpha = p.opacity * (0.6 + Math.sin(pulse) * 0.4);
-                ctx.fillStyle = p.isBlood ? `rgba(225, 29, 72, ${alpha})` : `rgba(56, 189, 248, ${alpha})`;
+                const alpha = p.opacity * (0.5 + Math.sin(pulse + p.x) * 0.5);
+                ctx.fillStyle = p.isCyan ? `rgba(56, 189, 248, ${alpha})` : `rgba(239, 68, 68, ${alpha})`;
                 ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
             });
 
