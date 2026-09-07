@@ -127,34 +127,48 @@
             text-shadow: 0 0 8px rgba(255,255,255,0.8);
         }
 
-        /* 祈りの宝珠ステージ */
+        /* 引っ張りガチャステージ */
         .gacha-stage {
-            position: relative; width: 100%; height: 320px; display: flex;
+            position: relative; width: 100%; height: 360px; display: flex;
             justify-content: center; align-items: center; z-index: 5;
+            touch-action: none;
         }
         .orb-ring {
             position: absolute; width: 220px; height: 220px; border-radius: 50%;
-            border: 1px dashed rgba(168, 85, 247, 0.4);
+            border: 1px dashed rgba(168, 85, 247, 0.4); pointer-events: none;
             animation: rotateRing 25s linear infinite;
         }
         @keyframes rotateRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* 矢印のガイド指示 */
+        .pull-guide {
+            position: absolute; bottom: 40px; color: #38bdf8; font-size: 0.85rem;
+            letter-spacing: 0.1em; pointer-events: none; opacity: 0.8;
+            animation: guideBounce 1.5s infinite ease-in-out; text-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+        }
+        @keyframes guideBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+
+        /* 引っ張るオーブ */
         .gacha-orb {
-            width: 110px; height: 110px; border-radius: 50%;
+            width: 90px; height: 90px; border-radius: 50%;
             background: radial-gradient(circle at 35% 35%, #ffffff 0%, #a855f7 30%, #3b82f6 70%, #020617 100%);
             box-shadow: 0 0 35px rgba(168, 85, 247, 0.8), inset 0 0 15px rgba(255,255,255,0.8);
-            cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative; animation: orbFloat 4s infinite ease-in-out;
+            cursor: grab; position: relative; z-index: 6;
+            transform-origin: center center;
         }
-        .gacha-orb:hover {
-            transform: scale(1.12);
-            box-shadow: 0 0 60px rgba(217, 70, 239, 0.9), inset 0 0 25px rgba(255,255,255,1);
+        .gacha-orb:active { cursor: grabbing; }
+
+        /* 引っ張り用のライン */
+        #pullLine {
+            position: absolute; top: 50%; left: 50%; width: 2px; background: rgba(56, 189, 248, 0.6);
+            transform-origin: top center; pointer-events: none; z-index: 4; display: none;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
         }
-        @keyframes orbFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 
         .gacha-result-area {
-            position: absolute; z-index: 10; display: none; flex-direction: column;
-            align-items: center; animation: cardPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: absolute; z-index: 10; display: none; flex-direction: row;
+            flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; max-width: 700px;
+            animation: cardPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         @keyframes cardPop { 0% { transform: scale(0) rotate(-10deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
 
@@ -235,16 +249,21 @@
                     <div class="pack-tab" onclick="selectPack('ghost', this)">👻 幽霊ガチャ</div>
                 </div>
 
-                <div class="gacha-stage">
+                <div class="gacha-stage" id="gachaStage">
                     <div class="orb-ring"></div>
-                    <div class="gacha-orb" id="packArea" onclick="openPack()"></div>
+                    <div id="pullLine"></div>
+                    <div class="gacha-orb" id="packArea"></div>
+                    <div class="pull-guide" id="pullGuide">▼ 下へ引き下ろして解き放て！ ▼</div>
                     
                     <div class="gacha-result-area" id="gachaResultCard"></div>
                 </div>
 
-                <div style="z-index: 5; text-align: center; margin-bottom: 10px;">
-                    <p style="color: #cbd5e1; font-size: 0.8rem; letter-spacing: 0.1em; margin-bottom: 8px;">宝珠に触れて祈りを捧げる (1回: 200 💎)</p>
-                    <button class="btn btn-sec" style="width: 160px; padding: 6px 10px; font-size: 0.8rem;" onclick="playSE('click'); showScreen('menuScreen')">メインメニューへ戻る</button>
+                <div style="z-index: 5; text-align: center; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" style="padding: 8px 16px; font-size: 0.85rem;" onclick="setGachaMode(1)">単発 (200 💎)</button>
+                        <button class="btn" style="padding: 8px 16px; font-size: 0.85rem; border-color: #ff007f; color: #ff007f;" onclick="setGachaMode(10)">10連 (2000 💎)</button>
+                    </div>
+                    <button class="btn btn-sec" style="width: 160px; padding: 6px 10px; font-size: 0.8rem;" onclick="playSE('click'); resetGachaStage(); showScreen('menuScreen');">メインメニューへ戻る</button>
                 </div>
             </div>
         </div>
@@ -416,6 +435,7 @@
         /* --- ゲームデータ --- */
         let gameState = { gems: 1000, ownedCardIds: Array.from({length: 20}, (_, i) => `c${i+1}`) };
         let selectedPackKey = 'normal';
+        let gachaPullCount = 1;
 
         /* --- サウンド＆BGM (Web Audio API) --- */
         let audioCtx = null, isSoundOn = false, bgmTimer = null;
@@ -454,6 +474,13 @@
                 gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
                 gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'release') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
             }
         }
 
@@ -506,37 +533,132 @@
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         function updateGemUI() { document.getElementById('gemDisplay').innerText = gameState.gems; }
 
-        /* --- ガチャ --- */
+        /* --- ガチャ引っ張り処理 --- */
+        let isDragging = false, startY = 0, currentY = 0;
+        const orb = document.getElementById('packArea');
+        const pullLine = document.getElementById('pullLine');
+        const stage = document.getElementById('gachaStage');
+
+        function setGachaMode(count) {
+            gachaPullCount = count;
+            playSE('click');
+            const cost = count * 200;
+            if (gameState.gems < cost) {
+                alert(`Θαύμα石が足りません！ (${cost} 💎 必要)`);
+                return;
+            }
+            document.getElementById('pullGuide').innerText = `▼ 下へ引っ張って放て！ (${count}連: ${cost}💎) ▼`;
+        }
+
         function selectPack(key, el) {
             selectedPackKey = key;
             document.querySelectorAll('.pack-tab').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
             playSE('click');
-            const res = document.getElementById('gachaResultCard');
-            res.style.display = 'none';
+            resetGachaStage();
         }
 
-        function openPack() {
-            if (gameState.gems < 200) { alert("Θαύμα石が足りません！"); return; }
-            gameState.gems -= 200; updateGemUI(); playSE('click');
+        function resetGachaStage() {
+            orb.style.display = 'block';
+            orb.style.transform = 'translate(0, 0)';
+            pullLine.style.display = 'none';
+            document.getElementById('pullGuide').style.display = 'block';
+            document.getElementById('gachaResultCard').style.display = 'none';
+            document.getElementById('gachaResultCard').innerHTML = '';
+        }
 
-            const orb = document.getElementById('packArea');
-            orb.style.transform = "scale(1.4)";
-            orb.style.boxShadow = "0 0 90px rgba(236, 72, 153, 1), inset 0 0 35px rgba(255,255,255,1)";
+        function initPullAction() {
+            const handleStart = (e) => {
+                const cost = gachaPullCount * 200;
+                if (gameState.gems < cost) {
+                    alert(`Θαύμα石が足りません！ (${cost} 💎 必要)`);
+                    return;
+                }
+                isDragging = true;
+                const touch = e.touches ? e.touches[0] : e;
+                startY = touch.clientY;
+                pullLine.style.display = 'block';
+            };
+
+            const handleMove = (e) => {
+                if (!isDragging) return;
+                const touch = e.touches ? e.touches[0] : e;
+                const diffY = touch.clientY - startY;
+
+                if (diffY > 0) {
+                    const pullDist = Math.min(diffY, 150);
+                    orb.style.transform = `translateY(${pullDist}px) scale(${1 + pullDist/300})`;
+                    pullLine.style.height = `${pullDist}px`;
+                    pullLine.style.transform = `translate(-50%, 0)`;
+                }
+            };
+
+            const handleEnd = (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                const matrix = window.getComputedStyle(orb).transform;
+                let pulledDist = 0;
+                if (matrix !== 'none') {
+                    const values = matrix.split('(')[1].split(')')[0].split(',');
+                    pulledDist = parseFloat(values[5]) || 0;
+                }
+
+                pullLine.style.display = 'none';
+
+                if (pulledDist >= 80) {
+                    executeGacha();
+                } else {
+                    orb.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    orb.style.transform = 'translate(0, 0)';
+                    setTimeout(() => orb.style.transition = '', 300);
+                }
+            };
+
+            orb.addEventListener('mousedown', handleStart);
+            window.addEventListener('mousemove', handleMove);
+            window.addEventListener('mouseup', handleEnd);
+
+            orb.addEventListener('touchstart', handleStart);
+            window.addEventListener('touchmove', handleMove);
+            window.addEventListener('touchend', handleEnd);
+        }
+
+        function executeGacha() {
+            const cost = gachaPullCount * 200;
+            if (gameState.gems < cost) return;
+            gameState.gems -= cost;
+            updateGemUI();
+            playSE('release');
+
+            orb.style.transition = 'transform 0.2s ease-in, opacity 0.2s';
+            orb.style.transform = 'translateY(-300px) scale(2)';
+            orb.style.opacity = '0';
+            document.getElementById('pullGuide').style.display = 'none';
 
             setTimeout(() => {
-                orb.style.transform = "";
-                orb.style.boxShadow = "";
+                orb.style.display = 'none';
+                orb.style.opacity = '1';
+                orb.style.transition = '';
 
                 const targetPool = CARDS_DATABASE.filter(c => c.packKey === selectedPackKey);
-                const card = targetPool[Math.floor(Math.random() * targetPool.length)];
+                const results = [];
+                for (let i = 0; i < gachaPullCount; i++) {
+                    const card = targetPool[Math.floor(Math.random() * targetPool.length)];
+                    if (!gameState.ownedCardIds.includes(card.id)) gameState.ownedCardIds.push(card.id);
+                    results.push(card);
+                }
 
-                if (!gameState.ownedCardIds.includes(card.id)) gameState.ownedCardIds.push(card.id);
-                const res = document.getElementById('gachaResultCard');
-                res.style.display = 'flex';
-                res.innerHTML = `<div class="card card-${card.type==='SPELL'?'SPELL':card.rarity}" style="width:140px; height:190px;"><div class="card-icon" style="font-size:2rem;">${card.icon}</div><div class="card-title" style="font-size:0.85rem;">${card.name}</div></div>`;
+                const resContainer = document.getElementById('gachaResultCard');
+                resContainer.style.display = 'flex';
+                resContainer.innerHTML = results.map(card => `
+                    <div class="card card-${card.type==='SPELL'?'SPELL':card.rarity}" style="width:110px; height:150px;">
+                        <div class="card-icon" style="font-size:1.6rem;">${card.icon}</div>
+                        <div class="card-title" style="font-size:0.75rem;">${card.name}</div>
+                    </div>
+                `).join('');
+
                 saveData();
-            }, 300);
+            }, 250);
         }
 
         /* --- 対戦相手の選択画面 --- */
@@ -803,7 +925,7 @@
         }
 
         window.addEventListener('resize', initCanvas);
-        window.addEventListener('DOMContentLoaded', () => { loadData(); initCanvas(); drawCanvas(); updateGemUI(); });
+        window.addEventListener('DOMContentLoaded', () => { loadData(); initCanvas(); drawCanvas(); initPullAction(); updateGemUI(); });
     </script>
 </body>
 </html>
