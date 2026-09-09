@@ -125,6 +125,10 @@
             border-color: #a855f7; color: #f8fafc; box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
             text-shadow: 0 0 8px rgba(255,255,255,0.8);
         }
+        .pack-tab.completed {
+            border-color: #ffd700; color: #ffd700; background: rgba(217, 119, 6, 0.25);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+        }
 
         .gacha-stage {
             position: relative; width: 100%; height: 360px; display: flex;
@@ -176,6 +180,8 @@
         }
         .card:hover { transform: translateY(-4px) scale(1.03); z-index: 5; border-color: #7dd3fc; }
         .card-UR { border-color: #ff007f; box-shadow: 0 0 12px rgba(255, 0, 127, 0.8); animation: urGlow 1.5s infinite alternate; }
+        .card-WORLD_KING { border-color: #ffd700; background: linear-gradient(135deg, #451a03, #78350f, #020612); box-shadow: 0 0 20px rgba(255, 215, 0, 0.9); animation: kingGlow 1.2s infinite alternate; }
+        @keyframes kingGlow { from { box-shadow: 0 0 10px #ffd700; } to { box-shadow: 0 0 25px #ff007f, 0 0 35px #38bdf8; } }
         @keyframes urGlow { from { box-shadow: 0 0 8px #ff007f; } to { box-shadow: 0 0 18px #ff7700; } }
         .card-EX { border-color: #ffd700; box-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }
         .card-SSS { border-color: #c084fc; }
@@ -247,7 +253,7 @@
             <canvas id="hellGateCanvas"></canvas>
             <h2 style="color: #ef4444; margin-bottom: 15px; letter-spacing: 0.2em; text-shadow: 0 0 12px rgba(239, 68, 68, 0.8); z-index: 5;">メインメニュー</h2>
             <div class="btn-grid">
-                <button class="btn" onclick="playSE('click'); showScreen('gachaScreen')">カードパック開封 (全6種)</button>
+                <button class="btn" onclick="playSE('click'); updatePackTabsUI(); showScreen('gachaScreen')">カードパック開封 (全6種)</button>
                 <button class="btn" onclick="playSE('click'); openBattleSelect()">Θαύμαカードバトル開始</button>
                 <button class="btn" onclick="playSE('click'); openArchiveScreen()">カード図鑑 (全1000種)</button>
                 <button class="btn" onclick="playSE('click'); openAchievementScreen()" id="achieveMenuBtn">🏆 大量ミッション (0/50)</button>
@@ -273,12 +279,12 @@
                 <div class="bg-fog"></div>
                 
                 <div class="pack-select" id="packGrid">
-                    <div class="pack-tab selected" onclick="selectPack('normal', this)">⚔️ 通常ガチャ (167種)</div>
-                    <div class="pack-tab" onclick="selectPack('holy', this)">🛡️ 聖騎士ガチャ (167種)</div>
-                    <div class="pack-tab" onclick="selectPack('dark', this)">🗡️ 黒騎士ガチャ (167種)</div>
-                    <div class="pack-tab" onclick="selectPack('mage', this)">🔮 魔道士ガチャ (167種)</div>
-                    <div class="pack-tab" onclick="selectPack('slime', this)">🟢 スライムガチャ (166種)</div>
-                    <div class="pack-tab" onclick="selectPack('ghost', this)">👻 幽霊ガチャ (166種)</div>
+                    <div class="pack-tab selected" id="tab_normal" onclick="selectPack('normal', this)">⚔️ 通常ガチャ</div>
+                    <div class="pack-tab" id="tab_holy" onclick="selectPack('holy', this)">🛡️ 聖騎士ガチャ</div>
+                    <div class="pack-tab" id="tab_dark" onclick="selectPack('dark', this)">🗡️ 黒騎士ガチャ</div>
+                    <div class="pack-tab" id="tab_mage" onclick="selectPack('mage', this)">🔮 魔道士ガチャ</div>
+                    <div class="pack-tab" id="tab_slime" onclick="selectPack('slime', this)">🟢 スライムガチャ</div>
+                    <div class="pack-tab" id="tab_ghost" onclick="selectPack('ghost', this)">👻 幽霊ガチャ</div>
                 </div>
 
                 <div class="gacha-stage" id="gachaStage">
@@ -355,7 +361,7 @@
                 <ul style="font-size: 0.8rem; line-height: 1.5; color: #ccc; padding-left: 15px;">
                     <li><b>敵全滅で勝利！</b>: 相手フィールドのモンスターをすべて撃破（または相手LPを0に）すれば、即座にバトル終了となり**Θαύμα石**を獲得できます！</li>
                     <li><b>手札から選択召喚</b>: モンスターをタップして「攻撃表示」または「シールド（守備表示）」で召喚！</li>
-                    <li><b>生贄（リリース）</b>: 攻撃力1800以上の強力モンスターを召喚するには、場にある仲間を1〜2体生贄にする必要があります。</li>
+                    <li><b>生贄（リリース）召喚</b>: 攻撃力1800以上の強力モンスターを召喚するには、場にある仲間を1〜2体生贄にします。**フィールドが満杯(3体)の時でも、必要な生贄を捧げて直接召喚可能です！**</li>
                 </ul>
                 <button class="btn" style="margin-top: 12px; width: 100%;" onclick="closeModal('ruleModal')">閉じる</button>
             </div>
@@ -468,6 +474,14 @@
                 });
             }
         });
+
+        /* --- 全1000枚コンプリート記念の限定特別カード --- */
+        const WORLD_KING_CARD = {
+            id: 'c_world_king', packKey: 'special', type: 'MONSTER',
+            name: '世界の王者', icon: '👑', rarity: 'WORLD_KING',
+            atk: 5000, def: 5000, tribute: 2,
+            desc: `【全1000種コンプリート到達者限定】\n攻撃力:5000 / 守備力:5000\n全カードを統べる真の王者にのみ与えられる神話のカード。`
+        };
 
         /* --- 超大量ミッション定義データ (50種) --- */
         const ACHIEVEMENTS_DEF = [
@@ -631,11 +645,35 @@
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         function updateGemUI() { document.getElementById('gemDisplay').innerText = gameState.gems; }
 
-        /* --- 実績・ミッション判定処理 --- */
+        /* --- パックタブのコンプリート表示更新機能 --- */
+        function updatePackTabsUI() {
+            packCategories.forEach(p => {
+                const totalInPack = p.count;
+                const ownedInPack = CARDS_DATABASE.filter(c => c.packKey === p.key && gameState.ownedCardIds.includes(c.id)).length;
+                const tabEl = document.getElementById(`tab_${p.key}`);
+                if (tabEl) {
+                    const isComp = ownedInPack >= totalInPack;
+                    tabEl.innerText = `${p.icon} ${p.name} (${ownedInPack}/${totalInPack}${isComp ? ' COMP!' : ''})`;
+                    if (isComp) {
+                        tabEl.classList.add('completed');
+                    } else {
+                        tabEl.classList.remove('completed');
+                    }
+                }
+            });
+        }
+
+        /* --- 実績・ミッション判定 & 全コンプ判定 --- */
         function checkAchievements() {
             if (!gameState.achievements) gameState.achievements = [];
             const ownedList = CARDS_DATABASE.filter(c => gameState.ownedCardIds.includes(c.id));
             const count = ownedList.length;
+
+            /* 全1000種コンプリートで『世界の王者』付与 */
+            if (count >= 1000 && !gameState.ownedCardIds.includes('c_world_king')) {
+                gameState.ownedCardIds.push('c_world_king');
+                alert("👑 祝・1000種完全コンプリート！ 👑\n世界のすべてのカードを収集した証として、神話のカード『世界の王者』を手に入れました！");
+            }
 
             ACHIEVEMENTS_DEF.forEach(ach => {
                 if (!gameState.achievements.includes(ach.id)) {
@@ -648,6 +686,7 @@
             });
 
             updateAchievementUI();
+            updatePackTabsUI();
             updateGemUI();
             saveData();
         }
@@ -858,9 +897,17 @@
         /* --- バトル処理 --- */
         let battleState = { pLP: 4000, eLP: 4000, pHand: [], pField: [], eField: [], rewardGems: 800, isEnded: false };
 
+        function getFullOwnedCards() {
+            const list = CARDS_DATABASE.filter(c => gameState.ownedCardIds.includes(c.id));
+            if (gameState.ownedCardIds.includes('c_world_king')) {
+                list.push(WORLD_KING_CARD);
+            }
+            return list;
+        }
+
         function startTCGBattle(poolIdx, reward) {
             playSE('click');
-            const ownedList = CARDS_DATABASE.filter(c => gameState.ownedCardIds.includes(c.id));
+            const ownedList = getFullOwnedCards();
             
             battleState = {
                 pLP: 4000, eLP: 4000, rewardGems: reward, isEnded: false,
@@ -907,11 +954,25 @@
                 else if (card.effect === 'DAMAGE') { battleState.eLP = Math.max(0, battleState.eLP - card.val); logAdd(`【${card.name}】発動！ 相手に ${card.val} ダメージ！`); }
                 battleState.pHand.splice(handIdx, 1);
             } else {
-                if (battleState.pField.length >= 3) { alert("フィールドが満杯です！"); return; }
-                if (card.tribute > battleState.pField.length) { alert(`召喚に必要な生贄が ${card.tribute} 体足りません！`); return; }
+                /* --- フィールド満杯時の特殊召喚（アドバンス召喚）サポート --- */
+                const reqTribute = card.tribute;
+
+                if (reqTribute === 0 && battleState.pField.length >= 3) {
+                    alert("フィールドが満杯です！ 生贄なしのモンスターは召喚できません。");
+                    return;
+                }
+                if (reqTribute > battleState.pField.length) {
+                    alert(`召喚に必要な生贄が ${reqTribute} 体足りません！ (場のモンスター: ${battleState.pField.length}体)`);
+                    return;
+                }
 
                 const mode = confirm(`【${card.name}】を召喚します。\n「OK」= 攻撃表示\n「キャンセル」= シールド(守備表示)`) ? 'ATK' : 'DEF';
-                for (let i = 0; i < card.tribute; i++) battleState.pField.pop();
+                
+                // 生贄処理：必要数分だけ場の先頭モンスターを墓地へ送る
+                for (let i = 0; i < reqTribute; i++) {
+                    const sacrificed = battleState.pField.pop();
+                    if (sacrificed) logAdd(`【${sacrificed.name}】が生贄に捧げられた！`);
+                }
 
                 battleState.pField.push({ ...card, mode: mode });
                 battleState.pHand.splice(handIdx, 1);
@@ -958,7 +1019,7 @@
         function tcgEndTurn() {
             if (battleState.isEnded) return;
             logAdd("ターンエンド。相手のターン！");
-            const ownedList = CARDS_DATABASE.filter(c => gameState.ownedCardIds.includes(c.id));
+            const ownedList = getFullOwnedCards();
             if (battleState.pHand.length < 5) battleState.pHand.push(ownedList[Math.floor(Math.random() * ownedList.length)]);
 
             if (battleState.eField.length && battleState.pField.length) {
@@ -1012,9 +1073,12 @@
 
         /* 図鑑 */
         function openArchiveScreen() {
-            document.getElementById('archiveProgress').innerText = `カードアーカイブ (${gameState.ownedCardIds.length}/1000)`;
+            const ownedCount = CARDS_DATABASE.filter(c => gameState.ownedCardIds.includes(c.id)).length;
+            const hasKing = gameState.ownedCardIds.includes('c_world_king');
+            document.getElementById('archiveProgress').innerText = `カードアーカイブ (${ownedCount}/1000)${hasKing ? ' ＋ 👑世界の王者' : ''}`;
             const grid = document.getElementById('cardGridArea');
-            grid.innerHTML = CARDS_DATABASE.map(c => {
+
+            let archiveListHTML = CARDS_DATABASE.map(c => {
                 const owned = gameState.ownedCardIds.includes(c.id);
                 return `
                     <div class="card card-${c.type==='SPELL'?'SPELL':c.rarity}" style="opacity:${owned?1:0.25}" onclick="${owned?`alert('${c.desc}')`:''}">
@@ -1023,6 +1087,19 @@
                     </div>
                 `;
             }).join('');
+
+            /* コンプ特典の『世界の王者』を追加表示 */
+            if (hasKing) {
+                archiveListHTML = `
+                    <div class="card card-WORLD_KING" onclick="alert('${WORLD_KING_CARD.desc}')">
+                        <div class="card-icon">${WORLD_KING_CARD.icon}</div>
+                        <div class="card-title">${WORLD_KING_CARD.name}</div>
+                        <div class="card-stats"><span>5000</span><span>5000</span></div>
+                    </div>
+                ` + archiveListHTML;
+            }
+
+            grid.innerHTML = archiveListHTML;
             showScreen('archiveScreen');
         }
 
@@ -1108,101 +1185,51 @@
 
         function initHellGate() {
             hCanvas.width = hCanvas.offsetWidth; hCanvas.height = hCanvas.offsetHeight;
-            fireParticles = Array.from({length: 120}, () => ({
-                x: hCanvas.width / 2 + (Math.random() - 0.5) * 220,
-                y: hCanvas.height * 0.7 + Math.random() * 150,
+            fireParticles = Array.from({length: 80}, () => ({
+                x: Math.random() * hCanvas.width,
+                y: hCanvas.height + Math.random() * 100,
                 size: Math.random() * 4 + 1.5,
-                vx: (Math.random() - 0.5) * 1.2,
-                vy: -Math.random() * 3.5 - 1.0,
+                speedY: Math.random() * 2.5 + 1.0,
+                speedX: (Math.random() - 0.5) * 1.2,
                 life: Math.random(),
-                maxLife: 0.6 + Math.random() * 0.4
+                maxLife: Math.random() * 0.6 + 0.4
             }));
         }
 
         function drawHellGate() {
             hCtx.clearRect(0, 0, hCanvas.width, hCanvas.height);
             hellTime += 0.02;
-            const cx = hCanvas.width / 2, cy = hCanvas.height / 2;
 
-            const bgGrd = hCtx.createRadialGradient(cx, cy, 20, cx, cy, hCanvas.width * 0.7);
-            const pulseGlow = Math.sin(hellTime * 2.5) * 0.15 + 0.35;
-            bgGrd.addColorStop(0, `rgba(255, 30, 0, ${pulseGlow})`);
-            bgGrd.addColorStop(0.3, 'rgba(120, 10, 0, 0.75)');
-            bgGrd.addColorStop(0.7, 'rgba(25, 2, 5, 0.95)');
-            bgGrd.addColorStop(1, '#01040a');
+            const bgGrd = hCtx.createLinearGradient(0, 0, 0, hCanvas.height);
+            bgGrd.addColorStop(0, '#020612');
+            bgGrd.addColorStop(0.6, '#1a0508');
+            bgGrd.addColorStop(1, '#450a0a');
             hCtx.fillStyle = bgGrd;
             hCtx.fillRect(0, 0, hCanvas.width, hCanvas.height);
 
-            hCtx.save();
-            hCtx.translate(cx, cy);
-            for (let i = 0; i < 12; i++) {
-                const angle = (Math.PI * 2 / 12) * i + hellTime * 0.2;
-                hCtx.beginPath();
-                hCtx.moveTo(0, 0);
-                hCtx.arc(0, 0, 600, angle - 0.08, angle + 0.08);
-                hCtx.fillStyle = `rgba(255, 60, 0, ${0.03 + Math.sin(hellTime + i) * 0.02})`;
-                hCtx.fill();
-            }
-            hCtx.restore();
-
-            const gateW = Math.min(360, hCanvas.width * 0.5);
-            const gateH = gateW * 1.35;
-            const gateX = cx - gateW / 2;
-            const gateY = cy - gateH / 2 + 30;
-
-            const innerGlow = hCtx.createRadialGradient(cx, cy + 20, 10, cx, cy + 20, gateW * 0.6);
-            innerGlow.addColorStop(0, '#ffffff');
-            innerGlow.addColorStop(0.25, '#ff4500');
-            innerGlow.addColorStop(0.65, '#800000');
-            innerGlow.addColorStop(1, 'transparent');
-            hCtx.fillStyle = innerGlow;
-            hCtx.fillRect(gateX, gateY, gateW, gateH);
-
-            hCtx.save();
-            hCtx.translate(cx, cy + 20);
-            hCtx.rotate(-hellTime * 0.5);
-            hCtx.strokeStyle = 'rgba(255, 80, 0, 0.6)';
-            hCtx.lineWidth = 2;
+            const cx = hCanvas.width / 2, cy = hCanvas.height * 0.85;
+            const gateGrd = hCtx.createRadialGradient(cx, cy, 10, cx, cy, 250);
+            gateGrd.addColorStop(0, 'rgba(239, 68, 68, 0.8)');
+            gateGrd.addColorStop(0.5, 'rgba(185, 28, 28, 0.4)');
+            gateGrd.addColorStop(1, 'transparent');
+            hCtx.fillStyle = gateGrd;
             hCtx.beginPath();
-            hCtx.arc(0, 0, gateW * 0.32, 0, Math.PI * 2);
-            hCtx.stroke();
-            for (let i = 0; i < 5; i++) {
-                const a = (Math.PI * 2 / 5) * i;
-                hCtx.lineTo(Math.cos(a) * gateW * 0.32, Math.sin(a) * gateW * 0.32);
-            }
-            hCtx.strokeStyle = 'rgba(255, 120, 0, 0.4)';
-            hCtx.stroke();
-            hCtx.restore();
+            hCtx.arc(cx, cy, 250, 0, Math.PI * 2);
+            hCtx.fill();
 
-            hCtx.fillStyle = '#060205';
-            hCtx.strokeStyle = '#3d0c0c';
-            hCtx.lineWidth = 4;
-
-            // 地獄の門の左右の柱とアーチを描画（途切れていた部分の補完）
-            const pillarW = 24;
-            hCtx.fillRect(gateX - pillarW, gateY, pillarW, gateH);
-            hCtx.strokeRect(gateX - pillarW, gateY, pillarW, gateH);
-            hCtx.fillRect(gateX + gateW, gateY, pillarW, gateH);
-            hCtx.strokeRect(gateX + gateW, gateY, pillarW, gateH);
-
-            // アーチ部分
-            hCtx.fillRect(gateX - pillarW, gateY - 30, gateW + pillarW * 2, 30);
-            hCtx.strokeRect(gateX - pillarW, gateY - 30, gateW + pillarW * 2, 30);
-
-            // 炎の粒子アニメーション描画
             fireParticles.forEach(p => {
-                p.x += p.vx;
-                p.y += p.vy;
+                p.y -= p.speedY;
+                p.x += p.speedX + Math.sin(hellTime + p.y * 0.02) * 0.5;
                 p.life += 0.015;
 
-                if (p.life >= p.maxLife || p.y < gateY - 50) {
-                    p.x = cx + (Math.random() - 0.5) * gateW * 0.8;
-                    p.y = gateY + gateH - 20;
+                if (p.life > p.maxLife || p.y < -10) {
+                    p.x = Math.random() * hCanvas.width;
+                    p.y = hCanvas.height + 20;
                     p.life = 0;
                 }
 
                 const alpha = (1 - p.life / p.maxLife);
-                hCtx.fillStyle = `rgba(255, ${Math.floor(150 * (1 - p.life))}, 0, ${alpha})`;
+                hCtx.fillStyle = `rgba(${255}, ${Math.floor(80 * (1 - p.life))}, ${20}, ${alpha})`;
                 hCtx.beginPath();
                 hCtx.arc(p.x, p.y, p.size * (1 - p.life * 0.5), 0, Math.PI * 2);
                 hCtx.fill();
@@ -1211,22 +1238,13 @@
             requestAnimationFrame(drawHellGate);
         }
 
-        /* --- 初期化実行 --- */
-        window.addEventListener('resize', () => {
-            initCanvas();
-            initHellGate();
-        });
-
-        window.onload = () => {
-            loadData();
-            initCanvas();
-            drawCanvas();
-            initHellGate();
-            drawHellGate();
+        window.addEventListener('resize', () => { initCanvas(); initHellGate(); });
+        window.addEventListener('load', () => {
+            initCanvas(); drawCanvas();
+            initHellGate(); drawHellGate();
             initPullAction();
-            updateGemUI();
-            updateAchievementUI();
-        };
+            loadData();
+        });
     </script>
 </body>
 </html>
